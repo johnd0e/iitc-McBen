@@ -294,7 +294,7 @@ RegionScoreboard = (function () {
           + percentToString( score,total)+'\n';
     }
 
-    res +='<hr>\nEstiminated:\n';
+    res +='<hr>\nEstimated:\n';
     total = e_res+e_enl;
     for (var t=0; t<2; t++) {
       var faction = order[t];
