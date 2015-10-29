@@ -158,8 +158,6 @@ window.setupMap = function() {
   $('#map').text('');
 
 
-
-
   // proper initial position is now delayed until all plugins are loaded and the base layer is set
   window.map = new L.Map('map', {
     center: [0,0],
@@ -168,7 +166,8 @@ window.setupMap = function() {
     minZoom: MIN_ZOOM,
 //    zoomAnimation: false,
     markerZoomAnimation: false,
-    bounceAtZoomLimits: false
+    bounceAtZoomLimits: false,
+    preferCanvas: (window.L_PREFER_CANVAS ? true : false)
   });
 
   if (L.Path.CANVAS) {
@@ -584,7 +583,6 @@ function boot() {
     iconAnchor: new L.Point(12, 41),
     popupAnchor: new L.Point(1, -34),
   }});
-
   window.extractFromStock();
   window.setupIdle();
   window.setupTaphold();
