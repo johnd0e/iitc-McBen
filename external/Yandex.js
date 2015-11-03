@@ -3,7 +3,7 @@
  */
 //(function (ymaps, L) {
 
-L.Yandex = L.Class.extend({
+L.Yandex = L.Layer.extend({
 	includes: L.Mixin.Events,
 
 	options: {
@@ -32,7 +32,7 @@ L.Yandex = L.Class.extend({
 		// set up events
 		map.on('viewreset', this._resetCallback, this);
 
-		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
+		this._limitedUpdate = L.Util.throttle(this._update, 150, this);
 		map.on('move', this._update, this);
 
 		map._controlCorners['bottomright'].style.marginBottom = "3em";
@@ -72,7 +72,7 @@ L.Yandex = L.Class.extend({
 			first = tilePane.firstChild;
 
 		if (!this._container) {
-			this._container = L.DomUtil.create('div', 'leaflet-yandex-layer leaflet-top leaflet-left');
+			this._container = L.DomUtil.create('div', 'leaflet-yandex-layer leaflet-top');
 			this._container.id = "_YMapContainer_" + L.Util.stamp(this);
 			this._container.style.zIndex = "auto";
 		}
