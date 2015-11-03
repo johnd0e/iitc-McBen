@@ -76,7 +76,7 @@ window.MapDataRequest = function() {
     _this.render.processGameEntities([data.ent]);
   });
 
-}
+};
 
 
 window.MapDataRequest.prototype.start = function() {
@@ -94,8 +94,8 @@ window.MapDataRequest.prototype.start = function() {
   this.refreshOnTimeout (this.STARTUP_REFRESH);
   this.setStatus ('refreshing', undefined, -1);
 
-  this.cache && this.cache.startExpireInterval (15);
-}
+  if (this.cache) this.cache.startExpireInterval(15);
+};
 
 
 window.MapDataRequest.prototype.mapMoveStart = function() {
@@ -104,7 +104,7 @@ window.MapDataRequest.prototype.mapMoveStart = function() {
   this.setStatus('paused');
   this.clearTimeout();
   this.pauseRenderQueue(true);
-}
+};
 
 window.MapDataRequest.prototype.mapMoveEnd = function() {
   var bounds = clampLatLngBounds(map.getBounds());
@@ -129,7 +129,7 @@ window.MapDataRequest.prototype.mapMoveEnd = function() {
 
   this.setStatus('refreshing', undefined, -1);
   this.refreshOnTimeout(this.MOVE_REFRESH);
-}
+};
 
 window.MapDataRequest.prototype.idleResume = function() {
   // if we have no timer set and there are no active requests, refresh has gone idle and the timer needs restarting
@@ -140,7 +140,7 @@ window.MapDataRequest.prototype.idleResume = function() {
     this.setStatus('idle restart', undefined, -1);
     this.refreshOnTimeout(this.IDLE_RESUME_REFRESH);
   }
-}
+};
 
 
 window.MapDataRequest.prototype.clearTimeout = function() {
@@ -150,7 +150,7 @@ window.MapDataRequest.prototype.clearTimeout = function() {
     clearTimeout(this.timer);
     this.timer = undefined;
   }
-}
+};
 
 window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
   this.clearTimeout();
@@ -164,13 +164,13 @@ window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
     _this.timer = setTimeout ( function() { _this.timer = undefined; _this.refresh(); }, seconds*1000);
   }, 0);
   this.timerExpectedTimeoutTime = new Date().getTime() + seconds*1000;
-}
+};
 
 
 window.MapDataRequest.prototype.setStatus = function(short,long,progress) {
   this.status = { short: short, long: long, progress: progress };
   window.renderUpdateStatus();
-}
+};
 
 
 window.MapDataRequest.prototype.getStatus = function() {
@@ -338,7 +338,7 @@ window.MapDataRequest.prototype.refresh = function() {
     // all data was from the cache, nothing queued - run the queue 'immediately' so it handles the end request processing
     this.delayProcessRequestQueue (0,true);
   }
-}
+};
 
 
 window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFirst) {
@@ -348,13 +348,13 @@ window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFi
       _this.timer = setTimeout ( function() { _this.timer = undefined; _this.processRequestQueue(isFirst); }, seconds*1000 );
     }, 0);
   }
-}
+};
 
 
 window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
 
   // if nothing left in the queue, finish
-  if (Object.keys(this.queuedTiles).length == 0) {
+  if (Object.keys(this.queuedTiles).length === 0) {
     // we leave the renderQueue code to handle ending the render pass now
     // (but we need to make sure it's not left without it's timer running!)
     if (!this.renderQueuePaused) {
@@ -414,7 +414,7 @@ window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
 
   progress = this.requestedTileCount > 0 ? (this.requestedTileCount-pendingTileCount) / this.requestedTileCount : undefined;
   this.setStatus ('loading', longText, progress);
-}
+};
 
 
 window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
@@ -446,7 +446,7 @@ window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
     function(data, textStatus, jqXHR) { savedThis.handleResponse (data, tiles, true); },  // request successful callback
     function() { savedThis.handleResponse (undefined, tiles, false); }  // request failed callback
   );
-}
+};
 
 window.MapDataRequest.prototype.requeueTile = function(id, error) {
   if (id in this.queuedTiles) {
@@ -489,7 +489,7 @@ window.MapDataRequest.prototype.requeueTile = function(id, error) {
 
     }
   } // else the tile wasn't currently wanted (an old non-cancelled request) - ignore
-}
+};
 
 
 window.MapDataRequest.prototype.handleResponse = function (data, tiles, success) {
@@ -553,7 +553,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
         successTiles.push (id);
 
         // store the result in the cache
-        this.cache && this.cache.store (id, val);
+        if (this.cache) this.cache.store (id, val);
 
         // if this tile was in the render list, render it
         // (requests aren't aborted when new requests are started, so it's entirely possible we don't want to render it!)
@@ -633,7 +633,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 
 
   this.delayProcessRequestQueue(nextQueueDelay);
-}
+};
 
 
 window.MapDataRequest.prototype.resetRenderQueue = function() {
@@ -644,7 +644,7 @@ window.MapDataRequest.prototype.resetRenderQueue = function() {
     this.renderQueueTimer = undefined;
   }
   this.renderQueuePaused = false;  
-}
+};
 
 
 window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
@@ -659,7 +659,7 @@ window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
   if (!this.renderQueuePaused) {
     this.startQueueTimer(this.RENDER_PAUSE);
   }
-}
+};
 
 window.MapDataRequest.prototype.startQueueTimer = function(delay) {
   if (this.renderQueueTimer === undefined) {
@@ -668,7 +668,7 @@ window.MapDataRequest.prototype.startQueueTimer = function(delay) {
       _this.renderQueueTimer = setTimeout ( function() { _this.renderQueueTimer = undefined; _this.processRenderQueue(); }, (delay||0)*1000 );
     }, 0);
   }
-}
+};
 
 window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
   this.renderQueuePaused = pause;
@@ -682,7 +682,7 @@ window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
       this.startQueueTimer(this.RENDER_PAUSE);
     }
   }
-}
+};
 
 window.MapDataRequest.prototype.processRenderQueue = function() {
   var drawEntityLimit = this.RENDER_BATCH_SIZE;
@@ -705,7 +705,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
       this.render.processGameEntities(drawThisPass);
     }
 
-    if (current.deleted.length == 0 && current.entities.length == 0) {
+    if (current.deleted.length === 0 && current.entities.length === 0) {
       this.renderQueue.splice(0,1);
       this.debugTiles.setState(current.id, current.status);
     }
@@ -715,7 +715,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 
   if (this.renderQueue.length > 0) {
     this.startQueueTimer(this.RENDER_PAUSE);
-  } else if (Object.keys(this.queuedTiles).length == 0) {
+  } else if (Object.keys(this.queuedTiles).length === 0) {
 
     this.render.endRenderPass();
 
@@ -739,5 +739,4 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
     this.setStatus (this.failedTileCount ? 'errors' : this.staleTileCount ? 'out of date' : 'done', longStatus);
 
   }
-
-}
+};

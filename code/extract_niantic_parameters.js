@@ -3,7 +3,7 @@
 // so we need to extract some essential parameters from the code for IITC to use
 
 window.extractFromStock = function() {
-  window.niantic_params = {}
+  window.niantic_params = {};
 
   // extract the former nemesis.dashboard.config.CURRENT_VERSION from the code
   var reVersion = new RegExp('"X-CSRFToken".*[a-z].v="([a-f0-9]{40})";');

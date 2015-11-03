@@ -19,7 +19,7 @@
 
 
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
-if(document.getElementsByTagName('html')[0].getAttribute('itemscope') != null)
+if(document.getElementsByTagName('html')[0].getAttribute('itemscope') !== null)
   throw('Ingress Intel Website is down, not a userscript issue.');
 window.iitcBuildDate = '@@BUILDDATE@@';
 
@@ -136,7 +136,7 @@ window.CHAT_SHRINKED = 60;
 window.FIELD_MU_DISPLAY_AREA_ZOOM_RATIO = 0.001;
 
 // Point tolerance for displaying MU's
-window.FIELD_MU_DISPLAY_POINT_TOLERANCE = 60
+window.FIELD_MU_DISPLAY_POINT_TOLERANCE = 60;
 
 window.COLOR_SELECTED_PORTAL = '#f0f';
 window.COLORS = ['#FF6600', '#0088FF', '#03DC03']; // none, res, enl
@@ -150,7 +150,7 @@ window.MOD_TYPE = {RES_SHIELD:'Shield', MULTIHACK:'Multi-hack', FORCE_AMP:'Force
 // it and how far the portal reaches (i.e. how far links may be made
 // from this portal)
 window.ACCESS_INDICATOR_COLOR = 'orange';
-window.RANGE_INDICATOR_COLOR = 'red'
+window.RANGE_INDICATOR_COLOR = 'red';
 
 // min zoom for intel map - should match that used by stock intel
 window.MIN_ZOOM = 3;

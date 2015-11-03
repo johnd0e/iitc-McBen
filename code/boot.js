@@ -23,7 +23,7 @@ window.setupLargeImagePreview = function() {
       });
     }
   });
-}
+};
 
 // adds listeners to the layer chooser such that a long press hides
 // all custom layers except the long pressed one.
@@ -60,7 +60,7 @@ window.setupLayerChooserSelectOne = function() {
     }
     e.preventDefault();
   });
-}
+};
 
 // Setup the function to record the on/off status of overlay layerGroups
 window.setupLayerChooserStatusRecorder = function() {
@@ -76,7 +76,7 @@ window.setupLayerChooserStatusRecorder = function() {
     var display = (e.type === 'overlayadd');
     window.updateDisplayedLayerGroup(e.name, display);
   });
-}
+};
 
 window.layerChooserSetDisabledStates = function() {
 // layer selector - enable/disable layers that aren't visible due to zoom level
@@ -90,7 +90,7 @@ window.layerChooserSetDisabledStates = function() {
 
 //TODO? some generic mechanism where other layers can have their disabled state marked on/off? a few
 //plugins have code to do it by hand already
-}
+};
 
 
 window.setupStyles = function() {
@@ -107,7 +107,7 @@ window.setupStyles = function() {
       '#scrollwrapper  { width:'+(SIDEBAR_WIDTH + 2*HIDDEN_SCROLLBAR_ASSUMED_WIDTH)+'px; right:-'+(2*HIDDEN_SCROLLBAR_ASSUMED_WIDTH-2)+'px } ',
       '#sidebar > * { width:'+(SIDEBAR_WIDTH+1)+'px;  }'].join("\n")
     + '</style>');
-}
+};
 
 function createDefaultBaseMapLayers() {
   var baseLayers = {};
@@ -309,7 +309,7 @@ window.setupMap = function() {
     // then latitude is clamped with the clampLatLng function (to the 85 deg north/south limits)
     var newPos = clampLatLng(map.getCenter().wrap());
     if (!map.getCenter().equals(newPos)) {
-      map.panTo(newPos,{animate:false})
+      map.panTo(newPos,{animate:false});
     }
   });
 
@@ -387,9 +387,7 @@ window.setMapBaseLayer = function() {
 
 
   });
-
-
-}
+};
 
 // renders player details into the website. Since the player info is
 // included as inline script in the original site, the data is static
@@ -405,10 +403,12 @@ window.setupPlayerStat = function() {
   var ap = parseInt(PLAYER.ap);
   var thisLvlAp = parseInt(PLAYER.min_ap_for_current_level);
   var nextLvlAp = parseInt(PLAYER.min_ap_for_next_level);
-
+  var lvlUpAp = 0;
+  var lvlApProg = 0;
+  
   if (nextLvlAp) {
-    var lvlUpAp = digits(nextLvlAp-ap);
-    var lvlApProg = Math.round((ap-thisLvlAp)/(nextLvlAp-thisLvlAp)*100);
+    lvlUpAp = digits(nextLvlAp-ap);
+    lvlApProg = Math.round((ap-thisLvlAp)/(nextLvlAp-thisLvlAp)*100);
   } // else zero nextLvlAp - so at maximum level(?)
 
   var xmMax = parseInt(PLAYER.xm_capacity);
@@ -436,7 +436,7 @@ window.setupPlayerStat = function() {
     + '</div>'
     + '</h2>'
   );
-}
+};
 
 window.setupSidebarToggle = function() {
   $('#sidebartoggle').on('click', function() {
@@ -455,7 +455,7 @@ window.setupSidebarToggle = function() {
     }
     $('.ui-tooltip').remove();
   });
-}
+};
 
 window.setupTooltips = function(element) {
   element = element || $(document);
@@ -477,16 +477,16 @@ window.setupTooltips = function(element) {
     window.tooltipClearerHasBeenSetup = true;
     $(document).on('click', '.ui-tooltip', function() { $(this).remove(); });
   }
-}
+};
 
 window.setupTaphold = function() {
   @@INCLUDERAW:external/taphold.js@@
-}
+};
 
 
 window.setupQRLoadLib = function() {
   @@INCLUDERAW:external/jquery.qrcode.min.js@@
-}
+};
 
 window.setupLayerChooserApi = function() {
   // hide layer chooser if booted with the iitcm android app
@@ -507,7 +507,7 @@ window.setupLayerChooserApi = function() {
         layerId: L.stamp(obj.layer),
         name: obj.name,
         active: layerActive
-      }
+      };
       if (obj.overlay) {
         overlayLayers.push(info);
       } else {
@@ -525,8 +525,8 @@ window.setupLayerChooserApi = function() {
     return {
       baseLayers: baseLayers,
       overlayLayers: overlayLayers
-    }
-  }
+    };
+  };
 
   window.layerChooser.showLayer = function(id,show) {
     if (show === undefined) show = true;
@@ -582,8 +582,6 @@ window.setupLayerChooserApi = function() {
       window.layerChooser.getLayers();
   } catch(e) {
     console.error(e);
-  }
-}
 
 // BOOTING ///////////////////////////////////////////////////////////
 

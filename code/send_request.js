@@ -84,11 +84,10 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
   requests.add(result);
 
   return result;
-}
+};
 
 
-window.outOfDateUserPrompt = function()
-{
+window.outOfDateUserPrompt = function() {
   // we block all requests while the dialog is open. 
   if (!window.blockOutOfDateRequests) {
     window.blockOutOfDateRequests = true;
@@ -116,5 +115,4 @@ window.outOfDateUserPrompt = function()
 
 
   }
-
-}
+};

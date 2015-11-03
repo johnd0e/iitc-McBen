@@ -9,7 +9,7 @@
 // 2014-02-06: intel site updates hint at new 'amar artifacts', likely following the same system as above
 
 
-window.artifact = function() {}
+window.artifact = function() {};
 
 window.artifact.setup = function() {
   artifact.REFRESH_JITTER = 2*60;  // 2 minute random period so not all users refresh at once
@@ -29,7 +29,7 @@ window.artifact.setup = function() {
 
   $('#toolbox').append(' <a onclick="window.artifact.showArtifactList()" title="Show artifact portal list">Artifacts</a>');
 
-}
+};
 
 window.artifact.requestData = function() {
   if (isIdle()) {
@@ -37,14 +37,14 @@ window.artifact.requestData = function() {
   } else {
     window.postAjax('getArtifactPortals', {}, artifact.handleSuccess, artifact.handleError);
   }
-}
+};
 
 window.artifact.idleResume = function() {
   if (artifact.idle) {
     artifact.idle = false;
     artifact.requestData();
   }
-}
+};
 
 window.artifact.handleSuccess = function(data) {
   artifact.processData (data);
@@ -54,13 +54,13 @@ window.artifact.handleSuccess = function(data) {
   var nextTime = Math.ceil(now/(artifact.REFRESH_SUCCESS*1000))*(artifact.REFRESH_SUCCESS*1000) + Math.floor(Math.random()*artifact.REFRESH_JITTER*1000);
 
   setTimeout (artifact.requestData, nextTime - now);
-}
+};
 
 window.artifact.handleFailure = function(data) {
   // no useful data on failure - do nothing
 
   setTimeout (artifact.requestData, artifact.REFRESH_FAILURE*1000);
-}
+};
 
 
 window.artifact.processData = function(data) {
@@ -79,7 +79,7 @@ window.artifact.processData = function(data) {
   // redraw the artifact layer
   artifact.updateLayer();
 
-}
+};
 
 
 window.artifact.clearData = function() {
@@ -87,7 +87,7 @@ window.artifact.clearData = function() {
   artifact.artifactTypes = {};
 
   artifact.entities = [];
-}
+};
 
 
 window.artifact.processResult = function (portals) {
@@ -129,34 +129,34 @@ window.artifact.processResult = function (portals) {
 
   }
 
-}
+};
 
 window.artifact.getArtifactTypes = function() {
   return Object.keys(artifact.artifactTypes);
-}
+};
 
 window.artifact.isArtifact = function(type) {
   return type in artifact.artifactTypes;
-}
+};
 
 // used to render portals that would otherwise be below the visible level
 window.artifact.getArtifactEntities = function() {
   return artifact.entities;
-}
+};
 
 window.artifact.getInterestingPortals = function() {
   return Object.keys(artifact.portalInfo);
-}
+};
 
 // quick test for portal being relevant to artifacts - of any type
 window.artifact.isInterestingPortal = function(guid) {
   return guid in artifact.portalInfo;
-}
+};
 
 // get the artifact data for a specified artifact id (e.g. 'jarvis'), if it exists - otherwise returns something 'false'y
 window.artifact.getPortalData = function(guid,artifactId) {
   return artifact.portalInfo[guid] && artifact.portalInfo[guid][artifactId];
-}
+};
 
 window.artifact.updateLayer = function() {
   artifact._layer.clearLayers();
@@ -210,13 +210,13 @@ window.artifact.updateLayer = function() {
 
   }); //end $.each(artifact.portalInfo, function(guid,data)
 
-}
+};
 
 
 window.artifact.showArtifactList = function() {
   var html = '';
 
-  if (Object.keys(artifact.artifactTypes).length == 0) {
+  if (Object.keys(artifact.artifactTypes).length === 0) {
     html += '<i>No artifacts at this time</i>';
   }
 
@@ -271,7 +271,7 @@ window.artifact.showArtifactList = function() {
     });
 
     // check for no rows, and add a note to the table instead
-    if (tableRows.length == 0) {
+    if (tableRows.length === 0) {
       html += '<tr><td colspan="2"><i>No portals at this time</i></td></tr>';
     }
 
@@ -304,4 +304,4 @@ window.artifact.showArtifactList = function() {
     position: {my: 'right center', at: 'center-60 center', of: window, collision: 'fit'}
   });
 
-}
+};
