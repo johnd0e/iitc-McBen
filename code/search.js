@@ -34,6 +34,7 @@ window.search.Query = function(term, confirmed) {
   this.confirmed = confirmed;
   this.init();
 };
+
 window.search.Query.prototype.init = function() {
   this.results = [];
 
@@ -59,15 +60,18 @@ window.search.Query.prototype.init = function() {
 
   runHooks('search', this);
 };
+
 window.search.Query.prototype.show = function() {
   this.container.appendTo('#searchwrapper');
 };
+
 window.search.Query.prototype.hide = function() {
   this.container.remove();
   this.removeSelectedResult();
 };
+
 window.search.Query.prototype.addResult = function(result) {
-  if(this.results.length == 0) {
+  if(this.results.length === 0) {
     // remove 'No results'
     this.list.empty();
   }
@@ -109,8 +113,8 @@ window.search.Query.prototype.addResult = function(result) {
       .append($('<em>')
         .append(result.description));
   }
-
 };
+
 window.search.Query.prototype.onResultSelected = function(result, ev) {
   this.removeSelectedResult();
   this.selectedResult = result;
@@ -156,13 +160,14 @@ window.search.Query.prototype.onResultSelected = function(result, ev) {
     map.addLayer(result.layer);
 
   if(window.isSmartphone()) window.show('map');
-}
+};
+
 window.search.Query.prototype.removeSelectedResult = function() {
   if(this.selectedResult) {
     if(this.selectedResult.layer) map.removeLayer(this.selectedResult.layer);
     if(this.selectedResult.onRemove) this.selectedResult.onRemove(this.selectedResult);
   }
-}
+};
 
 window.search.doSearch = function(term, confirmed) {
   term = term.trim();
@@ -186,7 +191,7 @@ window.search.doSearch = function(term, confirmed) {
   window.search.lastSearch = null;
 
   // clear results
-  if(term == '') return;
+  if(term === '') return;
 
   if(useAndroidPanes()) show('info');
 
@@ -270,7 +275,7 @@ addHook('search', function(query) {
   if(!query.confirmed) return;
 
   $.getJSON(NOMINATIM + encodeURIComponent(query.term), function(data) {
-    if(data.length == 0) {
+    if(data.length === 0) {
       query.addResult({
         title: 'No results on OpenStreetMap',
         icon: '//www.openstreetmap.org/favicon.ico',

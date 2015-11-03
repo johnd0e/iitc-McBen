@@ -13,7 +13,7 @@ window.storeMapPosition = function() {
     writeCookie('ingress.intelmap.lng', m['lng']);
 
   writeCookie('ingress.intelmap.zoom', window.map.getZoom());
-}
+};
 
 
 // either retrieves the last shown position from a cookie, from the
@@ -48,7 +48,7 @@ window.getPosition = function() {
     return {center: new L.LatLng(lat, lng), zoom: z};
   }
 
-  setTimeout("window.map.locate({setView : true});", 50);
+  setTimeout(function () {window.map.locate({setView : true});}, 50);
 
   return {center: new L.LatLng(0.0, 0.0), zoom: 1};
 }
