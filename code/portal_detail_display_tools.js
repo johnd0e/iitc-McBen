@@ -21,7 +21,7 @@ window.getRangeText = function(d) {
       : Math.floor(range.range)      + ' m')
     + '</a>',
     title];
-}
+};
 
 
 // given portal details, returns html code to display mod details.
@@ -86,23 +86,23 @@ window.getModDetails = function(d) {
 
   var t = '';
   for (var i=0; i<mods.length; i++) {
-    t += '<span'+(modsTitle[i].length ? ' title="'+modsTitle[i]+'"' : '')+' style="color:'+modsColor[i]+'">'+mods[i]+'</span>'
+    t += '<span'+(modsTitle[i].length ? ' title="'+modsTitle[i]+'"' : '')+' style="color:'+modsColor[i]+'">'+mods[i]+'</span>';
   }
   // and add blank entries if we have less than 4 mods (as the server no longer returns all mod slots, but just the filled ones)
   for (var i=mods.length; i<4; i++) {
-    t += '<span style="color:#000"></span>'
+    t += '<span style="color:#000"></span>';
   }
 
   return t;
-}
+};
 
 window.getEnergyText = function(d) {
   var currentNrg = getCurrentPortalEnergy(d);
   var totalNrg = getTotalPortalEnergy(d);
   var title = currentNrg + ' / ' + totalNrg;
-  var fill = prettyEnergy(currentNrg) + ' / ' + prettyEnergy(totalNrg)
+  var fill = prettyEnergy(currentNrg) + ' / ' + prettyEnergy(totalNrg);
   return ['energy', fill, title];
-}
+};
 
 
 window.getResonatorDetails = function(d) {
@@ -144,18 +144,15 @@ window.getResonatorDetails = function(d) {
   }
 
   return '<table id="resodetails">' + genFourColumnTable(resoDetails) + '</table>';
-
-}
+};
 
 // helper function that renders the HTML for a given resonator. Does
 // not work with raw details-hash. Needs digested infos instead:
 // slot: which slot this resonator occupies. Starts with 0 (east) and
 // rotates clockwise. So, last one is 7 (southeast).
 window.renderResonatorDetails = function(slot, level, nrg, nick) {
-  if(OCTANTS[slot] === 'N')
-    var className = 'meter north';
-  else
-    var className = 'meter';
+  var className = 'meter';
+  if(OCTANTS[slot] === 'N') className = 'meter north';
 
   var max = RESO_NRG[level];
   var fillGrade = level > 0 ? nrg/max*100 : 0;
@@ -178,7 +175,7 @@ window.renderResonatorDetails = function(slot, level, nrg, nick) {
 
   nick = nick ? '<span class="nickname">'+nick+'</span>' : null;
   return [meter, nick || ''];
-}
+};
 
 // calculate AP gain from destroying portal and then capturing it by deploying resonators
 window.getAttackApGainText = function(d,fieldCount,linkCount) {
@@ -198,7 +195,7 @@ window.getAttackApGainText = function(d,fieldCount,linkCount) {
   t += '  Capture AP:\t' + breakdown.captureAp + '\n';
 
   return ['AP Gain', digits(totalGain), t];
-}
+};
 
 
 window.getHackDetailsText = function(d) {
@@ -212,7 +209,7 @@ window.getHackDetailsText = function(d) {
             + 'Burnout time:\t'+formatInterval(hackDetails.burnout);
 
   return ['hacks', shortHackInfo, title];
-}
+};
 
 
 window.getMitigationText = function(d,linkCount) {
@@ -229,4 +226,4 @@ window.getMitigationText = function(d,linkCount) {
             + '- links:\t'+mitigationDetails.links;
 
   return ['shielding', mitigationShort, title];
-}
+};

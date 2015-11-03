@@ -123,7 +123,7 @@ window.renderPortalDetails = function(guid) {
   if (details) {
     runHooks('portalDetailsUpdated', {guid: guid, portal: portal, portalDetails: details, portalData: data});
   }
-}
+};
 
 
 
@@ -142,7 +142,7 @@ window.getPortalMiscDetails = function(guid,d) {
     var title = 'at most ' + maxOutgoing + ' outgoing links\n' +
                 links.outgoing + ' links out\n' +
                 links.incoming + ' links in\n' +
-                '(' + (links.outgoing+links.incoming) + ' total)'
+                '(' + (links.outgoing+links.incoming) + ' total)';
     var linksText = ['links', links.outgoing+' out / '+links.incoming+' in', title];
 
     var player = d.owner
@@ -204,7 +204,7 @@ window.getPortalMiscDetails = function(guid,d) {
   }
 
   return randDetails;
-}
+};
 
 
 // draws link-range and hack-range circles around the portal with the
@@ -243,7 +243,7 @@ window.setPortalIndicators = function(p) {
     ).addTo(map);
   }
 
-}
+};
 
 // highlights portal with given GUID. Automatically clears highlights
 // on old selection. Returns false if the selected portal changed.
@@ -273,4 +273,4 @@ window.selectPortal = function(guid) {
 
   runHooks('portalSelected', {selectedPortalGuid: guid, unselectedPortalGuid: oldPortalGuid});
   return update;
-}
+};
