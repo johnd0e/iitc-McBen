@@ -17,7 +17,7 @@ window.addPortalHighlighter = function(name, data) {
 
   // old-format highlighters just passed a callback function. this is the same as just a highlight method
   if (!data.highlight) {
-    data = {highlight: data}
+    data = {highlight: data};
   }
 
   _highlighters[name] = data;
@@ -40,7 +40,7 @@ window.addPortalHighlighter = function(name, data) {
 
   }
   updatePortalHighlighterControl();
-}
+};
 
 // (re)creates the highlighter dropdown list
 window.updatePortalHighlighterControl = function() {
@@ -66,7 +66,7 @@ window.updatePortalHighlighterControl = function() {
 
     $("#portal_highlight_select").val(_current_highlighter);
   }
-}
+};
 
 window.changePortalHighlights = function(name) {
 
@@ -86,17 +86,17 @@ window.changePortalHighlights = function(name) {
 
   resetHighlightedPortals();
   localStorage.portal_highlighter = name;
-}
+};
 
 window.highlightPortal = function(p) {
   
   if(_highlighters !== null && _highlighters[_current_highlighter] !== undefined) {
     _highlighters[_current_highlighter].highlight({portal: p});
   }
-}
+};
 
 window.resetHighlightedPortals = function() {
   $.each(portals, function(guid, portal) {
     setMarkerStyle(portal, guid === selectedPortal);
   });
-}
+};

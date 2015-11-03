@@ -12,7 +12,7 @@ window.isSmartphone = function() {
   if (viewParam == 'f') return false;
 
   return navigator.userAgent.match(/Android.*Mobile/);
-}
+};
 
 window.smartphone = function() {};
 
@@ -32,7 +32,7 @@ window.runOnSmartphonesBeforeBoot = function() {
         '#largepreview.res img { border:2px solid '+COLORS[TEAM_RES]+'; } ',
         '#largepreview.none img { border:2px solid '+COLORS[TEAM_NONE]+'; } '].join("\n")
       + '</style>');
-  }
+  };
 
   window.smartphone.mapButton = $('<a>map</a>').click(function() {
     $('#map').css('visibility', 'visible');
@@ -63,7 +63,7 @@ window.runOnSmartphonesBeforeBoot = function() {
       x.addClass('fullimg').appendTo('#sidebar');
     }
   });
-}
+};
 
 window.smartphoneInfo = function(data) {
   var guid = data.selectedPortalGuid;
@@ -73,10 +73,11 @@ window.smartphoneInfo = function(data) {
   var details = window.portalDetail.get(guid);
 
   var lvl = data.level;
+  var t;
   if(data.team === "NEUTRAL")
-    var t = '<span class="portallevel">L0</span>';
+    t = '<span class="portallevel">L0</span>';
   else
-    var t = '<span class="portallevel" style="background: '+COLORS_LVL[lvl]+';">L' + lvl + '</span>';
+    t = '<span class="portallevel" style="background: '+COLORS_LVL[lvl]+';">L' + lvl + '</span>';
 
   var percentage = data.health;
   if(details) {
@@ -119,12 +120,12 @@ window.smartphoneInfo = function(data) {
 
       t += '<div class="resonator '+className+'" style="border-top-color: '+COLORS_LVL[l]+';left: '+(100*ind/8.0)+'%;">';
       t += '<div class="filllevel" style="width:'+perc+'%;"></div>';
-      t += '</div>'
+      t += '</div>';
     }
   }
 
   $('#mobileinfo').html(t);
-}
+};
 
 window.runOnSmartphonesAfterBoot = function() {
   if(!isSmartphone()) return;
@@ -178,8 +179,7 @@ window.runOnSmartphonesAfterBoot = function() {
   // for some reason, leaflet misses the WebView size being set at startup on IITC Mobile
   // create a short timer that checks for this issue
   setTimeout (function() { map.invalidateSize(); }, 0.2*1000);
-
-}
+};
 
 
 
@@ -199,18 +199,19 @@ window.setAndroidPermalink = function() {
 
   href = $('<a>').prop('href',  href).prop('href'); // to get absolute URI
   android.setPermalink(href);
-}
+};
 
 window.useAndroidPanes = function() {
   // isSmartphone is important to disable panes in desktop mode
   return (typeof android !== 'undefined' && android && android.addPane && window.isSmartphone());
-}
+};
 
 if(typeof android !== 'undefined' && android && android.getFileRequestUrlPrefix) {
   window.requestFile = function(callback) {
+    var funcName;
     do {
-      var funcName = "onFileSelected" + parseInt(Math.random()*0xFFFF).toString(16);
-    } while(window[funcName] !== undefined)
+      funcName = "onFileSelected" + parseInt(Math.random()*0xFFFF).toString(16);
+    } while(window[funcName] !== undefined);
 
     window[funcName] = function(filename, content) {
       callback(decodeURIComponent(filename), atob(content));

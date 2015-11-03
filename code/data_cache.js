@@ -21,8 +21,7 @@ window.DataCache = function() {
   this._cacheCharSize = 0;
 
   this._interval = undefined;
-
-}
+};
 
 window.DataCache.prototype.store = function(qk,data,freshTime) {
   // fixme? common behaviour for objects is that properties are kept in the order they're added
@@ -40,25 +39,25 @@ window.DataCache.prototype.store = function(qk,data,freshTime) {
 
   this._cacheCharSize += dataStr.length;
   this._cache[qk] = { time: time, expire: expire, dataStr: dataStr };
-}
+};
 
 window.DataCache.prototype.remove = function(qk) {
   if (qk in this._cache) {
     this._cacheCharSize -= this._cache[qk].dataStr.length;
     delete this._cache[qk];
   }
-}
+};
 
 
 window.DataCache.prototype.get = function(qk) {
   if (qk in this._cache) return JSON.parse(this._cache[qk].dataStr);
   else return undefined;
-}
+};
 
 window.DataCache.prototype.getTime = function(qk) {
   if (qk in this._cache) return this._cache[qk].time;
   else return 0;
-}
+};
 
 window.DataCache.prototype.isFresh = function(qk) {
   if (qk in this._cache) {
@@ -69,21 +68,21 @@ window.DataCache.prototype.isFresh = function(qk) {
   }
 
   return undefined;
-}
+};
 
 window.DataCache.prototype.startExpireInterval = function(period) {
   if (this._interval === undefined) {
     var savedContext = this;
     this._interval = setInterval (function() { savedContext.runExpire(); }, period*1000);
   }
-}
+};
 
 window.DataCache.prototype.stopExpireInterval = function() {
   if (this._interval !== undefined) {
     stopInterval (this._interval);
     this._interval = undefined;
   }
-}
+};
 
 
 
@@ -104,7 +103,7 @@ window.DataCache.prototype.runExpire = function() {
       cacheSize--;
     }
   }
-}
+};
 
 
 window.DataCache.prototype.debug = function() {
