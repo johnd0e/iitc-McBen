@@ -1,0 +1,13 @@
+Test-System
+- using mocha
+- using should.js
+
+
+Install:
+  sudo install mocha npm
+  sudo npm install -g should cssstyle htmlparser2 nwmatcher jquery
+  
+  export NODE_PATH=/usr/local/lib/node_modules
+  
+Usage:
+  mocha
