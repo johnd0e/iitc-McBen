@@ -1,6 +1,6 @@
 var should=require('should');
 var assert=require('assert');
-require('./framework/mainwindow.js');
+require('./test_framework/mainwindow.js');
 
 
 greatCircleArcIntersect = function(a0,a1,b0,b1) {

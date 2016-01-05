@@ -12,3 +12,11 @@ Usage:
   mocha 
 or 
   mocha -w -R min
+
+-----------
+Code couverage:
+Install:
+  npm install -g istanbul
+  
+usage
+  istanbul cover _mocha --dir ./test/coverage -- -R spec
