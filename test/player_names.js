@@ -1,6 +1,6 @@
-require('should');
+var should=require('should');
+var assert=require('assert');
 require('./framework/mainwindow.js');
-
 
 require('../code/player_names');
   
