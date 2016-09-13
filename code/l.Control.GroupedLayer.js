@@ -15,8 +15,7 @@ L.Control.GroupedLayers = L.Control.extend({
   initialize: function (baseLayers, overlays, options) {
     L.setOptions(this, options);
 
-    this._layers_base = [];
-    this._layers_overlay = [];
+    this._layers = {};
     this._lastZIndex = 0;
     this._handlingClick = false;
 
@@ -59,35 +58,10 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   removeLayer: function (layer) {
-    this.removeBaseLayer(layer);
-    this.removeOverlay(layer);
+    var id = L.stamp(layer);
+    delete this._layers[id];
+    this._update();
     return this;
-  },
-
-  removeBaseLayer: function (layer) {
-    var id = L.stamp(layer);
-    var idx = this._indexOfID(this._layers_base,id);
-    if (idx)  {
-      delete this._layers_base(idx);
-      this._update();
-      return idx;
-    }
-  },
-
-  removeOverlay: function (layer) {
-    var id = L.stamp(layer);
-    var idx = this._indexOfID(this._layers_overlay,id);
-    if (idx)  {
-      delete this._layers_overlay(idx);
-      this._update();
-      return idx;
-    }
-  },
-
-  _indexOfID: function (array,id) {
-    for (var i=0,l=array.length;i<l;++i) {
-      if ( L.stamp(array[i]) === id) return i;
-    }
   },
 
   _initLayout: function () {
@@ -146,14 +120,11 @@ L.Control.GroupedLayers = L.Control.extend({
   _addLayer: function (layer, name, overlay) {
     var id = L.stamp(layer);
 
-    var data = {
+    this._layers[id] = {
       layer: layer,
-      name: name};
-
-    if (overlay) 
-      this._layers_overlay.push(data);
-    else
-      this._layers_base.push(data);
+      name: name,
+      overlay: overlay
+    };
 
     if (this.options.autoZIndex && layer.setZIndex) {
       this._lastZIndex++;
@@ -178,15 +149,16 @@ L.Control.GroupedLayers = L.Control.extend({
     this._baseLayersList.innerHTML = '';
     this._overlaysList.innerHTML = '';
 
-    var i, obj;
+    var baseLayersPresent = false,
+        overlaysPresent = false,
+        i, obj;
 
     for (i in this._layers) {
       obj = this._layers[i];
       this._addItem(obj);
+      overlaysPresent = overlaysPresent || obj.overlay;
+      baseLayersPresent = baseLayersPresent || !obj.overlay;
     }
-
-    var overlaysPresent = this._layers_overlay.length>0;
-    var baseLayersPresent = this._layers_base.length>0;
 
     this._separator.style.display = overlaysPresent && baseLayersPresent ? '' : 'none';
   },
