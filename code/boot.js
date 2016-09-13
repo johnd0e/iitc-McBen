@@ -192,6 +192,59 @@ window.setupMap = function() {
       $('<div>').width(708).height(108).addClass('leaflet-control').css({'pointer-events': 'none', 'margin': '0'}));
   }
 
+  setupLayers();
+
+  map.attributionControl.setPrefix('');
+  // listen for changes and store them in cookies
+  map.on('moveend', window.storeMapPosition);
+
+  map.on('moveend', function(e) {
+    // two limits on map position
+    // we wrap longitude (the L.LatLng 'wrap' method) - so we don't find ourselves looking beyond +-180 degrees
+    // then latitude is clamped with the clampLatLng function (to the 85 deg north/south limits)
+    var newPos = clampLatLng(map.getCenter().wrap());
+    if (!map.getCenter().equals(newPos)) {
+      map.panTo(newPos,{animate:false})
+    }
+  });
+
+  // map update status handling & update map hooks
+  // ensures order of calls
+  map.on('movestart', function() { window.mapRunsUserAction = true; window.requests.abort(); window.startRefreshTimeout(-1); });
+  map.on('moveend', function() { window.mapRunsUserAction = false; window.startRefreshTimeout(ON_MOVE_REFRESH*1000); });
+
+  map.on('zoomend', function() { window.layerChooserSetDisabledStates(); });
+  window.layerChooserSetDisabledStates();
+
+  // on zoomend, check to see the zoom level is an int, and reset the view if not
+  // (there's a bug on mobile where zoom levels sometimes end up as fractional levels. this causes the base map to be invisible)
+  map.on('zoomend', function() {
+    var z = map.getZoom();
+    if (z != parseInt(z))
+    {
+      console.warn('Non-integer zoom level at zoomend: '+z+' - trying to fix...');
+      map.setZoom(parseInt(z), {animate:false});
+    }
+  });
+
+
+  // set a 'moveend' handler for the map to clear idle state. e.g. after mobile 'my location' is used.
+  // possibly some cases when resizing desktop browser too
+  map.on('moveend', idleReset);
+
+  window.addResumeFunction(function() { window.startRefreshTimeout(ON_MOVE_REFRESH*1000); });
+
+  // create the map data requester
+  window.mapDataRequest = new MapDataRequest();
+  window.mapDataRequest.start();
+
+  // start the refresh process with a small timeout, so the first data request happens quickly
+  // (the code originally called the request function directly, and triggered a normal delay for the next refresh.
+  //  however, the moveend/zoomend gets triggered on map load, causing a duplicate refresh. this helps prevent that
+  window.startRefreshTimeout(ON_MOVE_REFRESH*1000);
+}
+
+function setupLayers() {
   var addLayers = {};
   var hiddenLayer = [];
 
@@ -276,7 +329,7 @@ window.setupMap = function() {
 
   var baseLayers = createDefaultBaseMapLayers();
 
-  window.layerChooser = new L.Control.Layers(baseLayers, addLayers);
+  window.layerChooser = new L.Control.GroupedLayers(baseLayers, addLayers);
 
   // Remove the hidden layer after layerChooser built, to avoid messing up ordering of layers 
   $.each(hiddenLayer, function(ind, layer){
@@ -298,55 +351,6 @@ window.setupMap = function() {
   });
 
   map.addControl(window.layerChooser);
-
-  map.attributionControl.setPrefix('');
-  // listen for changes and store them in cookies
-  map.on('moveend', window.storeMapPosition);
-
-  map.on('moveend', function(e) {
-    // two limits on map position
-    // we wrap longitude (the L.LatLng 'wrap' method) - so we don't find ourselves looking beyond +-180 degrees
-    // then latitude is clamped with the clampLatLng function (to the 85 deg north/south limits)
-    var newPos = clampLatLng(map.getCenter().wrap());
-    if (!map.getCenter().equals(newPos)) {
-      map.panTo(newPos,{animate:false})
-    }
-  });
-
-  // map update status handling & update map hooks
-  // ensures order of calls
-  map.on('movestart', function() { window.mapRunsUserAction = true; window.requests.abort(); window.startRefreshTimeout(-1); });
-  map.on('moveend', function() { window.mapRunsUserAction = false; window.startRefreshTimeout(ON_MOVE_REFRESH*1000); });
-
-  map.on('zoomend', function() { window.layerChooserSetDisabledStates(); });
-  window.layerChooserSetDisabledStates();
-
-  // on zoomend, check to see the zoom level is an int, and reset the view if not
-  // (there's a bug on mobile where zoom levels sometimes end up as fractional levels. this causes the base map to be invisible)
-  map.on('zoomend', function() {
-    var z = map.getZoom();
-    if (z != parseInt(z))
-    {
-      console.warn('Non-integer zoom level at zoomend: '+z+' - trying to fix...');
-      map.setZoom(parseInt(z), {animate:false});
-    }
-  });
-
-
-  // set a 'moveend' handler for the map to clear idle state. e.g. after mobile 'my location' is used.
-  // possibly some cases when resizing desktop browser too
-  map.on('moveend', idleReset);
-
-  window.addResumeFunction(function() { window.startRefreshTimeout(ON_MOVE_REFRESH*1000); });
-
-  // create the map data requester
-  window.mapDataRequest = new MapDataRequest();
-  window.mapDataRequest.start();
-
-  // start the refresh process with a small timeout, so the first data request happens quickly
-  // (the code originally called the request function directly, and triggered a normal delay for the next refresh.
-  //  however, the moveend/zoomend gets triggered on map load, causing a duplicate refresh. this helps prevent that
-  window.startRefreshTimeout(ON_MOVE_REFRESH*1000);
 };
 
 //adds a base layer to the map. done separately from the above, so that plugins that add base layers can be the default
@@ -713,6 +717,8 @@ try { console.log('Loading included JS now'); } catch(e) {}
 @@INCLUDERAW:external/Google.js@@
 @@INCLUDERAW:external/autolink.js@@
 @@INCLUDERAW:external/oms.min.js@@
+window.LL = L.noConflict();
+window.L = window.LL; // TODO: remove after total conversation
 
 try { console.log('done loading included JS'); } catch(e) {}
 
