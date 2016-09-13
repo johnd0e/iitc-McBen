@@ -25,73 +25,6 @@ window.setupLargeImagePreview = function() {
   });
 }
 
-// adds listeners to the layer chooser such that a long press hides
-// all custom layers except the long pressed one.
-window.setupLayerChooserSelectOne = function() {
-  $('.leaflet-control-layers-overlays').on('click taphold', 'label', function(e) {
-    if(!e) return;
-    if(!(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.type === 'taphold')) return;
-    var m = window.map;
-
-    var add = function(layer) {
-      if(!m.hasLayer(layer.layer)) m.addLayer(layer.layer);
-    };
-    var rem = function(layer) {
-      if(m.hasLayer(layer.layer)) m.removeLayer(layer.layer);
-    };
-
-    var isChecked = $(e.target).find('input').is(':checked');
-    var checkSize = $('.leaflet-control-layers-overlays input:checked').length;
-    if((isChecked && checkSize === 1) || checkSize === 0) {
-      // if nothing is selected or the users long-clicks the only
-      // selected element, assume all boxes should be checked again
-      $.each(window.layerChooser._layers, function(ind, layer) {
-        if(!layer.overlay) return true;
-        add(layer);
-      });
-    } else {
-      // uncheck all
-      var keep = $.trim($(e.target).text());
-      $.each(window.layerChooser._layers, function(ind, layer) {
-        if(layer.overlay !== true) return true;
-        if(layer.name === keep) { add(layer);  return true; }
-        rem(layer);
-      });
-    }
-    e.preventDefault();
-  });
-}
-
-// Setup the function to record the on/off status of overlay layerGroups
-window.setupLayerChooserStatusRecorder = function() {
-  // Record already added layerGroups
-  $.each(window.layerChooser._layers, function(ind, chooserEntry) {
-    if(!chooserEntry.overlay) return true;
-    var display = window.map.hasLayer(chooserEntry.layer);
-    window.updateDisplayedLayerGroup(chooserEntry.name, display);
-  });
-
-  // Record layerGroups change
-  window.map.on('overlayadd overlayremove', function(e) {
-    var display = (e.type === 'overlayadd');
-    window.updateDisplayedLayerGroup(e.name, display);
-  });
-}
-
-window.layerChooserSetDisabledStates = function() {
-// layer selector - enable/disable layers that aren't visible due to zoom level
-  var minlvl = getMinPortalLevel();
-  var portalSelection = $('.leaflet-control-layers-overlays label');
-  //it's an array - 0=unclaimed, 1=lvl 1, 2=lvl 2, ..., 8=lvl 8 - 9 relevant entries
-  //mark all levels below (but not at) minlvl as disabled
-  portalSelection.slice(0, minlvl).addClass('disabled').attr('title', 'Zoom in to show those.');
-  //and all from minlvl to 8 as enabled
-  portalSelection.slice(minlvl, 8+1).removeClass('disabled').attr('title', '');
-
-//TODO? some generic mechanism where other layers can have their disabled state marked on/off? a few
-//plugins have code to do it by hand already
-}
-
 
 window.setupStyles = function() {
   $('head').append('<style>' +
@@ -109,55 +42,9 @@ window.setupStyles = function() {
     + '</style>');
 }
 
-function createDefaultBaseMapLayers() {
-  var baseLayers = {};
-
-  //OpenStreetMap attribution - required by several of the layers
-  osmAttribution = 'Map data © OpenStreetMap contributors';
-
-  // MapQuest - http://developer.mapquest.com/web/products/open/map
-  // now requires an API key
-  //var mqSubdomains = [ 'otile1','otile2', 'otile3', 'otile4' ];
-  //var mqTileUrlPrefix = window.location.protocol !== 'https:' ? 'http://{s}.mqcdn.com' : 'https://{s}-s.mqcdn.com';
-  //var mqMapOpt = {attribution: osmAttribution+', Tiles Courtesy of MapQuest', maxNativeZoom: 18, maxZoom: 21, subdomains: mqSubdomains};
-  //baseLayers['MapQuest OSM'] = new L.TileLayer(mqTileUrlPrefix+'/tiles/1.0.0/map/{z}/{x}/{y}.jpg',mqMapOpt);
-
-  // cartodb has some nice tiles too - both dark and light subtle maps - http://cartodb.com/basemaps/
-  // (not available over https though - not on the right domain name anyway)
-  var cartoAttr = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
-  var cartoUrl = 'http://{s}.basemaps.cartocdn.com/{theme}/{z}/{x}/{y}.png';
-  baseLayers['CartoDB Dark Matter'] = L.tileLayer(cartoUrl,{attribution:cartoAttr,theme:'dark_all'});
-  baseLayers['CartoDB Positron'] = L.tileLayer(cartoUrl,{attribution:cartoAttr,theme:'light_all'});
-
-
-  // we'll include google maps too - in the ingress default style, and a few other standard ones
-  // as the stock intel map already uses the googme maps API, we just hijack their inclusion of the javascript and API key :)
-  var ingressGMapOptions = {
-    backgroundColor: '#0e3d4e', //or #dddddd ? - that's the Google tile layer default
-    styles: [
-        { featureType:"all", elementType:"all",
-          stylers: [{visibility:"on"}, {hue:"#131c1c"}, {saturation:"-50"}, {invert_lightness:true}] },
-        { featureType:"water", elementType:"all",
-          stylers: [{visibility:"on"}, {hue:"#005eff"}, {invert_lightness:true}] },
-        { featureType:"poi", stylers:[{visibility:"off"}]},
-        { featureType:"transit", elementType:"all", stylers:[{visibility:"off"}] }
-      ]
-  };
-  baseLayers['Google Default Ingress Map'] = new L.Google('ROADMAP',{maxZoom:21, mapOptions:ingressGMapOptions});
-  baseLayers['Google Roads'] = new L.Google('ROADMAP',{maxZoom:21});
-  baseLayers['Google Satellite'] = new L.Google('SATELLITE',{maxZoom:21});
-  baseLayers['Google Hybrid'] = new L.Google('HYBRID',{maxZoom:21});
-  baseLayers['Google Terrain'] = new L.Google('TERRAIN',{maxZoom:15});
-
-
-  return baseLayers;
-}
-
 
 window.setupMap = function() {
   $('#map').text('');
-
-
 
 
   // proper initial position is now delayed until all plugins are loaded and the base layer is set
@@ -244,156 +131,7 @@ window.setupMap = function() {
   window.startRefreshTimeout(ON_MOVE_REFRESH*1000);
 }
 
-function setupLayers() {
-  var addLayers = {};
-  var hiddenLayer = [];
 
-  portalsFactionLayers = [];
-  var portalsLayers = [];
-  for(var i = 0; i <= 8; i++) {
-    portalsFactionLayers[i] = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
-    portalsLayers[i] = L.layerGroup(portalsFactionLayers[i]);
-    map.addLayer(portalsLayers[i]);
-    var t = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
-    addLayers[t] = portalsLayers[i];
-    // Store it in hiddenLayer to remove later
-    if(!isLayerGroupDisplayed(t, true)) hiddenLayer.push(portalsLayers[i]);
-  }
-
-  fieldsFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
-  var fieldsLayer = L.layerGroup(fieldsFactionLayers);
-  map.addLayer(fieldsLayer, true);
-  addLayers['Fields'] = fieldsLayer;
-  // Store it in hiddenLayer to remove later
-  if(!isLayerGroupDisplayed('Fields', true)) hiddenLayer.push(fieldsLayer);
-
-  linksFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
-  var linksLayer = L.layerGroup(linksFactionLayers);
-  map.addLayer(linksLayer, true);
-  addLayers['Links'] = linksLayer;
-  // Store it in hiddenLayer to remove later
-  if(!isLayerGroupDisplayed('Links', true)) hiddenLayer.push(linksLayer);
-
-  // faction-specific layers
-  // these layers don't actually contain any data. instead, every time they're added/removed from the map,
-  // the matching sub-layers within the above portals/fields/links are added/removed from their parent with
-  // the below 'onoverlayadd/onoverlayremove' events
-  var factionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
-  for (var fac in factionLayers) {
-    map.addLayer (factionLayers[fac]);
-  }
-
-  var setFactionLayersState = function(fac,enabled) {
-    if (enabled) {
-      if (!fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.addLayer (fieldsFactionLayers[fac]);
-      if (!linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.addLayer (linksFactionLayers[fac]);
-      for (var lvl in portalsLayers) {
-        if (!portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].addLayer (portalsFactionLayers[lvl][fac]);
-      }
-    } else {
-      if (fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.removeLayer (fieldsFactionLayers[fac]);
-      if (linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.removeLayer (linksFactionLayers[fac]);
-      for (var lvl in portalsLayers) {
-        if (portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].removeLayer (portalsFactionLayers[lvl][fac]);
-      }
-    }
-  }
-
-  // to avoid any favouritism, we'll put the player's own faction layer first
-  if (PLAYER.team == 'RESISTANCE') {
-    addLayers['Resistance'] = factionLayers[TEAM_RES];
-    addLayers['Enlightened'] = factionLayers[TEAM_ENL];
-  } else {
-    addLayers['Enlightened'] = factionLayers[TEAM_ENL];
-    addLayers['Resistance'] = factionLayers[TEAM_RES];
-  }
-  if (!isLayerGroupDisplayed('Resistance', true)) hiddenLayer.push (factionLayers[TEAM_RES]);
-  if (!isLayerGroupDisplayed('Enlightened', true)) hiddenLayer.push (factionLayers[TEAM_ENL]);
-
-  setFactionLayersState (TEAM_NONE, true);
-  setFactionLayersState (TEAM_RES, isLayerGroupDisplayed('Resistance', true));
-  setFactionLayersState (TEAM_ENL, isLayerGroupDisplayed('Enlightened', true));
-
-  // NOTE: these events are fired by the layer chooser, so won't happen until that's created and added to the map
-  window.map.on('overlayadd overlayremove', function(e) {
-    var displayed = (e.type == 'overlayadd');
-    switch (e.name) {
-      case 'Resistance':
-        setFactionLayersState (TEAM_RES, displayed);
-        break;
-      case 'Enlightened':
-        setFactionLayersState (TEAM_ENL, displayed);
-        break;
-    }
-  });
-
-  var baseLayers = createDefaultBaseMapLayers();
-
-  window.layerChooser = new L.Control.GroupedLayers(baseLayers, addLayers);
-
-  // Remove the hidden layer after layerChooser built, to avoid messing up ordering of layers 
-  $.each(hiddenLayer, function(ind, layer){
-    map.removeLayer(layer);
-
-    // as users often become confused if they accidentally switch a standard layer off, display a warning in this case
-    $('#portaldetails').html('<div class="layer_off_warning">'
-                            +'<p><b>Warning</b>: some of the standard layers are turned off. Some portals/links/fields will not be visible.</p>'
-                            +'<a id="enable_standard_layers">Enable standard layers</a>'
-                            +'</div>');
-
-    $('#enable_standard_layers').on('click', function() {
-      $.each(addLayers, function(ind, layer) {
-        if (!map.hasLayer(layer)) map.addLayer(layer);
-      });
-      $('#portaldetails').html('');
-    });
-
-  });
-
-  map.addControl(window.layerChooser);
-};
-
-//adds a base layer to the map. done separately from the above, so that plugins that add base layers can be the default
-window.setMapBaseLayer = function() {
-  //create a map name -> layer mapping - depends on internals of L.Control.Layers
-  var nameToLayer = {};
-  var firstLayer = null;
-
-  for (i in window.layerChooser._layers) {
-    var obj = window.layerChooser._layers[i];
-    if (!obj.overlay) {
-      nameToLayer[obj.name] = obj.layer;
-      if (!firstLayer) firstLayer = obj.layer;
-    }
-  }
-
-  var baseLayer = nameToLayer[localStorage['iitc-base-map']] || firstLayer;
-  map.addLayer(baseLayer);
-
-  // now we have a base layer we can set the map position
-  // (setting an initial position, before a base layer is added, causes issues with leaflet)
-  var pos = getPosition();
-  map.setView (pos.center, pos.zoom, {reset:true});
-
-
-  //event to track layer changes and store the name
-  map.on('baselayerchange', function(info) {
-    for(i in window.layerChooser._layers) {
-      var obj = window.layerChooser._layers[i];
-      if (info.layer === obj.layer) {
-        localStorage['iitc-base-map'] = obj.name;
-        break;
-      }
-    }
-
-    //also, leaflet no longer ensures the base layer zoom is suitable for the map (a bug? feature change?), so do so here
-    map.setZoom(map.getZoom());
-
-
-  });
-
-
-}
 
 // renders player details into the website. Since the player info is
 // included as inline script in the original site, the data is static
@@ -492,110 +230,55 @@ window.setupQRLoadLib = function() {
   @@INCLUDERAW:external/jquery.qrcode.min.js@@
 }
 
-window.setupLayerChooserApi = function() {
-  // hide layer chooser if booted with the iitcm android app
-  if (typeof android !== 'undefined' && android && android.setLayers) {
-    $('.leaflet-control-layers').hide();
-  }
 
-  //hook some additional code into the LayerControl so it's easy for the mobile app to interface with it
-  //WARNING: does depend on internals of the L.Control.Layers code
-  window.layerChooser.getLayers = function() {
-    var baseLayers = new Array();
-    var overlayLayers = new Array();
+window.setupPlugins = function() {
+  if(window.bootPlugins) {
+    // check to see if a known 'bad' plugin is installed. If so, alert the user, and don't boot any plugins
+    var badPlugins = {
+      'arc': 'Contains hidden code to report private data to a 3rd party server: <a href="https://plus.google.com/105383756361375410867/posts/4b2EjP3Du42">details here</a>',
+    };
 
-    for (i in this._layers) {
-      var obj = this._layers[i];
-      var layerActive = window.map.hasLayer(obj.layer);
-      var info = {
-        layerId: L.stamp(obj.layer),
-        name: obj.name,
-        active: layerActive
+    // remove entries from badPlugins which are not installed
+    $.each(badPlugins, function(name,desc) {
+      if (!(window.plugin && window.plugin[name])) {
+        // not detected: delete from the list
+        delete badPlugins[name];
       }
-      if (obj.overlay) {
-        overlayLayers.push(info);
-      } else {
-        baseLayers.push(info);
-      }
-    }
+    });
 
-    var overlayLayersJSON = JSON.stringify(overlayLayers);
-    var baseLayersJSON = JSON.stringify(baseLayers);
+    // if any entries remain in the list, report this to the user and don't boot ANY plugins
+    // (why not any? it's tricky to know which of the plugin boot entries were safe/unsafe)
+    if (Object.keys(badPlugins).length > 0) {
+      var warning = 'One or more known unsafe plugins were detected. For your safety, IITC has disabled all plugins.<ul>';
+      $.each(badPlugins,function(name,desc) {
+        warning += '<li><b>'+name+'</b>: '+desc+'</li>';
+      });
+      warning += '</ul><p>Please uninstall the problem plugins and reload the page. See this <a href="http://iitc.me/faq/#uninstall">FAQ entry</a> for help.</p><p><i>Note: It is tricky for IITC to safely disable just problem plugins</i></p>';
 
-    if (typeof android !== 'undefined' && android && android.setLayers) {
-        if(this.androidTimer) clearTimeout(this.androidTimer);
-        this.androidTimer = setTimeout(function() {
-            this.androidTimer = null;
-            android.setLayers(baseLayersJSON, overlayLayersJSON);
-        }, 1000);
-    }
-
-    return {
-      baseLayers: baseLayers,
-      overlayLayers: overlayLayers
-    }
-  }
-
-  window.layerChooser.showLayer = function(id,show) {
-    if (show === undefined) show = true;
-    obj = this._layers[id];
-    if (!obj) return false;
-
-    if(show) {
-      if (!this._map.hasLayer(obj.layer)) {
-        //the layer to show is not currently active
-        this._map.addLayer(obj.layer);
-
-        //if it's a base layer, remove any others
-        if (!obj.overlay) {
-          for(i in this._layers) {
-            if (i != id) {
-              var other = this._layers[i];
-              if (!other.overlay && this._map.hasLayer(other.layer)) this._map.removeLayer(other.layer);
-            }
-          }
-        }
-      }
+      dialog({
+        title: 'Plugin Warning',
+        html: warning,
+        width: 400
+      });
     } else {
-      if (this._map.hasLayer(obj.layer)) {
-        this._map.removeLayer(obj.layer);
-      }
+      // no known unsafe plugins detected - boot all plugins
+      $.each(window.bootPlugins, function(ind, ref) {
+        try {
+          ref();
+        } catch(err) {
+          console.error("error starting plugin: index "+ind+", error: "+err);
+          debugger;
+        }
+      });
     }
-
-    //below logic based on code in L.Control.Layers _onInputClick
-    if(!obj.overlay) {
-      this._map.setZoom(this._map.getZoom());
-      this._map.fire('baselayerchange', {layer: obj.layer});
-    }
-
-    return true;
-  };
-
-  var _update = window.layerChooser._update;
-  window.layerChooser._update = function() {
-    // update layer menu in IITCm
-    try {
-      if(typeof android != 'undefined')
-        window.layerChooser.getLayers();
-    } catch(e) {
-      console.error(e);
-    }
-    // call through
-    return _update.apply(this, arguments);
-  }
-  // as this setupLayerChooserApi function is called after the layer menu is populated, we need to also get they layers once
-  // so they're passed through to the android app
-  try {
-    if(typeof android != 'undefined')
-      window.layerChooser.getLayers();
-  } catch(e) {
-    console.error(e);
-  }
+  }  
 }
+
 
 // BOOTING ///////////////////////////////////////////////////////////
 
 function boot() {
+
   if(!isSmartphone()) // TODO remove completely?
     window.debug.console.overwriteNativeIfRequired();
 
@@ -636,6 +319,7 @@ function boot() {
   window.setupQRLoadLib();
   window.setupLayerChooserSelectOne();
   window.setupLayerChooserStatusRecorder();
+
   // read here ONCE, so the URL is only evaluated one time after the
   // necessary data has been loaded.
   urlPortalLL = getURLParam('pll');
@@ -647,58 +331,15 @@ function boot() {
 
   $('#sidebar').show();
 
-  if(window.bootPlugins) {
-    // check to see if a known 'bad' plugin is installed. If so, alert the user, and don't boot any plugins
-    var badPlugins = {
-      'arc': 'Contains hidden code to report private data to a 3rd party server: <a href="https://plus.google.com/105383756361375410867/posts/4b2EjP3Du42">details here</a>',
-    };
-
-    // remove entries from badPlugins which are not installed
-    $.each(badPlugins, function(name,desc) {
-      if (!(window.plugin && window.plugin[name])) {
-        // not detected: delete from the list
-        delete badPlugins[name];
-      }
-    });
-
-    // if any entries remain in the list, report this to the user and don't boot ANY plugins
-    // (why not any? it's tricky to know which of the plugin boot entries were safe/unsafe)
-    if (Object.keys(badPlugins).length > 0) {
-      var warning = 'One or more known unsafe plugins were detected. For your safety, IITC has disabled all plugins.<ul>';
-      $.each(badPlugins,function(name,desc) {
-        warning += '<li><b>'+name+'</b>: '+desc+'</li>';
-      });
-      warning += '</ul><p>Please uninstall the problem plugins and reload the page. See this <a href="http://iitc.me/faq/#uninstall">FAQ entry</a> for help.</p><p><i>Note: It is tricky for IITC to safely disable just problem plugins</i></p>';
-
-      dialog({
-        title: 'Plugin Warning',
-        html: warning,
-        width: 400
-      });
-    } else {
-      // no known unsafe plugins detected - boot all plugins
-      $.each(window.bootPlugins, function(ind, ref) {
-        try {
-          ref();
-        } catch(err) {
-          console.error("error starting plugin: index "+ind+", error: "+err);
-          debugger;
-        }
-      });
-    }
-  }
+  window.setupPlugins();
 
   window.setMapBaseLayer();
   window.setupLayerChooserApi();
 
   window.runOnSmartphonesAfterBoot();
 
-  // workaround for #129. Not sure why this is required.
-  // setTimeout('window.map.invalidateSize(false);', 500);
-
   window.iitcLoaded = true;
   window.runHooks('iitcLoaded');
-
 
   if (typeof android !== 'undefined' && android && android.bootFinished) {
     android.bootFinished();
