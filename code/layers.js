@@ -20,14 +20,14 @@ window.setupLayerChooserSelectOne = function() {
     if((isChecked && checkSize === 1) || checkSize === 0) {
       // if nothing is selected or the users long-clicks the only
       // selected element, assume all boxes should be checked again
-      $.each(window.layerChooser._layers, function(ind, layer) {
+      $.each(window.layerChooser._mlayers, function(ind, layer) {
         if(!layer.overlay) return true;
         add(layer);
       });
     } else {
       // uncheck all
       var keep = $.trim($(e.target).text());
-      $.each(window.layerChooser._layers, function(ind, layer) {
+      $.each(window.layerChooser._mlayers, function(ind, layer) {
         if(layer.overlay !== true) return true;
         if(layer.name === keep) { add(layer);  return true; }
         rem(layer);
@@ -41,7 +41,7 @@ window.setupLayerChooserSelectOne = function() {
 // Setup the function to record the on/off status of overlay layerGroups
 window.setupLayerChooserStatusRecorder = function() {
   // Record already added layerGroups
-  $.each(window.layerChooser._layers, function(ind, chooserEntry) {
+  $.each(window.layerChooser._mlayers, function(ind, chooserEntry) {
     if(!chooserEntry.overlay) return true;
     var display = window.map.hasLayer(chooserEntry.layer);
     window.updateDisplayedLayerGroup(chooserEntry.name, display);
@@ -230,15 +230,9 @@ window.setMapBaseLayer = function() {
   var nameToLayer = {};
   var firstLayer = null;
 
-  for (i in window.layerChooser._layers) {
-    var obj = window.layerChooser._layers[i];
-    if (!obj.overlay) {
-      nameToLayer[obj.name] = obj.layer;
-      if (!firstLayer) firstLayer = obj.layer;
-    }
-  }
-
-  var baseLayer = nameToLayer[localStorage['iitc-base-map']] || firstLayer;
+  var baseLayer = window.layerChooser.findBaseLayerByName(localStorage['iitc-base-map'])
+                  || window.layerChooser.getfirstBaseLayer();
+  
   map.addLayer(baseLayer);
 
   // now we have a base layer we can set the map position
@@ -249,18 +243,13 @@ window.setMapBaseLayer = function() {
 
   //event to track layer changes and store the name
   map.on('baselayerchange', function(info) {
-    for(i in window.layerChooser._layers) {
-      var obj = window.layerChooser._layers[i];
-      if (info.layer === obj.layer) {
-        localStorage['iitc-base-map'] = obj.name;
-        break;
-      }
+    var obj = window.layerChooser._findLayer(info.layer);
+    if (obj) {
+      localStorage['iitc-base-map'] = obj.name;
     }
 
     //also, leaflet no longer ensures the base layer zoom is suitable for the map (a bug? feature change?), so do so here
     map.setZoom(map.getZoom());
-
-
   });
 }
 

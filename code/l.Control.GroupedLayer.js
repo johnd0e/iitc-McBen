@@ -15,7 +15,7 @@ L.Control.GroupedLayers = L.Control.extend({
   initialize: function (baseLayers, overlays, options) {
     L.setOptions(this, options);
 
-    this._layers = {};
+    this._mlayers = [];
     this._lastZIndex = 0;
     this._handlingClick = false;
 
@@ -59,9 +59,19 @@ L.Control.GroupedLayers = L.Control.extend({
 
   removeLayer: function (layer) {
     var id = L.stamp(layer);
-    delete this._layers[id];
+    this._removeLayer(this._mlayers,id);
     this._update();
     return this;
+  },
+
+  _removeLayer: function (arr,id) {
+    for (var i=arr.length-1;i>=0;--i) {
+      var obj = arr[i];
+      if (obj.layer && L.stamp(obj.layer)===id) delete obj[l];
+      if (obj.childs!=null) {
+        this._removeLayer(obj.childs,id);
+      }
+    }
   },
 
   _initLayout: function () {
@@ -120,15 +130,50 @@ L.Control.GroupedLayers = L.Control.extend({
   _addLayer: function (layer, name, overlay) {
     var id = L.stamp(layer);
 
-    this._layers[id] = {
+    this._mlayers.push({
       layer: layer,
       name: name,
-      overlay: overlay
-    };
+      overlay: overlay,
+      childs: null,
+    });
 
     if (this.options.autoZIndex && layer.setZIndex) {
       this._lastZIndex++;
       layer.setZIndex(this._lastZIndex);
+    }
+  },
+
+  _findLayer: function (layer) {
+    var id = L.stamp(layer);
+    return this._findLayerByID(id);
+  },
+
+  findBaseLayerByName: function (name) {
+    for (var i=this._mlayers.length-1;i>=0;--i) {
+      var obj = this._mlayers[i];
+      if (obj.layer && !obj.overlay && obj.name===name) return obj.layer;
+    }
+  },
+
+  getfirstBaseLayer: function () {
+    for (var i=0,l=this._mlayers.length;i<l;++i) {
+      var obj = this._mlayers[i];
+      if (obj.layer && !obj.overlay) return obj.layer;
+    }
+  },
+
+  _findLayerByID: function (id) {
+    return this._findLayerInArray(this._mlayers,id);
+  },
+
+  _findLayerInArray: function (arr,id) {
+    for (var i=arr.length-1;i>=0;--i) {
+      var obj = arr[i];
+      if (obj.layer && L.stamp(obj.layer)===id) return obj;
+      if (obj.childs) {
+        var res = this._findLayerInArray(obj.childs,id);
+        if (res) return res;
+      }
     }
   },
 
@@ -150,11 +195,10 @@ L.Control.GroupedLayers = L.Control.extend({
     this._overlaysList.innerHTML = '';
 
     var baseLayersPresent = false,
-        overlaysPresent = false,
-        i, obj;
+        overlaysPresent = false;
 
-    for (i in this._layers) {
-      obj = this._layers[i];
+    for (var i=0,l=this._mlayers.length;i<l;++i) {    
+      var obj = this._mlayers[i];
       this._addItem(obj);
       overlaysPresent = overlaysPresent || obj.overlay;
       baseLayersPresent = baseLayersPresent || !obj.overlay;
@@ -164,7 +208,7 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   _onLayerChange: function (e) {
-    var obj = this._layers[L.stamp(e.layer)];
+    var obj = this._findLayer(e.layer);
 
     if (!obj) { return; }
 
@@ -233,15 +277,15 @@ L.Control.GroupedLayers = L.Control.extend({
 
   
   _onInputClick: function () {
-    var i, input, obj,
-        inputs = this._form.getElementsByTagName('input'),
+    var inputs = this._form.getElementsByTagName('input'),
         inputsLen = inputs.length;
 
     this._handlingClick = true;
 
-    for (i = 0; i < inputsLen; i++) {
-      input = inputs[i];
-      obj = this._layers[input.layerId];
+    for (var i = 0; i < inputsLen; i++) {
+      var input = inputs[i];
+
+      var obj = this._findLayerByID(input.layerId);
 
       if (input.checked && !this._map.hasLayer(obj.layer)) {
         this._map.addLayer(obj.layer);
@@ -267,7 +311,7 @@ L.Control.GroupedLayers = L.Control.extend({
 
   showLayer: function(id,show) {
     if (show === undefined) show = true;
-    obj = this._layers[id];
+    obj = this._findLayerByID(id);
     if (!obj) return false;
 
     if(show) {
@@ -277,10 +321,10 @@ L.Control.GroupedLayers = L.Control.extend({
 
         //if it's a base layer, remove any others
         if (!obj.overlay) {
-          for(i in this._layers) {
-            if (i != id) {
-              var other = this._layers[i];
-              if (!other.overlay && this._map.hasLayer(other.layer)) this._map.removeLayer(other.layer);
+          for (var i=this._mlayers.length-1;i>=0;--i) {
+            var other = this._mlayers[i];
+            if (other.overlay && other.layer && L.stamp(other.layer)!=id && this._map.hasLayer(other.layer)) {
+              this._map.removeLayer(other.layer);
             }
           }
         }
@@ -303,21 +347,32 @@ L.Control.GroupedLayers = L.Control.extend({
 
   // Android Helper - TODO: convert to hooks
   getLayers: function() {
-    var baseLayers = new Array();
-    var overlayLayers = new Array();
+    var baseLayers = [];
+    var overlayLayers = [];
 
-    for (i in this._layers) {
-      var obj = this._layers[i];
+    function push(obj) {
+      if (!layer_obj.layer) return;
       var layerActive = window.map.hasLayer(obj.layer);
       var info = {
         layerId: L.stamp(obj.layer),
         name: obj.name,
         active: layerActive
-      }
+      };
       if (obj.overlay) {
         overlayLayers.push(info);
       } else {
         baseLayers.push(info);
+      }
+    }
+
+    for (var i=this._mlayers.length-1;i>=0;--i) {
+      var obj = this._mlayers[i];
+      push(obj);
+      if (obj.childs) {
+        for (var j=obj.childs-1;j>=0;--j) {
+          var obj2= obj.childs[j];
+          push(obj);
+        }
       }
     }
 
@@ -335,7 +390,7 @@ L.Control.GroupedLayers = L.Control.extend({
     return {
       baseLayers: baseLayers,
       overlayLayers: overlayLayers
-    }
+    };
   },
 
 
