@@ -35,7 +35,7 @@ window.setupLayerChooserSelectOne = function() {
     }
     e.preventDefault();
   });
-}
+};
 
 
 // Setup the function to record the on/off status of overlay layerGroups
@@ -52,7 +52,7 @@ window.setupLayerChooserStatusRecorder = function() {
     var display = (e.type === 'overlayadd');
     window.updateDisplayedLayerGroup(e.name, display);
   });
-}
+};
 
 
 window.layerChooserSetDisabledStates = function() {
@@ -67,7 +67,7 @@ window.layerChooserSetDisabledStates = function() {
 
 //TODO? some generic mechanism where other layers can have their disabled state marked on/off? a few
 //plugins have code to do it by hand already
-}
+};
 
 
 function createDefaultBaseMapLayers() {
@@ -117,69 +117,68 @@ function createDefaultBaseMapLayers() {
 
 function setupLayers() {
   var addLayers = {};
-  var hiddenLayer = [];
+  var displayWarning = false;
+
+  function addDefaultLayer(name,layer) {
+    addLayers[name] = layer;
+    if(isLayerGroupDisplayed(name, true)) {
+      map.addLayer(layer);  
+    } else {
+      displayWarning = true;
+    }
+  }
+
 
   portalsFactionLayers = [];
   var portalsLayers = [];
   for(var i = 0; i <= 8; i++) {
     portalsFactionLayers[i] = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
     portalsLayers[i] = L.layerGroup(portalsFactionLayers[i]);
-    map.addLayer(portalsLayers[i]);
-    var t = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
-    addLayers[t] = portalsLayers[i];
-    // Store it in hiddenLayer to remove later
-    if(!isLayerGroupDisplayed(t, true)) hiddenLayer.push(portalsLayers[i]);
+    var name = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
+    addDefaultLayer(name,portalsLayers[i]);
   }
 
   fieldsFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
   var fieldsLayer = L.layerGroup(fieldsFactionLayers);
-  map.addLayer(fieldsLayer, true);
-  addLayers['Fields'] = fieldsLayer;
-  // Store it in hiddenLayer to remove later
-  if(!isLayerGroupDisplayed('Fields', true)) hiddenLayer.push(fieldsLayer);
+  addDefaultLayer('Fields',fieldsLayer);
 
   linksFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
   var linksLayer = L.layerGroup(linksFactionLayers);
-  map.addLayer(linksLayer, true);
-  addLayers['Links'] = linksLayer;
-  // Store it in hiddenLayer to remove later
-  if(!isLayerGroupDisplayed('Links', true)) hiddenLayer.push(linksLayer);
+  addDefaultLayer('Links',linksLayer);
+
 
   // faction-specific layers
   // these layers don't actually contain any data. instead, every time they're added/removed from the map,
   // the matching sub-layers within the above portals/fields/links are added/removed from their parent with
   // the below 'onoverlayadd/onoverlayremove' events
   var factionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
-  for (var fac in factionLayers) {
-    map.addLayer (factionLayers[fac]);
+  map.addLayer (factionLayers[TEAM_NONE]);
+
+  // to avoid any favouritism, we'll put the player's own faction layer first
+  if (PLAYER.team == 'RESISTANCE') {
+    addDefaultLayer('Resistance',factionLayers[TEAM_RES]);
+    addDefaultLayer('Enlightened',factionLayers[TEAM_ENL]);
+  } else {
+    addDefaultLayer('Enlightened',factionLayers[TEAM_ENL]);
+    addDefaultLayer('Resistance',factionLayers[TEAM_RES]);
   }
 
   var setFactionLayersState = function(fac,enabled) {
+    var lvl;
     if (enabled) {
       if (!fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.addLayer (fieldsFactionLayers[fac]);
       if (!linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.addLayer (linksFactionLayers[fac]);
-      for (var lvl in portalsLayers) {
+      for (lvl in portalsLayers) {
         if (!portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].addLayer (portalsFactionLayers[lvl][fac]);
       }
     } else {
       if (fieldsLayer.hasLayer(fieldsFactionLayers[fac])) fieldsLayer.removeLayer (fieldsFactionLayers[fac]);
       if (linksLayer.hasLayer(linksFactionLayers[fac])) linksLayer.removeLayer (linksFactionLayers[fac]);
-      for (var lvl in portalsLayers) {
+      for (lvl in portalsLayers) {
         if (portalsLayers[lvl].hasLayer(portalsFactionLayers[lvl][fac])) portalsLayers[lvl].removeLayer (portalsFactionLayers[lvl][fac]);
       }
     }
-  }
-
-  // to avoid any favouritism, we'll put the player's own faction layer first
-  if (PLAYER.team == 'RESISTANCE') {
-    addLayers['Resistance'] = factionLayers[TEAM_RES];
-    addLayers['Enlightened'] = factionLayers[TEAM_ENL];
-  } else {
-    addLayers['Enlightened'] = factionLayers[TEAM_ENL];
-    addLayers['Resistance'] = factionLayers[TEAM_RES];
-  }
-  if (!isLayerGroupDisplayed('Resistance', true)) hiddenLayer.push (factionLayers[TEAM_RES]);
-  if (!isLayerGroupDisplayed('Enlightened', true)) hiddenLayer.push (factionLayers[TEAM_ENL]);
+  };
 
   setFactionLayersState (TEAM_NONE, true);
   setFactionLayersState (TEAM_RES, isLayerGroupDisplayed('Resistance', true));
@@ -198,31 +197,29 @@ function setupLayers() {
     }
   });
 
-  var baseLayers = createDefaultBaseMapLayers();
 
+  var baseLayers = createDefaultBaseMapLayers();
   window.layerChooser = new L.Control.GroupedLayers(baseLayers, addLayers);
 
-  // Remove the hidden layer after layerChooser built, to avoid messing up ordering of layers 
-  $.each(hiddenLayer, function(ind, layer){
-    map.removeLayer(layer);
-
-    // as users often become confused if they accidentally switch a standard layer off, display a warning in this case
-    $('#portaldetails').html('<div class="layer_off_warning">'
-                            +'<p><b>Warning</b>: some of the standard layers are turned off. Some portals/links/fields will not be visible.</p>'
-                            +'<a id="enable_standard_layers">Enable standard layers</a>'
-                            +'</div>');
-
-    $('#enable_standard_layers').on('click', function() {
-      $.each(addLayers, function(ind, layer) {
-        if (!map.hasLayer(layer)) map.addLayer(layer);
-      });
-      $('#portaldetails').html('');
-    });
-
-  });
+  if (displayWarning)  showHiddenLayerWarning(addLayers);
 
   map.addControl(window.layerChooser);
-};
+}
+
+
+function showHiddenLayerWarning(addLayers) {
+  $('#portaldetails').html('<div class="layer_off_warning">'
+                          +'<p><b>Warning</b>: some of the standard layers are turned off. Some portals/links/fields will not be visible.</p>'
+                          +'<a id="enable_standard_layers">Enable standard layers</a>'
+                          +'</div>');
+
+  $('#enable_standard_layers').on('click', function() {
+    $.each(addLayers, function(ind, layer) {
+      if (!map.hasLayer(layer)) map.addLayer(layer);
+    });
+    $('#portaldetails').html('');
+  });
+}
 
 //adds a base layer to the map. done separately from the above, so that plugins that add base layers can be the default
 window.setMapBaseLayer = function() {
@@ -251,7 +248,7 @@ window.setMapBaseLayer = function() {
     //also, leaflet no longer ensures the base layer zoom is suitable for the map (a bug? feature change?), so do so here
     map.setZoom(map.getZoom());
   });
-}
+};
 
 
 window.setupLayerChooserApi = function() {
@@ -263,4 +260,4 @@ window.setupLayerChooserApi = function() {
   // so they're passed through to the android app
     window.layerChooser.getLayers();
   }
-}
+};
