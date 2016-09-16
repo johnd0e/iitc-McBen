@@ -70,6 +70,16 @@ window.layerChooserSetDisabledStates = function() {
 };
 
 
+function setupLayers() {
+
+  var addLayers = createDefaultOverlays();
+  var baseLayers = createDefaultBaseMapLayers();
+  window.layerChooser = new L.Control.GroupedLayers(baseLayers, addLayers);
+
+  map.addControl(window.layerChooser);
+}
+
+
 function createDefaultBaseMapLayers() {
   var baseLayers = {};
 
@@ -110,7 +120,7 @@ function createDefaultBaseMapLayers() {
 }
 
 
-function setupLayers() {
+function createDefaultOverlays() {
   var addLayers = {};
   var displayWarning = false;
 
@@ -192,13 +202,9 @@ function setupLayers() {
     }
   });
 
-
-  var baseLayers = createDefaultBaseMapLayers();
-  window.layerChooser = new L.Control.GroupedLayers(baseLayers, addLayers);
-
   if (displayWarning)  showHiddenLayerWarning(addLayers);
 
-  map.addControl(window.layerChooser);
+  return addLayers;
 }
 
 
