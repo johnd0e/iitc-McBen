@@ -51,7 +51,7 @@ L.Control.GroupedLayers = L.Control.extend({
     return this;
   },
 
-  addOverlay: function (layer, name) {
+  addOverlay: function (layer, name, group) {
     this._addLayer(layer, name, true);
     this._update();
     return this;

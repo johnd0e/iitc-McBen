@@ -73,16 +73,6 @@ window.layerChooserSetDisabledStates = function() {
 function createDefaultBaseMapLayers() {
   var baseLayers = {};
 
-  //OpenStreetMap attribution - required by several of the layers
-  osmAttribution = 'Map data © OpenStreetMap contributors';
-
-  // MapQuest - http://developer.mapquest.com/web/products/open/map
-  // now requires an API key
-  //var mqSubdomains = [ 'otile1','otile2', 'otile3', 'otile4' ];
-  //var mqTileUrlPrefix = window.location.protocol !== 'https:' ? 'http://{s}.mqcdn.com' : 'https://{s}-s.mqcdn.com';
-  //var mqMapOpt = {attribution: osmAttribution+', Tiles Courtesy of MapQuest', maxNativeZoom: 18, maxZoom: 21, subdomains: mqSubdomains};
-  //baseLayers['MapQuest OSM'] = new L.TileLayer(mqTileUrlPrefix+'/tiles/1.0.0/map/{z}/{x}/{y}.jpg',mqMapOpt);
-
   // cartodb has some nice tiles too - both dark and light subtle maps - http://cartodb.com/basemaps/
   // (not available over https though - not on the right domain name anyway)
   var cartoAttr = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
@@ -92,7 +82,7 @@ function createDefaultBaseMapLayers() {
 
 
   // we'll include google maps too - in the ingress default style, and a few other standard ones
-  // as the stock intel map already uses the googme maps API, we just hijack their inclusion of the javascript and API key :)
+  // as the stock intel map already uses the google maps API, we just hijack their inclusion of the javascript and API key :)
   var ingressGMapOptions = {
     backgroundColor: '#0e3d4e', //or #dddddd ? - that's the Google tile layer default
     styles: [
@@ -109,6 +99,11 @@ function createDefaultBaseMapLayers() {
   baseLayers['Google Satellite'] = new L.Google('SATELLITE',{maxZoom:21});
   baseLayers['Google Hybrid'] = new L.Google('HYBRID',{maxZoom:21});
   baseLayers['Google Terrain'] = new L.Google('TERRAIN',{maxZoom:15});
+
+  // pure OSM
+  var OSMAttr = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+  var OSMUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  baseLayers['OpenStreetMap'] = L.tileLayer(OSMUrl,{attribution:OSMAttr,maxZoom:18,maxNativeZoom:17});
 
 
   return baseLayers;
