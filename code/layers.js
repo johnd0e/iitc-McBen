@@ -121,11 +121,11 @@ function createDefaultBaseMapLayers() {
 
 
 function createDefaultOverlays() {
-  var addLayers = {};
+  var addLayers = [];
   var displayWarning = false;
 
-  function addDefaultLayer(name,layer) {
-    addLayers[name] = layer;
+  function addDefaultLayer(name,layer,group) {
+    addLayers.push({name: name, layer: layer, group: group});
     if(isLayerGroupDisplayed(name, true)) {
       map.addLayer(layer);  
     } else {
@@ -140,7 +140,7 @@ function createDefaultOverlays() {
     portalsFactionLayers[i] = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
     portalsLayers[i] = L.layerGroup(portalsFactionLayers[i]);
     var name = (i === 0 ? 'Unclaimed/Placeholder' : 'Level ' + i) + ' Portals';
-    addDefaultLayer(name,portalsLayers[i]);
+    addDefaultLayer(name,portalsLayers[i],'Portals');
   }
 
   fieldsFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];

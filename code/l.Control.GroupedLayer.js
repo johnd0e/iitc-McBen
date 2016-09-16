@@ -19,12 +19,13 @@ L.Control.GroupedLayers = L.Control.extend({
     this._lastZIndex = 0;
     this._handlingClick = false;
 
-    for (var i in baseLayers) {
-      this._addLayer(baseLayers[i], i);
+    for (var name in baseLayers) {
+      this._addLayer(baseLayers[name], name);
     }
 
-    for (i in overlays) {
-      this._addLayer(overlays[i], i, true);
+    for (var i=0,l=overlays.length;i<l;++i) {
+      var obj = overlays[i];
+      this._addLayer(obj.layer, obj.name, true, obj.group);
     }
   },
 
@@ -52,7 +53,7 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   addOverlay: function (layer, name, group) {
-    this._addLayer(layer, name, true);
+    this._addLayer(layer, name, true, group);
     this._update();
     return this;
   },
@@ -68,7 +69,7 @@ L.Control.GroupedLayers = L.Control.extend({
     for (var i=arr.length-1;i>=0;--i) {
       var obj = arr[i];
       if (obj.layer && L.stamp(obj.layer)===id) delete obj[l];
-      if (obj.childs!=null) {
+      if (obj.childs!==null) {
         this._removeLayer(obj.childs,id);
       }
     }
@@ -127,20 +128,43 @@ L.Control.GroupedLayers = L.Control.extend({
     container.appendChild(form);
   },
 
-  _addLayer: function (layer, name, overlay) {
+  _addLayer: function (layer, name, overlay, group) {
     var id = L.stamp(layer);
 
-    this._mlayers.push({
-      layer: layer,
-      name: name,
-      overlay: overlay,
-      childs: null,
-    });
+    var obj = {
+        layer: layer,
+        name: name,
+        overlay: overlay,
+        childs: null,
+      };
+
+    if (group && overlay) {
+      var group_obj = this._getGroup(group);
+      group_obj.childs.push(obj);
+    } else {
+      this._mlayers.push(obj);
+    }
 
     if (this.options.autoZIndex && layer.setZIndex) {
       this._lastZIndex++;
       layer.setZIndex(this._lastZIndex);
     }
+  },
+
+  _getGroup: function(group) {
+    for (var i=this._mlayers.length-1;i>=0;--i) {
+      var obj = this._mlayers[i];
+      if (obj.name===group && obj.childs !==null && obj.overlay) return obj;
+    }
+
+    var new_group = {
+      name: group,
+      overlay: true,
+      childs: [],
+    };
+
+    this._mlayers.push(new_group);
+    return new_group;
   },
 
   _findLayer: function (layer) {
@@ -186,7 +210,6 @@ L.Control.GroupedLayers = L.Control.extend({
       console.error(e);
     }
 
-
     if (!this._container) {
       return;
     }
@@ -194,17 +217,15 @@ L.Control.GroupedLayers = L.Control.extend({
     this._baseLayersList.innerHTML = '';
     this._overlaysList.innerHTML = '';
 
-    var baseLayersPresent = false,
-        overlaysPresent = false;
-
     for (var i=0,l=this._mlayers.length;i<l;++i) {    
       var obj = this._mlayers[i];
-      this._addItem(obj);
-      overlaysPresent = overlaysPresent || obj.overlay;
-      baseLayersPresent = baseLayersPresent || !obj.overlay;
+      if (obj.childs!==null && obj.overlay) {
+        this._addGroup(obj);  
+      } else {
+        this._addItem(obj);
+      }
     }
 
-    this._separator.style.display = overlaysPresent && baseLayersPresent ? '' : 'none';
   },
 
   _onLayerChange: function (e) {
@@ -223,6 +244,62 @@ L.Control.GroupedLayers = L.Control.extend({
     if (type) {
       this._map.fire(type, obj);
     }
+  },
+
+
+  _addItem: function (obj) {
+    var checked = this._map.hasLayer(obj.layer);
+    var button = this._createItemButton(obj, checked, this._onInputClick);
+
+    var container = obj.overlay ? this._overlaysList : this._baseLayersList;
+    container.appendChild(button);
+  },
+
+  _addGroup: function (obj) {
+    var list = document.createElement('li');
+    var main_button = this._createItemButton(obj,false);
+    list.appendChild(main_button);
+
+    for (var i=0,l=obj.childs.length;i<l;++i) {   
+      var child_obj = obj.childs[i];
+      var checked = this._map.hasLayer(child_obj.layer);
+      var button = this._createItemButton(child_obj, checked, this._onInputClick);
+
+      var sublist = document.createElement('ul'); 
+      sublist.appendChild(button);
+
+      list.appendChild(sublist);
+    }
+
+
+    this._overlaysList.appendChild(list);
+  },
+
+  _createItemButton: function (obj, checked, clickevent) {
+    var label = document.createElement('label'),
+        input;
+
+    if (obj.overlay) {
+      input = this._createOverlayCheckbox(checked);
+    } else {
+      input = this._createBasemapSelector(checked);
+    }
+
+    if (obj.layer) {
+      input.layerId = L.stamp(obj.layer);
+    }
+
+    if (clickevent) {
+      L.DomEvent.on(input, 'click', clickevent, this);
+    }
+
+    var name = document.createElement('span');
+    name.innerHTML = ' ' + obj.name;
+
+    label.appendChild(input);
+    label.appendChild(name);
+
+    return label;
   },
 
   _createBasemapSelector: function (checked) {
@@ -248,34 +325,7 @@ L.Control.GroupedLayers = L.Control.extend({
     return input;
   },
 
-  _addItem: function (obj) {
-    var label = document.createElement('label'),
-        input,
-        checked = this._map.hasLayer(obj.layer);
 
-    if (obj.overlay) {
-      input = this._createOverlayCheckbox(checked);
-    } else {
-      input = this._createBasemapSelector(checked);
-    }
-
-    input.layerId = L.stamp(obj.layer);
-
-    L.DomEvent.on(input, 'click', this._onInputClick, this);
-
-    var name = document.createElement('span');
-    name.innerHTML = ' ' + obj.name;
-
-    label.appendChild(input);
-    label.appendChild(name);
-
-    var container = obj.overlay ? this._overlaysList : this._baseLayersList;
-    container.appendChild(label);
-
-    return label;
-  },
-
-  
   _onInputClick: function () {
     var inputs = this._form.getElementsByTagName('input'),
         inputsLen = inputs.length;
@@ -287,11 +337,13 @@ L.Control.GroupedLayers = L.Control.extend({
 
       var obj = this._findLayerByID(input.layerId);
 
-      if (input.checked && !this._map.hasLayer(obj.layer)) {
-        this._map.addLayer(obj.layer);
+      if (obj) {
+        if (input.checked && !this._map.hasLayer(obj.layer)) {
+          this._map.addLayer(obj.layer);
 
-      } else if (!input.checked && this._map.hasLayer(obj.layer)) {
-        this._map.removeLayer(obj.layer);
+        } else if (!input.checked && this._map.hasLayer(obj.layer)) {
+          this._map.removeLayer(obj.layer);
+        }
       }
     }
 
@@ -351,7 +403,7 @@ L.Control.GroupedLayers = L.Control.extend({
     var overlayLayers = [];
 
     function push(obj) {
-      if (!layer_obj.layer) return;
+      if (!obj.layer) return;
       var layerActive = window.map.hasLayer(obj.layer);
       var info = {
         layerId: L.stamp(obj.layer),
@@ -371,7 +423,7 @@ L.Control.GroupedLayers = L.Control.extend({
       if (obj.childs) {
         for (var j=obj.childs-1;j>=0;--j) {
           var obj2= obj.childs[j];
-          push(obj);
+          push(obj2);
         }
       }
     }

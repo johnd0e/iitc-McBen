@@ -407,11 +407,11 @@ window.isLayerGroupDisplayed = function(name, defaultDisplay) {
   return overlayStatus[name];
 }
 
-window.addLayerGroup = function(name, layerGroup, defaultDisplay) {
+window.addLayerGroup = function(name, layerGroup, defaultDisplay, group) {
   if (defaultDisplay === undefined) defaultDisplay = true;
 
   if(isLayerGroupDisplayed(name, defaultDisplay)) map.addLayer(layerGroup);
-  layerChooser.addOverlay(layerGroup, name);
+  layerChooser.addOverlay(layerGroup, name, group);
 }
 
 window.removeLayerGroup = function(layerGroup) {
