@@ -6,7 +6,7 @@
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      @@UPDATEURL@@
 // @downloadURL    @@DOWNLOADURL@@
-// @description    [@@BUILDNAME@@-@@BUILDDATE@@] EXPERIMENTAL: Checks for existing links that cross planned links. Requires draw-tools plugin.
+// @description    [@@BUILDNAME@@-@@BUILDDATE@@] Checks for existing links that cross planned links. Requires draw-tools plugin.
 // @include        https://www.ingress.com/intel*
 // @include        http://www.ingress.com/intel*
 // @match          https://www.ingress.com/intel*
@@ -124,7 +124,6 @@ window.plugin.crossLinks.onLinkAdded = function (data) {
 window.plugin.crossLinks.checkAllLinks = function() {
     if (window.plugin.crossLinks.disabled) return;
 
-    console.debug("Cross-Links: checking all links");
     plugin.crossLinks.linkLayer.clearLayers();
     plugin.crossLinks.linkLayerGuids = {};
 
@@ -136,7 +135,7 @@ window.plugin.crossLinks.checkAllLinks = function() {
 window.plugin.crossLinks.testLink = function (link) {
     if (plugin.crossLinks.linkLayerGuids[link.options.guid]) return;
 
-    for (var i in plugin.drawTools.drawnItems._layers) { // leaflet don't support breaking out of the loop
+    for (var i in plugin.drawTools.drawnItems._layers) { 
        var layer = plugin.drawTools.drawnItems._layers[i];
        if (layer instanceof L.GeodesicPolygon) {
            if (plugin.crossLinks.testPolyLine(layer, link,true)) {
@@ -200,7 +199,6 @@ window.plugin.crossLinks.testForDeletedLinks = function () {
     window.plugin.crossLinks.linkLayer.eachLayer( function(layer) {
         var guid = layer.options.guid;
         if (!window.links[guid]) {
-            console.log("link removed");
             plugin.crossLinks.linkLayer.removeLayer(layer);
             delete plugin.crossLinks.linkLayerGuids[guid];
         }
@@ -256,8 +254,6 @@ var setup = function() {
 
     window.addHook('linkAdded', window.plugin.crossLinks.onLinkAdded);
     window.addHook('mapDataRefreshEnd', window.plugin.crossLinks.onMapDataRefreshEnd);
-
-    
 }
 
 // PLUGIN END //////////////////////////////////////////////////////////
