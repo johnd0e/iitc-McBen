@@ -52,15 +52,15 @@ if (typeof(window.PLAYER)!="object" || typeof(window.PLAYER.nickname) != "string
 // remove complete page. We only wanted the user-data and the page’s
 // security context so we can access the API easily. Setup as much as
 // possible without requiring scripts.
-document.getElementsByTagName('head')[0].innerHTML = ''
+document.head.innerHTML = ''
   + '<title>Ingress Intel Map</title>'
   + '<style>@@INCLUDESTRING:style.css@@</style>'
   + '<style>@@INCLUDESTRING:external/leaflet.css@@</style>'
 //note: smartphone.css injection moved into code/smartphone.js
   + '<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic,500,500italic,700,700italic&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"/>';
 
-
-document.getElementsByTagName('body')[0].innerHTML = ''
+document.body = document.createElement('body');
+document.body.innerHTML = ''
   + '<div id="map">Loading, please wait</div>'
   + '<div id="chatcontrols" style="display:none">'
   + '<a accesskey="0" title="[0]"><span class="toggle expand"></span></a>'
@@ -96,9 +96,7 @@ document.getElementsByTagName('body')[0].innerHTML = ''
   + '    </div>'
   + '  </div>'
   + '</div>'
-  + '<div id="updatestatus"><div id="innerstatus"></div></div>'
-  // avoid error by stock JS
-  + '<div id="play_button"></div>';
+  + '<div id="updatestatus"><div id="innerstatus"></div></div>';
 
 // putting everything in a wrapper function that in turn is placed in a
 // script tag on the website allows us to execute in the site’s context
