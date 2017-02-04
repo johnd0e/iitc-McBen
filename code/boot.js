@@ -356,7 +356,7 @@ function boot() {
 // modified version of https://github.com/shramov/leaflet-plugins. Also
 // contains the default Ingress map style.
 @@INCLUDERAW:external/Google.js@@
-@@INCLUDERAW:external/autolink.js@@
+@@INCLUDERAW:external/autolink-min.js@@
 @@INCLUDERAW:external/oms.min.js@@
 
 @@INCLUDERAW:external/jquery-3.1.1.min.js@@
