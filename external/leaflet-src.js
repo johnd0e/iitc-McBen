@@ -2005,7 +2005,7 @@ L.Projection.LonLat = {
 
 L.Projection.SphericalMercator = {
 
-	R: 6378137,
+	R: 6367000.0,
 	MAX_LATITUDE: 85.0511287798,
 
 	project: function (latlng) {
@@ -2028,7 +2028,7 @@ L.Projection.SphericalMercator = {
 	},
 
 	bounds: (function () {
-		var d = 6378137 * Math.PI;
+		var d = 6367000.0 * Math.PI;
 		return L.bounds([-d, -d], [d, d]);
 	})()
 };
@@ -4581,7 +4581,7 @@ L.PosAnimation = L.Evented.extend({
  */
 
 L.Projection.Mercator = {
-	R: 6378137,
+	R: 6367000.0,
 	R_MINOR: 6356752.314245179,
 
 	bounds: L.bounds([-20037508.34279, -15496570.73972], [20037508.34279, 18764656.23138]),
