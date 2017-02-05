@@ -129,7 +129,7 @@ function createDefaultBaseMapLayers() {
   var gnomeAerialUrl = 'https://gis.gnome.org/tiles/satellite/v1/{z}/{x}/{y}';
   baseLayers['MapBox Street'] = L.tileLayer(gnomeStreetUrl);
   baseLayers['MapBox Satellite'] = L.tileLayer(gnomeAerialUrl);
-  
+
   // cartodb has some nice tiles too - both dark and light subtle maps - http://cartodb.com/basemaps/
   // (not available over https though - not on the right domain name anyway)
   var cartoAttr = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
@@ -137,25 +137,24 @@ function createDefaultBaseMapLayers() {
   baseLayers['CartoDB Dark Matter'] = L.tileLayer(cartoUrl,{attribution:cartoAttr,theme:'dark_all'});
   baseLayers['CartoDB Positron'] = L.tileLayer(cartoUrl,{attribution:cartoAttr,theme:'light_all'});
 
+  // Google Maps - including ingress default (using the stock-intel API-key)
+  baseLayers['Google Default Ingress Map'] = L.gridLayer.googleMutant(
+    { type:'roadmap',
+      maxZoom: 21,
+      backgroundColor: '#0e3d4e',
+      styles: [
+          { featureType:"all", elementType:"all",
+            stylers: [{visibility:"on"}, {hue:"#131c1c"}, {saturation:"-50"}, {invert_lightness:true}] },
+          { featureType:"water", elementType:"all",
+            stylers: [{visibility:"on"}, {hue:"#005eff"}, {invert_lightness:true}] },
+          { featureType:"poi", stylers:[{visibility:"off"}]},
+          { featureType:"transit", elementType:"all", stylers:[{visibility:"off"}] }
+        ]});
+  baseLayers['Google Roads'] = L.gridLayer.googleMutant({type:'roadmap', maxZoom: 21});
+  baseLayers['Google Satellite'] = L.gridLayer.googleMutant({type:'satellite', maxZoom: 21});
+  baseLayers['Google Hybrid'] = L.gridLayer.googleMutant({type:'hybrid', maxZoom: 21});
+  baseLayers['Google Terrain'] = L.gridLayer.googleMutant({type:'terrain', maxZoom: 15});
 
-  // we'll include google maps too - in the ingress default style, and a few other standard ones
-  // as the stock intel map already uses the googme maps API, we just hijack their inclusion of the javascript and API key :)
-  var ingressGMapOptions = {
-    backgroundColor: '#0e3d4e', //or #dddddd ? - that's the Google tile layer default
-    styles: [
-        { featureType:"all", elementType:"all",
-          stylers: [{visibility:"on"}, {hue:"#131c1c"}, {saturation:"-50"}, {invert_lightness:true}] },
-        { featureType:"water", elementType:"all",
-          stylers: [{visibility:"on"}, {hue:"#005eff"}, {invert_lightness:true}] },
-        { featureType:"poi", stylers:[{visibility:"off"}]},
-        { featureType:"transit", elementType:"all", stylers:[{visibility:"off"}] }
-      ]
-  };
-  baseLayers['Google Default Ingress Map'] = new L.Google('ROADMAP',{maxZoom:21, mapOptions:ingressGMapOptions});
-  baseLayers['Google Roads'] = new L.Google('ROADMAP',{maxZoom:21});
-  baseLayers['Google Satellite'] = new L.Google('SATELLITE',{maxZoom:21});
-  baseLayers['Google Hybrid'] = new L.Google('HYBRID',{maxZoom:21});
-  baseLayers['Google Terrain'] = new L.Google('TERRAIN',{maxZoom:15});
 
 
   return baseLayers;
@@ -287,7 +286,7 @@ window.setupMap = function() {
 
   window.layerChooser = new L.Control.Layers(baseLayers, addLayers);
 
-  // Remove the hidden layer after layerChooser built, to avoid messing up ordering of layers 
+  // Remove the hidden layer after layerChooser built, to avoid messing up ordering of layers
   $.each(hiddenLayer, function(ind, layer){
     map.removeLayer(layer);
 
@@ -717,9 +716,7 @@ function boot() {
 try { console.log('Loading included JS now'); } catch(e) {}
 @@INCLUDERAW:external/leaflet-src.js@@
 @@INCLUDERAW:external/L.Geodesic.js@@
-// modified version of https://github.com/shramov/leaflet-plugins. Also
-// contains the default Ingress map style.
-@@INCLUDERAW:external/Google.js@@
+@@INCLUDERAW:external/Leaflet.GoogleMutant.js@@
 @@INCLUDERAW:external/autolink.js@@
 @@INCLUDERAW:external/oms.min.js@@
 
