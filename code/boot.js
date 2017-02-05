@@ -56,7 +56,8 @@ window.setupMap = function() {
     minZoom: MIN_ZOOM,
 //    zoomAnimation: false,
     markerZoomAnimation: false,
-    bounceAtZoomLimits: false
+    bounceAtZoomLimits: false,
+    preferCanvas: (window.L_PREFER_CANVAS ? true : false)
   });
 
   if (L.Path.CANVAS) {
