@@ -354,9 +354,9 @@ function boot() {
 
 @@INCLUDERAW:external/leaflet-src.js@@
 @@INCLUDERAW:external/L.Geodesic.js@@
-// modified version of https://github.com/shramov/leaflet-plugins. Also
-// contains the default Ingress map style.
-@@INCLUDERAW:external/Google.js@@
+
+//@ @INCLUDERAW:external/Google.js@@
+@@INCLUDERAW:external/Leaflet.GoogleMutant.js@@
 @@INCLUDERAW:external/autolink-min.js@@
 @@INCLUDERAW:external/oms.min.js@@
 
