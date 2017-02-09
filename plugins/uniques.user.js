@@ -494,7 +494,7 @@ window.plugin.uniques.unvisitedPortalStyle = {
 /***************************************************************************************************************************************************************/
 window.plugin.uniques.highlighter = {
 	highlight: function(data) {
-		var guid = data.portal.options.ent[0];
+		var guid = data.portal.options.guid;
 		var uniqueInfo = window.plugin.uniques.uniques[guid];
 
 		var style;
