@@ -1789,7 +1789,7 @@ L.Edit = L.Edit || {};
 L.Edit.Poly = L.Handler.extend({
 	// @method initialize(): void
 	initialize: function (poly) {
-		this.latlngs = [poly._latlngs];
+		this.latlngs = [poly.getLatLngs()];
 		if (poly._holes) {
 			this.latlngs = this.latlngs.concat(poly._holes);
 		}
@@ -1801,11 +1801,12 @@ L.Edit.Poly = L.Handler.extend({
 
 	// Compatibility method to normalize Poly* objects
 	// between 0.7.x and 1.0+
+	// NOTE: GeodesicPoly still uses flat model so no conversation is needed
 	_defaultShape: function () {
-		if (!L.GeodesicPolyline._flat) {
-			return this._poly._latlngs;
-		}
-		return L.GeodesicPolyline._flat(this._poly._latlngs) ? this._poly._latlngs : this._poly._latlngs[0];
+			return this._poly.getLatLngs();
+	},
+	getLatLngs: function () {
+		return this._latlngs
 	},
 
 	_eachVertexHandler: function (callback) {
@@ -1847,7 +1848,7 @@ L.Edit.Poly = L.Handler.extend({
 	},
 
 	_updateLatLngs: function (e) {
-		this.latlngs = [e.layer._latlngs];
+		this.latlngs = [e.layer.getLatLngs()];
 		if (e.layer._holes) {
 			this.latlngs = this.latlngs.concat(e.layer._holes);
 		}
@@ -1896,11 +1897,9 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 	// Compatibility method to normalize Poly* objects
 	// between 0.7.x and 1.0+
+	// NOTE: GeodesicPoly still uses flat model so no conversation is needed
 	_defaultShape: function () {
-		if (!L.GeodesicPolyline._flat) {
-			return this._latlngs;
-		}
-		return L.GeodesicPolyline._flat(this._latlngs) ? this._latlngs : this._latlngs[0];
+			return this._poly.getLatLngs();
 	},
 
 	// @method addHooks(): void
