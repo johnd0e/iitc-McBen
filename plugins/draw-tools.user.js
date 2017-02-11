@@ -113,33 +113,16 @@ window.plugin.drawTools.addDrawControl = function() {
     draw: {
       rectangle: false,
       polygon: {
-        title: 'Add a polygon\n\n'
-          + 'Click on the button, then click on the map to\n'
-          + 'define the start of the polygon. Continue clicking\n'
-          + 'to draw the line you want. Click the first or last\n'
-          + 'point of the line (a small white rectangle) to\n'
-          + 'finish. Double clicking also works.',
         shapeOptions: window.plugin.drawTools.polygonOptions,
         snapPoint: window.plugin.drawTools.getSnapLatLng,
       },
 
       polyline: {
-        title: 'Add a (poly) line.\n\n'
-          + 'Click on the button, then click on the map to\n'
-          + 'define the start of the line. Continue clicking\n'
-          + 'to draw the line you want. Click the <b>last</b>\n'
-          + 'point of the line (a small white rectangle) to\n'
-          + 'finish. Double clicking also works.',
         shapeOptions: window.plugin.drawTools.lineOptions,
         snapPoint: window.plugin.drawTools.getSnapLatLng,
       },
 
       circle: {
-        title: 'Add a circle.\n\n'
-          + 'Click on the button, then click-AND-HOLD on the\n'
-          + 'map where the circle’s center should be. Move\n'
-          + 'the mouse to control the radius. Release the mouse\n'
-          + 'to finish.',
         shapeOptions: window.plugin.drawTools.polygonOptions,
         snapPoint: window.plugin.drawTools.getSnapLatLng,
       },
@@ -147,9 +130,6 @@ window.plugin.drawTools.addDrawControl = function() {
       // Options for marker (icon, zIndexOffset) are not set via shapeOptions,
       // so we have merge them here!
       marker: L.extend({}, window.plugin.drawTools.markerOptions, {
-        title: 'Add a marker.\n\n'
-          + 'Click on the button, then click on the map where\n'
-          + 'you want the marker to appear.',
         snapPoint: window.plugin.drawTools.getSnapLatLng,
         repeatMode: true
       }),
@@ -160,14 +140,8 @@ window.plugin.drawTools.addDrawControl = function() {
       featureGroup: window.plugin.drawTools.drawnItems,
 
       edit: {
-        title: 'Edit drawn items',
         selectedPathOptions: window.plugin.drawTools.editOptions,
       },
-
-      remove: {
-        title: 'Delete drawn items'
-      },
-
     },
 
   });
@@ -175,8 +149,7 @@ window.plugin.drawTools.addDrawControl = function() {
   window.plugin.drawTools.drawControl = drawControl;
 
   map.addControl(drawControl);
-  //plugin.drawTools.addCustomButtons();
-
+  
   window.plugin.drawTools.setAccessKeys();
   for (var toolbarId in drawControl._toolbars) {
     if (drawControl._toolbars[toolbarId] instanceof L.Toolbar) {
