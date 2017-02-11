@@ -12,13 +12,18 @@
 }
 
 
-html, body, #map {
+html, body {
   height: 100%;
   width: 100%;
   overflow: hidden; /* workaround for #373 */
   background: #0e3d4e;
 }
 
+#map {
+    overflow: visible; 
+    height: 100%;
+    width: 100%;
+}
 
 body {
   font-size: 14px;
@@ -95,26 +100,11 @@ a:hover {
   text-decoration: underline;
 }
 
-/* map display, required because GMaps uses a high z-index which is
- * normally above Leaflet’s vector pane */
-.leaflet-map-pane {
-  z-index: 1000;
-}
-
-/* leaflet layer chooser, when opened, is above other panels */
-/* doesn't actually work :( - left commented out for reference
-.leaflet-control-layers-expanded {
-  z-index: 9999 !important;
-}
-*/
-
 
 .leaflet-control-layers-overlays label.disabled {
   text-decoration: line-through;
   cursor: help;
 }
-
-
 
 /* base layer selection - first column */
 .leaflet-control-layers-base {
@@ -137,7 +127,6 @@ a:hover {
 .leaflet-control-layers-separator {
   display: none;
 }
-
 
 
 .help {
@@ -1199,12 +1188,6 @@ table.artifact .portal {
 
 
 /* misc */
-
-.no-pointer-events {
-  pointer-events: none;
-}
-
-
 .layer_off_warning {
   color: #FFCE00;
   margin: 8px;
