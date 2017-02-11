@@ -43,7 +43,7 @@ window.artifact.idleResume = function() {
   if (artifact.idle) {
     artifact.idle = false;
     artifact.requestData();
-  }
+  } 
 }
 
 window.artifact.handleSuccess = function(data) {
@@ -184,10 +184,9 @@ window.artifact.updateLayer = function() {
           iconUrl: iconUrl,
           iconSize: [iconSize,iconSize],
           iconAnchor: [iconSize/2,iconSize/2],
-          className: 'no-pointer-events'  // the clickable: false below still blocks events going through to the svg underneath
         });
 
-        var marker = L.marker (latlng, {icon: icon, clickable: false, keyboard: false, opacity: opacity });
+        var marker = L.marker (latlng, {icon: icon, interactive: false, keyboard: false, opacity: opacity });
 
         artifact._layer.addLayer(marker);
 
@@ -202,10 +201,9 @@ window.artifact.updateLayer = function() {
           iconUrl: iconUrl,
           iconSize: [iconSize,iconSize],
           iconAnchor: [iconSize/2,iconSize/2],
-          className: 'no-pointer-events'  // the clickable: false below still blocks events going through to the svg underneath
         });
 
-        var marker = L.marker (latlng, {icon: icon, clickable: false, keyboard: false, opacity: opacity });
+        var marker = L.marker (latlng, {icon: icon, interactive: false, keyboard: false, opacity: opacity });
 
         artifact._layer.addLayer(marker);
 
