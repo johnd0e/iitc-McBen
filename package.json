@@ -1,0 +1,41 @@
+{
+  "name": "iitc",
+  "version": "0.26.0",
+  "description": "ingress intel total conversion (IITC)",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "ingress",
+    "map",
+    "intel"
+  ],
+  "author": "Stefan Breunig",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonatkins/ingress-intel-total-conversion/issues"
+  },
+  "homepage": "https://github.com/jonatkins/ingress-intel-total-conversion#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonatkins/ingress-intel-total-conversion.git"
+  },
+  "devDependencies": {
+    "babel-core": "^6.23.0",
+    "babel-loader": "^6.3.0",
+    "css-loader": "^0.26.1",
+    "eslint": "^3.15.1",
+    "file-loader": "^0.9.0",
+    "loader-utils": "^0.2.16",
+    "showdown": "^1.6.2",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/webpack --config build_code/webpack.config.js",
+    "build2": "./node_modules/.bin/webpack --config build_code/webpack.config_plugins.js"
+  }
+}
