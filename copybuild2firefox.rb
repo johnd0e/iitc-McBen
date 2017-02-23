@@ -106,7 +106,11 @@ class Firefox
             return
         end
 
-        FileUtils.cp(src, File.join(@firefox_profile_path,'gm_scripts',script[:basedir],script[:filename]))
+        dst = File.join(@firefox_profile_path,'gm_scripts',script[:basedir],script[:filename])
+        if not FileUtils.compare_file(src, dst) then
+          puts "update: #{name}"
+          FileUtils.cp(src, dst)
+        end
     end
 end
 
@@ -133,7 +137,7 @@ end
 
 def getPluginName(filename)
     ma = /^\s*\/\/\s*@name\s+(.*)\s*$/.match File.read(filename)
-    return (ma and ma[1])
+    return (ma and ma[1].gsub(/\r/,''))
 end
 
 
