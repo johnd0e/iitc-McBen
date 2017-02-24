@@ -750,6 +750,9 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			if (lastPtDistance < 10 && L.Browser.touch) {
 				this._finishShape();
 			} else if (Math.abs(dragCheckDistance) < 9 * (window.devicePixelRatio || 1)) {
+				if (this.options.snapPoint) {
+					e.latlng = this.options.snapPoint(e.latlng);
+				}	
 				this.addVertex(e.latlng);
 			}
 			this._enableNewMarkers(); // after a short pause, enable new markers
@@ -1505,6 +1508,10 @@ L.Draw.Marker = L.Draw.Feature.extend({
 	},
 
 	_onClick: function () {
+		if (this.options.snapPoint)  {
+			this._marker.setLatLng(this.options.snapPoint(this._marker.getLatLng()));
+		}
+
 		this._fireCreatedEvent();
 
 		this.disable();
