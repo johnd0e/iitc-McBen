@@ -2524,10 +2524,8 @@ L.Edit.Circle = L.Edit.SimpleShape.extend({
 	},
 
 	_getResizeMarkerPoint: function (latlng) {
-		// From L.shape.getBounds()
-		var delta = this._shape._radius * Math.cos(Math.PI / 4),
-			point = this._map.project(latlng);
-		return this._map.unproject([point.x + delta, point.y - delta]);
+		var latRadius = (this._shape.getRadius() / 40075017) * 360;
+		return L.latLng(latlng.lat + latRadius, latlng.lng);
 	},
 
 	_move: function (latlng) {
@@ -4172,7 +4170,7 @@ L.EditToolbar.Edit = L.Handler.extend({
 				this._uneditedLayerProps[id] = {
 					latlngs: L.LatLngUtil.cloneLatLngs(layer.getLatLngs())
 				};
-			} else if (layer instanceof L.GeodesicCircle) {
+			} else if (layer instanceof L.Circle || layer instanceof L.GeodesicCircle) {
 				this._uneditedLayerProps[id] = {
 					latlng: L.LatLngUtil.cloneLatLng(layer.getLatLng()),
 					radius: layer.getRadius()
@@ -4203,7 +4201,7 @@ L.EditToolbar.Edit = L.Handler.extend({
 			// Polyline, Polygon or Rectangle
 			if (layer instanceof L.GeodesicPolyline || layer instanceof L.GeodesicPolygon || layer instanceof L.Rectangle) {
 				layer.setLatLngs(this._uneditedLayerProps[id].latlngs);
-			} else if (layer instanceof L.GeodesicCircle) {
+			} else if (layer instanceof L.Circle || layer instanceof L.GeodesicCircle) {
 				layer.setLatLng(this._uneditedLayerProps[id].latlng);
 				layer.setRadius(this._uneditedLayerProps[id].radius);
 			} else if (layer instanceof L.Marker) { // Marker
