@@ -14,7 +14,7 @@ window.portalMarkerScale = function() {
 window.createMarker = function(latlng, data) {
   var styleOptions = window.getMarkerStyleOptions(data);
 
-  var options = L.extend({}, data, styleOptions, { clickable: true });
+  var options = L.extend({}, data, styleOptions, { interactive: true });
 
   var marker = L.circleMarker(latlng, options);
 

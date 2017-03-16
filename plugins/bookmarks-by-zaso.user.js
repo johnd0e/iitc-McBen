@@ -1047,7 +1047,7 @@
 /** HIGHLIGHTER ************************************************************************************************************************************************/
 /***************************************************************************************************************************************************************/
   window.plugin.bookmarks.highlight = function(data) {
-    var guid = data.portal.options.ent[0];
+    var guid = data.portal.options.guid;
     if(window.plugin.bookmarks.findByGuid(guid)) {
       data.portal.setStyle({fillColor:'red'});
     }

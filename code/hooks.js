@@ -82,7 +82,13 @@ window.runHooks = function(event, data) {
       }
     } catch(err) {
       console.error('error running hook '+event+', error: '+err);
-      debugger;
+      if (typeof(err.stack)=='string') {
+        console.log('Stack: '+err.stack);
+      }
+      if (typeof(callback.toString)=='function') {
+        console.log('source: '+callback.toString());
+      }
+      //debugger;
     }
   });
   return !interrupted;

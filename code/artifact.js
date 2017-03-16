@@ -43,7 +43,7 @@ window.artifact.idleResume = function() {
   if (artifact.idle) {
     artifact.idle = false;
     artifact.requestData();
-  }
+  } 
 }
 
 window.artifact.handleSuccess = function(data) {
@@ -96,6 +96,11 @@ window.artifact.processResult = function (portals) {
   for (var guid in portals) {
     var ent = portals[guid];
     var data = decodeArray.portalSummary(ent);
+    
+    if (!data.artifactBrief) {
+      // 2/12/2017 - Shard removed from a portal leaves it in artifact results but has no artifactBrief
+      continue;
+    }
 
     // we no longer know the faction for the target portals, and we don't know which fragment numbers are at the portals
     // all we know, from the portal summary data, for each type of artifact, is that each artifact portal is
@@ -179,10 +184,9 @@ window.artifact.updateLayer = function() {
           iconUrl: iconUrl,
           iconSize: [iconSize,iconSize],
           iconAnchor: [iconSize/2,iconSize/2],
-          className: 'no-pointer-events'  // the clickable: false below still blocks events going through to the svg underneath
         });
 
-        var marker = L.marker (latlng, {icon: icon, clickable: false, keyboard: false, opacity: opacity });
+        var marker = L.marker (latlng, {icon: icon, interactive: false, keyboard: false, opacity: opacity });
 
         artifact._layer.addLayer(marker);
 
@@ -197,10 +201,9 @@ window.artifact.updateLayer = function() {
           iconUrl: iconUrl,
           iconSize: [iconSize,iconSize],
           iconAnchor: [iconSize/2,iconSize/2],
-          className: 'no-pointer-events'  // the clickable: false below still blocks events going through to the svg underneath
         });
 
-        var marker = L.marker (latlng, {icon: icon, clickable: false, keyboard: false, opacity: opacity });
+        var marker = L.marker (latlng, {icon: icon, interactive: false, keyboard: false, opacity: opacity });
 
         artifact._layer.addLayer(marker);
 
