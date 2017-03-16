@@ -203,7 +203,7 @@ public class PluginPreferenceActivity extends PreferenceActivity {
         return files;
     }
 
-    void checkForNewPlugins() {
+    private void checkForNewPlugins() {
         final File[] userPlugins = getUserPlugins();
         final String[] officialPlugins = getAssetPlugins();
         int numPlugins = 0;
@@ -222,7 +222,7 @@ public class PluginPreferenceActivity extends PreferenceActivity {
         }
     }
 
-    void setUpPluginPreferenceScreen() {
+    private void setUpPluginPreferenceScreen() {
         // get all plugins from asset manager
         final String[] assets = getAssetPlugins();
         for (final String asset : assets) {
@@ -249,7 +249,7 @@ public class PluginPreferenceActivity extends PreferenceActivity {
         }
     }
 
-    void addPluginPreference(final String src, final String plugin_key, final boolean userPlugin) {
+    private void addPluginPreference(final String src, final String plugin_key, final boolean userPlugin) {
         // parse plugin name, description and category
         // we need default versions here otherwise iitcm may crash
         final HashMap<String, String> info = IITC_FileManager.getScriptInfo(src);
@@ -293,7 +293,7 @@ public class PluginPreferenceActivity extends PreferenceActivity {
         list.add(plugin_pref);
     }
 
-    void addHeaders() {
+    private void addHeaders() {
         if (sUserPlugins.size() > 0) {
             final Header category = new Header();
             category.title = "User Plugins";

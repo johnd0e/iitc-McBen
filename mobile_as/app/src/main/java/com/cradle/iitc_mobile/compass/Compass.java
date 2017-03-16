@@ -25,7 +25,7 @@ public abstract class Compass
 
     protected abstract void onStop();
 
-    protected void publishOrientation(final float x, final float y, final float z)
+    void publishOrientation(final float x, final float y, final float z)
     {
         for (final CompassListener listener : mListeners)
             listener.onCompassChanged(x, y, z);

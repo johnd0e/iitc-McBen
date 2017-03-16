@@ -22,9 +22,7 @@ import java.util.HashMap;
 public class UpdateScript extends AsyncTask<String, Void, Boolean> {
 
     private final Activity mActivity;
-    private String mFilePath;
     private String mScript;
-    private HashMap<String, String> mScriptInfo;
     private final boolean mForceSecureUpdates;
 
     public UpdateScript(final Activity activity) {
@@ -36,16 +34,16 @@ public class UpdateScript extends AsyncTask<String, Void, Boolean> {
     @Override
     protected Boolean doInBackground(final String... urls) {
         try {
-            mFilePath = urls[0];
+            String mFilePath = urls[0];
             // get local script meta information
             mScript = IITC_FileManager.readStream(new FileInputStream(new File(mFilePath)));
-            mScriptInfo = IITC_FileManager.getScriptInfo(mScript);
+            HashMap<String, String> mScriptInfo = IITC_FileManager.getScriptInfo(mScript);
 
             String updateURL = mScriptInfo.get("updateURL");
             String downloadURL = mScriptInfo.get("downloadURL");
             if (updateURL == null) updateURL = downloadURL;
 
-            if (!isUpdateAllowed(updateURL)) return false;
+            if (isUpdateForbidden(updateURL)) return false;
 
             final File updateFile = File.createTempFile("iitc.update", ".meta.js", mActivity.getCacheDir());
             IITC_FileManager.copyStream(new URL(updateURL).openStream(), new FileOutputStream(updateFile), true);
@@ -70,7 +68,7 @@ public class UpdateScript extends AsyncTask<String, Void, Boolean> {
                     downloadURL = updateInfo.get("downloadURL");
                 }
 
-                if (!isUpdateAllowed(downloadURL)) return false;
+                if (isUpdateForbidden(downloadURL)) return false;
 
                 sourceStream = new URL(downloadURL).openStream();
             }
@@ -88,11 +86,11 @@ public class UpdateScript extends AsyncTask<String, Void, Boolean> {
         }
     }
 
-    private boolean isUpdateAllowed(final String url) throws MalformedURLException {
+    private boolean isUpdateForbidden(final String url) throws MalformedURLException {
         if (new URL(url).getProtocol().equals("https"))
-            return true;
+            return false;
 
-        return !mForceSecureUpdates;
+        return mForceSecureUpdates;
     }
 
     @Override

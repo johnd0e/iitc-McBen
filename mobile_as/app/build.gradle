@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.cradle.iitc_mobile"
-        minSdkVersion 14
+        minSdkVersion 17
         targetSdkVersion 25
     }
     buildTypes {

@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 public class AccMagCompass extends Compass {
     private static final double SENSOR_DELAY_USER = 100 * 1e6; // 100 milliseconds
 
-    private final Context mContext;
     private long mLastUpdate = 0;
     private final SensorListener mListener = new SensorListener();
     private final float[] mOrientation = new float[3];
@@ -19,9 +18,8 @@ public class AccMagCompass extends Compass {
     private float[] mValuesAcc = null, mValuesMag = null;
 
     public AccMagCompass(final Context context) {
-        mContext = context;
 
-        mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
         mSensorAcc = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorMag = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);

@@ -1,6 +1,8 @@
 package com.cradle.iitc_mobile;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -35,7 +37,9 @@ public class IITC_UserLocation implements CompassListener, LocationListener {
 
     // Checks whether two providers are the same
     private boolean isSameProvider(final String provider1, final String provider2) {
-        if (provider1 == null) { return provider2 == null; }
+        if (provider1 == null) {
+            return provider2 == null;
+        }
         return provider1.equals(provider2);
     }
 
@@ -60,6 +64,17 @@ public class IITC_UserLocation implements CompassListener, LocationListener {
         final boolean useOrientation = useLocation && mMode == 2;
 
         if (useLocation && !mLocationRegistered) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+
             try {
                 mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
             } catch (final IllegalArgumentException e) {
@@ -99,7 +114,7 @@ public class IITC_UserLocation implements CompassListener, LocationListener {
      *
      *            code copied from http://developer.android.com/guide/topics/location/strategies.html#BestEstimate
      */
-    protected boolean isBetterLocation(final Location location, final Location currentBestLocation) {
+    private boolean isBetterLocation(final Location location, final Location currentBestLocation) {
         if (currentBestLocation == null) {
             // A new location is always better than no location
             return true;
@@ -165,6 +180,8 @@ public class IITC_UserLocation implements CompassListener, LocationListener {
 
         final int rotation = mIitc.getWindowManager().getDefaultDisplay().getRotation();
         switch (rotation) {
+            case Surface.ROTATION_0:
+                break;
             case Surface.ROTATION_90:
                 orientation += 90;
                 break;

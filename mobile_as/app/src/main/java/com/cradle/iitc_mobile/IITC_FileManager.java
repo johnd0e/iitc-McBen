@@ -74,7 +74,7 @@ public class IITC_FileManager {
         // in case Android includes Apache commons IO in the future, this function should be replaced by IOUtils.copy
         final int bufferSize = 4096;
         final byte[] buffer = new byte[bufferSize];
-        int len = 0;
+        int len;
 
         try {
             while ((len = inStream.read(buffer)) != -1) {
@@ -414,7 +414,7 @@ public class IITC_FileManager {
                     mStreamOut.write(call.getBytes());
 
                     final Base64OutputStream encoder =
-                            new Base64OutputStream(mStreamOut, Base64.NO_CLOSE | Base64.NO_WRAP | Base64.DEFAULT);
+                            new Base64OutputStream(mStreamOut, Base64.NO_CLOSE | Base64.NO_WRAP);
 
                     final InputStream fileinput = mActivity.getContentResolver().openInputStream(uri);
 
@@ -468,7 +468,7 @@ public class IITC_FileManager {
             if (mData == null) return;
 
             final Uri uri = mData.getData();
-            OutputStream os = null;
+            OutputStream os;
 
             try {
                 final ParcelFileDescriptor fd = mIitc.getContentResolver().openFileDescriptor(uri, "w");

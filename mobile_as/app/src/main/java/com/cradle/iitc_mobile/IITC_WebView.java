@@ -33,7 +33,6 @@ public class IITC_WebView extends WebView {
 
     private WebSettings mSettings;
     private IITC_WebViewClient mIitcWebViewClient;
-    private IITC_WebChromeClient mIitcWebChromeClient;
     private IITC_JSInterface mJsInterface;
     private IITC_Mobile mIitc;
     private SharedPreferences mSharedPrefs;
@@ -41,7 +40,7 @@ public class IITC_WebView extends WebView {
     private Runnable mNavHider;
     private boolean mDisableJs = false;
     private String mDefaultUserAgent;
-    private final String mDesktopUserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:17.0)" +
+    private static final String mDesktopUserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:17.0)" +
             " Gecko/20130810 Firefox/17.0 Iceweasel/17.0.8";
 
     // init web view
@@ -87,7 +86,7 @@ public class IITC_WebView extends WebView {
             }
         };
 
-        mIitcWebChromeClient = new IITC_WebChromeClient(mIitc);
+        IITC_WebChromeClient mIitcWebChromeClient = new IITC_WebChromeClient(mIitc);
         setWebChromeClient(mIitcWebChromeClient);
         mIitcWebViewClient = new IITC_WebViewClient(mIitc);
         setWebViewClient(mIitcWebViewClient);

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class IntentListFragment extends Fragment implements OnScrollListener, OnItemClickListener {
     private IntentAdapter mAdapter;
-    private ArrayList<Intent> mIntents;
     private ListView mListView;
     private int mScrollIndex, mScrollTop;
 
@@ -32,7 +31,7 @@ public class IntentListFragment extends Fragment implements OnScrollListener, On
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         final Bundle args = getArguments();
 
-        mIntents = args.getParcelableArrayList("intents");
+        ArrayList<Intent> mIntents = args.getParcelableArrayList("intents");
 
         mAdapter = new IntentAdapter(getActivity());
         mAdapter.setIntents(mIntents);

@@ -18,7 +18,7 @@ public class PluginPreference extends CheckBoxPreference {
         makeMultiline(view);
     }
 
-    protected void makeMultiline(View view) {
+    private void makeMultiline(View view) {
         if (view instanceof ViewGroup) {
             ViewGroup grp = (ViewGroup) view;
             for (int index = 0; index < grp.getChildCount(); index++) {

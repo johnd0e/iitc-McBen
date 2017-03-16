@@ -129,8 +129,8 @@ public class IntentComparator implements Comparator<Intent> {
     public static class Component implements Serializable {
         private static final long serialVersionUID = -5043782754318376792L;
 
-        public String name;
-        public String packageName;
+        public final String name;
+        public final String packageName;
 
         public Component() {
             name = null;

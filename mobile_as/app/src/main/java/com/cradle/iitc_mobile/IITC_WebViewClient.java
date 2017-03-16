@@ -33,7 +33,7 @@ public class IITC_WebViewClient extends WebViewClient {
             "body, #dashboard_container, #map_canvas { background: #000 !important; }"
                     .getBytes());
 
-    public static final boolean isIntelUrl(String url) {
+    public static boolean isIntelUrl(String url) {
         return
             url.startsWith("http://ingress.com/intel") ||
             url.startsWith("https://ingress.com/intel") ||

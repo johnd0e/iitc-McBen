@@ -92,7 +92,6 @@ public class IITC_MapSettings implements OnItemSelectedListener, OnItemClickList
 
     private final Spinner mSpinnerBaseMap;
     private final Spinner mSpinnerHighlighter;
-    private final ListView mListViewOverlayLayers;
 
     private String mActiveHighlighter;
     private int mActiveLayer;
@@ -115,7 +114,7 @@ public class IITC_MapSettings implements OnItemSelectedListener, OnItemClickList
 
         mSpinnerHighlighter = (Spinner) header.findViewById(R.id.spinnerHighlighter);
         mSpinnerBaseMap = (Spinner) header.findViewById(R.id.spinnerBaseLayer);
-        mListViewOverlayLayers = (ListView) mIitc.findViewById(R.id.right_drawer);
+        ListView mListViewOverlayLayers = (ListView) mIitc.findViewById(R.id.right_drawer);
 
         mListViewOverlayLayers.addHeaderView(header);
 
@@ -227,8 +226,8 @@ public class IITC_MapSettings implements OnItemSelectedListener, OnItemClickList
          * {"layerId":28,"name":"Default Ingress Map","active":false}]
          * Put it in a JSONArray and parse it
          */
-        JSONArray base_layers = null;
-        JSONArray overlay_layers = null;
+        JSONArray base_layers;
+        JSONArray overlay_layers;
 
         try {
             base_layers = new JSONArray(base_layer);

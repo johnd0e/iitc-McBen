@@ -75,7 +75,7 @@ public class MainSettings extends PreferenceFragment {
     // because PreferenceScreens are dialogs which swallow
     // events instead of passing to the activity
     // Related Issue: https://code.google.com/p/android/issues/detail?id=4611
-    public static void initializeActionBar(final PreferenceScreen preferenceScreen) {
+    private static void initializeActionBar(final PreferenceScreen preferenceScreen) {
         final Dialog dialog = preferenceScreen.getDialog();
 
         if (dialog != null) {
@@ -99,7 +99,7 @@ public class MainSettings extends PreferenceFragment {
 
                     if (containerParent instanceof LinearLayout) {
                         // This view also contains the title text, set the whole view as clickable
-                        ((LinearLayout) containerParent).setOnClickListener(dismissDialogClickListener);
+                        containerParent.setOnClickListener(dismissDialogClickListener);
                     } else {
                         // Just set it on the home button
                         ((FrameLayout) homeBtnContainer).setOnClickListener(dismissDialogClickListener);

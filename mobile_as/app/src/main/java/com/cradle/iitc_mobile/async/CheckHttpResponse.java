@@ -31,7 +31,7 @@ public class CheckHttpResponse extends AsyncTask<String, Void, Boolean> {
     @Override
     protected Boolean doInBackground(final String... urls) {
         // check http responses and disable splash screen on error
-        HttpGet httpRequest = null;
+        HttpGet httpRequest;
         try {
             httpRequest = new HttpGet(urls[0]);
         } catch (final IllegalArgumentException e) {
@@ -39,7 +39,7 @@ public class CheckHttpResponse extends AsyncTask<String, Void, Boolean> {
             return false;
         }
         final HttpClient httpclient = new DefaultHttpClient();
-        HttpResponse response = null;
+        HttpResponse response;
         try {
             response = httpclient.execute(httpRequest);
             final int code = response.getStatusLine().getStatusCode();

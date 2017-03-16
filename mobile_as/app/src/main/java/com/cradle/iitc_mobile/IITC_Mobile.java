@@ -479,7 +479,7 @@ public class IITC_Mobile extends Activity
         }
     }
 
-    public void backStackPop() {
+    private void backStackPop() {
         // shouldn't be called when back stack is empty
         // catch wrong usage
         if (mBackStack.isEmpty()) {
@@ -698,7 +698,7 @@ public class IITC_Mobile extends Activity
 
     // inject the iitc-script and load the intel url
     // plugins are injected onPageFinished
-    public void loadUrl(String url) {
+    private void loadUrl(String url) {
         reset();
         setLoadingState(true);
         url = addUrlParam(url);
@@ -903,7 +903,7 @@ public class IITC_Mobile extends Activity
     }
 
     /**
-     * @see getNavigationHelper()
+     * @see IITC_Mobile::getNavigationHelper()
      * @deprecated ActionBar related stuff should be handled by IITC_NavigationHelper
      */
     @Deprecated
