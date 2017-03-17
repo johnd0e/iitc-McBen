@@ -14,8 +14,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
     productFlavors {
     }
+
+    // TODO: re-enable lint-error-checking!
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 dependencies {
