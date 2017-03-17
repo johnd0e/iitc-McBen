@@ -750,6 +750,9 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			if (lastPtDistance < 10 && L.Browser.touch) {
 				this._finishShape();
 			} else if (Math.abs(dragCheckDistance) < 9 * (window.devicePixelRatio || 1)) {
+				if (this.options.snapPoint) {
+					e.latlng = this.options.snapPoint(e.latlng);
+				}	
 				this.addVertex(e.latlng);
 			}
 			this._enableNewMarkers(); // after a short pause, enable new markers
@@ -1364,7 +1367,7 @@ L.Draw.Circle = L.Draw.SimpleShape.extend({
 
 	_drawShape: function (latlng) {
 		if (!this._shape) {
-			this._shape = new L.Circle(this._startLatLng, this._startLatLng.distanceTo(latlng), this.options.shapeOptions);
+			this._shape = new L.GeodesicCircle(this._startLatLng, this._startLatLng.distanceTo(latlng), this.options.shapeOptions);
 			this._map.addLayer(this._shape);
 		} else {
 			this._shape.setRadius(this._startLatLng.distanceTo(latlng));
@@ -1372,7 +1375,7 @@ L.Draw.Circle = L.Draw.SimpleShape.extend({
 	},
 
 	_fireCreatedEvent: function () {
-		var circle = new L.Circle(this._startLatLng, this._shape.getRadius(), this.options.shapeOptions);
+		var circle = new L.GeodesicCircle(this._startLatLng, this._shape.getRadius(), this.options.shapeOptions);
 		L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this, circle);
 	},
 
@@ -1505,6 +1508,10 @@ L.Draw.Marker = L.Draw.Feature.extend({
 	},
 
 	_onClick: function () {
+		if (this.options.snapPoint)  {
+			this._marker.setLatLng(this.options.snapPoint(this._marker.getLatLng()));
+		}
+
 		this._fireCreatedEvent();
 
 		this.disable();
@@ -2104,6 +2111,36 @@ L.GeodesicPolyline.addInitHook(function () {
 });
 
 
+L.GeodesicPolygon.addInitHook(function () {
+
+	// Check to see if handler has already been initialized. This is to support versions of Leaflet that still have L.Handler.PolyEdit
+	if (this.editing) {
+		return;
+	}
+
+	if (L.Edit.Poly) {
+
+		this.editing = new L.Edit.Poly(this, this.options.poly);
+
+		if (this.options.editable) {
+			this.editing.enable();
+		}
+	}
+
+	this.on('add', function () {
+		if (this.editing && this.editing.enabled()) {
+			this.editing.addHooks();
+		}
+	});
+
+	this.on('remove', function () {
+		if (this.editing && this.editing.enabled()) {
+			this.editing.removeHooks();
+		}
+	});
+});
+
+
 
 L.Edit = L.Edit || {};
 /**
@@ -2487,10 +2524,8 @@ L.Edit.Circle = L.Edit.SimpleShape.extend({
 	},
 
 	_getResizeMarkerPoint: function (latlng) {
-		// From L.shape.getBounds()
-		var delta = this._shape._radius * Math.cos(Math.PI / 4),
-			point = this._map.project(latlng);
-		return this._map.unproject([point.x + delta, point.y - delta]);
+		var latRadius = (this._shape.getRadius() / 40075017) * 360;
+		return L.latLng(latlng.lat + latRadius, latlng.lng);
 	},
 
 	_move: function (latlng) {
@@ -2515,7 +2550,7 @@ L.Edit.Circle = L.Edit.SimpleShape.extend({
 	}
 });
 
-L.Circle.addInitHook(function () {
+L.GeodesicCircle.addInitHook(function () {
 	if (L.Edit.Circle) {
 		this.editing = new L.Edit.Circle(this);
 
@@ -4135,7 +4170,7 @@ L.EditToolbar.Edit = L.Handler.extend({
 				this._uneditedLayerProps[id] = {
 					latlngs: L.LatLngUtil.cloneLatLngs(layer.getLatLngs())
 				};
-			} else if (layer instanceof L.Circle) {
+			} else if (layer instanceof L.Circle || layer instanceof L.GeodesicCircle) {
 				this._uneditedLayerProps[id] = {
 					latlng: L.LatLngUtil.cloneLatLng(layer.getLatLng()),
 					radius: layer.getRadius()
@@ -4166,7 +4201,7 @@ L.EditToolbar.Edit = L.Handler.extend({
 			// Polyline, Polygon or Rectangle
 			if (layer instanceof L.GeodesicPolyline || layer instanceof L.GeodesicPolygon || layer instanceof L.Rectangle) {
 				layer.setLatLngs(this._uneditedLayerProps[id].latlngs);
-			} else if (layer instanceof L.Circle) {
+			} else if (layer instanceof L.Circle || layer instanceof L.GeodesicCircle) {
 				layer.setLatLng(this._uneditedLayerProps[id].latlng);
 				layer.setRadius(this._uneditedLayerProps[id].radius);
 			} else if (layer instanceof L.Marker) { // Marker

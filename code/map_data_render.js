@@ -408,7 +408,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
     fillColor: COLORS[team],
     fillOpacity: 0.25,
     stroke: false,
-    clickable: false,
+    interactive: false,
 
     team: team,
     ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead
@@ -425,7 +425,7 @@ window.Render.prototype.createFieldEntity = function(ent) {
   fieldsFactionLayers[poly.options.team].addLayer(poly);
 }
 
-window.Render.prototype.createLinkEntity = function(ent,faked) {
+window.Render.prototype.createLinkEntity = function(ent) {
   // Niantic have been faking link entities, based on data from fields
   // these faked links are sent along with the real portal links, causing duplicates
   // the faked ones all have longer GUIDs, based on the field GUID (with _ab, _ac, _bc appended)
@@ -474,7 +474,7 @@ window.Render.prototype.createLinkEntity = function(ent,faked) {
     color: COLORS[team],
     opacity: 1,
     weight: faked ? 1 : 2,
-    clickable: false,
+    interactive: false,
 
     team: team,
     ent: ent,  // LEGACY - TO BE REMOVED AT SOME POINT! use .guid, .timestamp and .data instead

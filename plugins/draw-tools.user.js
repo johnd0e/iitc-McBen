@@ -100,9 +100,9 @@ window.plugin.drawTools.setDrawColor = function(color) {
   window.plugin.drawTools.markerOptions.icon = window.plugin.drawTools.currentMarker;
 
   plugin.drawTools.drawControl.setDrawingOptions({
-    polygon:  { shapeOptions: plugin.drawTools.polygonOptions },
-    polyline: { shapeOptions: plugin.drawTools.lineOptions },
-    circle:   { shapeOptions: plugin.drawTools.polygonOptions },
+    polygon:  { shapeOptions: plugin.drawTools.polygonOptions, feet: false, nautic: false },
+    polyline: { shapeOptions: plugin.drawTools.lineOptions, feet: false, nautic: false },
+    circle:   { shapeOptions: plugin.drawTools.polygonOptions, feet: false, nautic: false },
     marker:   { icon:         plugin.drawTools.markerOptions.icon },
   });
 }
@@ -598,7 +598,7 @@ window.plugin.drawTools.boot = function() {
   window.plugin.drawTools.currentMarker = window.plugin.drawTools.getMarkerIcon(window.plugin.drawTools.currentColor);
 
   window.plugin.drawTools.setOptions();
-
+  
   //create a leaflet FeatureGroup to hold drawn items
   window.plugin.drawTools.drawnItems = new L.FeatureGroup();
 
@@ -607,6 +607,7 @@ window.plugin.drawTools.boot = function() {
 
   //add the draw control - this references the above FeatureGroup for editing purposes
   plugin.drawTools.addDrawControl();
+  window.plugin.drawTools.setDrawColor(window.plugin.drawTools.currentColor);
 
   //start off hidden. if the layer is enabled, the below addLayerGroup will add it, triggering a 'show'
   $('.leaflet-draw-section').hide();

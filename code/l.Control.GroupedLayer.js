@@ -417,11 +417,11 @@ L.Control.GroupedLayers = L.Control.extend({
       }
     }
 
-    for (var i=this._mlayers.length-1;i>=0;--i) {
+    for (var i=0,len=this._mlayers.length;i<len;++i) {
       var obj = this._mlayers[i];
       push(obj);
       if (obj.childs) {
-        for (var j=obj.childs-1;j>=0;--j) {
+        for (var j=obj.childs.length-1;j>=0;--j) {
           var obj2= obj.childs[j];
           push(obj2);
         }
