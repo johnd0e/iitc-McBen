@@ -291,7 +291,7 @@ if buildMobile:
         # now launch 'ant' to build the mobile project
         # retcode = os.system("ant %s -buildfile %s %s" % (antOptions, antBuildFile, buildMobile))
         os.chdir("mobile")
-        retcode = os.system("gradlew build")
+        retcode = os.system("./gradlew build")
         os.chdir("..")
 
         if retcode != 0:
