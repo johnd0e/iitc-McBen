@@ -262,9 +262,7 @@ public class IITC_WebView extends WebView {
         // ConnectivityManager.isActiveNetworkMeter returns if the currently used wifi-network
         // is ticked as mobile hotspot or not.
         // --> IITC_WebView.isConnectedToWifi should return 'false' if connected to mobile hotspot
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            if (conMan.isActiveNetworkMetered()) return false;
-        }
+        if (conMan.isActiveNetworkMetered()) return false;
 
         return (wifi.getState() == NetworkInfo.State.CONNECTED);
     }

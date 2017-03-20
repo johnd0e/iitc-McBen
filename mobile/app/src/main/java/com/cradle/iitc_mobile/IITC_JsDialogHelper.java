@@ -36,9 +36,7 @@ import java.net.URL;
 /**
  * Helper class to create JavaScript dialogs. It is used by
  * different WebView implementations.
- *
- * @hide Helper class for internal use
- */
+  */
 public class IITC_JsDialogHelper {
     // Dialog types
     public static final int ALERT = 1;
