@@ -473,7 +473,7 @@ window.Render.prototype.createLinkEntity = function(ent) {
   var poly = L.geodesicPolyline(latlngs, {
     color: COLORS[team],
     opacity: 1,
-    weight: faked ? 1 : 2,
+    weight: 2,
     interactive: false,
 
     team: team,
