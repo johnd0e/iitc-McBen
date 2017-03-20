@@ -130,18 +130,22 @@
                 <data
                     android:host="*"
                     android:pathPattern=".*\\.user.js"
+                    android:mimeType="*/*"
                     android:scheme="file"/>
                 <data
                     android:host="*"
                     android:pathPattern=".*\\.user.js"
+                    android:mimeType="*/*"
                     android:scheme="content"/>
                 <data
                     android:host="*"
                     android:pathPattern=".*\\.user.js"
+                    android:mimeType="*/*"
                     android:scheme="http"/>
                 <data
                     android:host="*"
                     android:pathPattern=".*\\.user.js"
+                    android:mimeType="*/*"
                     android:scheme="https"/>
             </intent-filter>
         </activity>
