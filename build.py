@@ -267,19 +267,20 @@ if buildMobile:
     saveScriptAndMeta(script, outDir, fn)
 
     # copy the IITC script into the mobile folder. create the folder if needed
+    assetsPath="mobile/app/src/main/assets"
     try:
-        os.makedirs("mobile/assets")
+        os.makedirs(assetsPath)
     except:
         pass
-    shutil.copy(os.path.join(outDir,"total-conversion-build.user.js"), "mobile/assets/total-conversion-build.user.js")
+    shutil.copy(os.path.join(outDir,"total-conversion-build.user.js"), os.path.join(assetsPath, "total-conversion-build.user.js"))
     # copy the user location script into the mobile folder.
-    shutil.copy(os.path.join(outDir,"user-location.user.js"), "mobile/assets/user-location.user.js")
+    shutil.copy(os.path.join(outDir,"user-location.user.js"), os.path.join(assetsPath,"user-location.user.js"))
     # also copy plugins
     try:
-        shutil.rmtree("mobile/assets/plugins")
+        shutil.rmtree( os.path.join(assetsPath,"plugins"))
     except:
         pass
-    shutil.copytree(os.path.join(outDir,"plugins"), "mobile/assets/plugins",
+    shutil.copytree(os.path.join(outDir,"plugins"), os.path.join(assetsPath,"plugins"),
             # do not include desktop-only plugins to mobile assets
             ignore=shutil.ignore_patterns('*.meta.js',
             'force-https*', 'speech-search*', 'basemap-cloudmade*',
@@ -288,7 +289,10 @@ if buildMobile:
 
     if buildMobile != 'copyonly':
         # now launch 'ant' to build the mobile project
-        retcode = os.system("ant %s -buildfile %s %s" % (antOptions, antBuildFile, buildMobile))
+        # retcode = os.system("ant %s -buildfile %s %s" % (antOptions, antBuildFile, buildMobile))
+        os.chdir("mobile")
+        retcode = os.system("gradlew build")
+        os.chdir("..")
 
         if retcode != 0:
             print ("Error: mobile app failed to build. ant returned %d" % retcode)

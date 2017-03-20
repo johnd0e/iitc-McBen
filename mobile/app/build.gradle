@@ -7,6 +7,9 @@ android {
         applicationId "com.cradle.iitc_mobile"
         minSdkVersion 17
         targetSdkVersion 25
+
+        versionName '0.254.2.4000'   // change with every release
+        setProperty("archivesBaseName", "iitc-mobile-$versionName")
     }
     buildTypes {
         release {
@@ -16,6 +19,9 @@ android {
     }
 
     productFlavors {
+        nightly {
+            applicationId "com.cradle.iitcm.test"
+        }
     }
 
     // TODO: re-enable lint-error-checking!
