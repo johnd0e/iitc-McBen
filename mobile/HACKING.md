@@ -18,14 +18,17 @@ If you want to debug the APK, I suggest [reading up on Google’s documentation]
 
 Debugging IITC(M) **after** it has booted is relatively easy: you can switch to the “debug” tab, which is a low end developer console. It renders all calls to `console.*`, so you can use it just like you expect. It may be easier to develop in a desktop browser. Set it up like explained [in the normal hacking guide](https://github.com/iitc-project/ingress-intel-total-conversion/blob/master/HACKING.md), but fake your user agent or modify the detection in `code/smartphone.js` and `main.js`. The device ID is printed to the debug console on IITC boot.
 
-Debugging IITC(M) **before** it has booted requires the Android Developer Tools. Connecting your device and running `adb logcat` should print the debug log to your computer until the low-end dev console mentioned above is available. 
+Debugging IITC(M) **before** it has booted requires the Android Developer Tools. Connecting your device and running `adb logcat` should print the debug log to your computer until the low-end dev console mentioned above is available.
 
 
 Building the APK
 ----------------
+Ensure that you have total-conversion-build.user.js and user-location.user.js in your assets folder.
+This is automatically created, when executing ```./build.py mobile```. Otherwise, just copy the scripts to the assets folder.
 
-- **ant:**
-  Set the ANDROID_HOME environment variable:
-  ```export ANDROID_HOME=/path/to/android_sdk```
-  Then build the app via the build.py script ```./build.py mobile```
-- **Eclipse:** Just import this project and klick the build button. Ensure that you have total-conversion-build.user.js and user-location.user.js in your assets folder. This is automatically created, when executing ```./build.py mobile```. Otherwise, just copy the scripts to the assets folder.
+- **Commandline:**
+Create "local.properties" file with 'sdk.dir=/users/home/android-sdk' to point to your android-sdk directory.
+Run "./gradle build"
+
+- **AndroidStudio:**
+Just import this project and klick the build button.
