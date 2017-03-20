@@ -511,7 +511,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			weight: 4,
 			opacity: 0.5,
 			fill: false,
-			clickable: true
+			interactive: true
 		},
 		metric: true, // Whether to use the metric measurement system or imperial
 		feet: true, // When not metric, to use feet instead of yards for display.
@@ -1096,7 +1096,7 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 			fill: true,
 			fillColor: null, //same as color by default
 			fillOpacity: 0.2,
-			clickable: true
+			interactive: true
 		},
 		// Whether to use the metric measurement system (truthy) or not (falsy).
 		// Also defines the units to use for the metric system as an array of
@@ -1346,7 +1346,7 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 			fillColor: null, //same as color by default
 			fillOpacity: 0.2,
 			showArea: true,
-			clickable: true
+			interactive: true
 		},
 		metric: true // Whether to use the metric measurement system or imperial
 	},
@@ -3001,7 +3001,7 @@ L.Marker.Touch = L.Marker.extend({
 	// with the addition of the touch events
 	_initInteractionLegacy: function () {
 
-		if (!this.options.clickable) {
+		if (!this.options.interactive) {
 			return;
 		}
 
