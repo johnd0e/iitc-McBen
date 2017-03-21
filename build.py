@@ -138,7 +138,15 @@ def loaderMD(var):
 
 def loaderImage(var):
     fn = var.group(1)
-    return 'data:image/png;base64,{0}'.format(base64.encodestring(open(fn, 'rb').read()).decode('utf8').replace('\n', ''))
+    fdata = open(fn, 'rb').read()
+    extension = os.path.splitext(fn)[1].lower()[1:]
+    if extension == 'svg':
+        extension='svg+xml'
+        fdata = re.sub(r'^<\?xml.*<svg','<svg',fdata,1,re.MULTILINE | re.DOTALL) # remove XML head
+        fdata = re.sub(r'[\r|\n]','',fdata) # remove line breaks
+        fdata = re.sub(r'(\s)+',r'\1',fdata) # remove double whitespaces
+
+    return 'data:image/{0};base64,{1}'.format(extension, base64.encodestring(fdata).decode('utf8').replace('\n', ''))
 
 def loadCode(ignore):
     return '\n\n;\n\n'.join(map(readfile, sorted(glob.glob('code/*.js'))))
