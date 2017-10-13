@@ -24,27 +24,26 @@ if(document.getElementsByTagName('html')[0].getAttribute('itemscope') != null)
 window.iitcBuildDate = '@@BUILDDATE@@';
 
 // disable vanilla JS
-window.onload = function() {};
 document.body.onload = function() {};
+window.onload = function() {};
 
+  //originally code here parsed the <Script> tags from the page to find the one that defined the PLAYER object
+  //however, that's already been executed, so we can just access PLAYER - no messing around needed!
 
-//originally code here parsed the <Script> tags from the page to find the one that defined the PLAYER object
-//however, that's already been executed, so we can just access PLAYER - no messing around needed!
-
-if (typeof(window.PLAYER)!="object" || typeof(window.PLAYER.nickname) != "string") {
+var PLAYER = window.PLAYER || window.wrappedJSObject.PLAYER;
+if (typeof(PLAYER)!="object" || typeof(PLAYER.nickname) != "string") {
   // page doesn’t have a script tag with player information.
   if(document.getElementById('header_email')) {
     // however, we are logged in.
     // it used to be regularly common to get temporary 'account not enabled' messages from the intel site.
     // however, this is no longer common. more common is users getting account suspended/banned - and this
     // currently shows the 'not enabled' message. so it's safer to not repeatedly reload in this case
-//    setTimeout('location.reload();', 3*1000);
+    //  setTimeout('location.reload();', 3*1000);
     throw("Page doesn't have player data, but you are logged in.");
   }
   // FIXME: handle nia takedown in progress
   throw("Couldn't retrieve player data. Are you logged in?");
 }
-
 
 // player information is now available in a hash like this:
 // window.PLAYER = {"ap": "123", "energy": 123, "available_invites": 123, "nickname": "somenick", "team": "ENLIGHTENED||RESISTANCE"};
