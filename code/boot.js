@@ -341,7 +341,8 @@ function boot() {
   window.runOnSmartphonesAfterBoot();
 
   window.iitcLoaded = true;
-  window.runHooks('iitcLoaded');
+  setTimeout(function(){window.runHooks('iitcLoaded');}, 1);
+
 
   if (typeof android !== 'undefined' && android && android.bootFinished) {
     android.bootFinished();
