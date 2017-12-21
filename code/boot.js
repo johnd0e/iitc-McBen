@@ -44,6 +44,7 @@ window.setupStyles = function() {
 
 
 
+
 window.setupMap = function() {
   $('#map').text('');
 
@@ -82,6 +83,7 @@ window.setupMap = function() {
   }
 
   setupLayers();
+
 
   map.attributionControl.setPrefix('');
   // listen for changes and store them in cookies
@@ -341,7 +343,8 @@ function boot() {
   window.runOnSmartphonesAfterBoot();
 
   window.iitcLoaded = true;
-  window.runHooks('iitcLoaded');
+  setTimeout(function(){window.runHooks('iitcLoaded');}, 1);
+
 
   if (typeof android !== 'undefined' && android && android.bootFinished) {
     android.bootFinished();
@@ -354,8 +357,6 @@ function boot() {
 
 @@INCLUDERAW:external/leaflet-src.js@@
 @@INCLUDERAW:external/L.Geodesic.js@@
-
-//@ @INCLUDERAW:external/Google.js@@
 @@INCLUDERAW:external/Leaflet.GoogleMutant.js@@
 @@INCLUDERAW:external/autolink-min.js@@
 @@INCLUDERAW:external/oms.min.js@@

@@ -30,7 +30,7 @@ window.onload = function() {};
   //originally code here parsed the <Script> tags from the page to find the one that defined the PLAYER object
   //however, that's already been executed, so we can just access PLAYER - no messing around needed!
 
-var PLAYER = window.PLAYER || window.wrappedJSObject.PLAYER;
+var PLAYER = window.PLAYER || (window.wrappedJSObject && window.wrappedJSObject.PLAYER);
 if (typeof(PLAYER)!="object" || typeof(PLAYER.nickname) != "string") {
   // page doesn’t have a script tag with player information.
   if(document.getElementById('header_email')) {
@@ -181,7 +181,6 @@ window.TEAM_NAMES = ['Neutral', 'Resistance', 'Enlightened'];
 
 window.SLOT_TO_LAT = [0, Math.sqrt(2)/2, 1, Math.sqrt(2)/2, 0, -Math.sqrt(2)/2, -1, -Math.sqrt(2)/2];
 window.SLOT_TO_LNG = [1, Math.sqrt(2)/2, 0, -Math.sqrt(2)/2, -1, -Math.sqrt(2)/2, 0, Math.sqrt(2)/2];
-window.EARTH_RADIUS=6378137;
 window.DEG2RAD = Math.PI / 180;
 
 // STORAGE ///////////////////////////////////////////////////////////
