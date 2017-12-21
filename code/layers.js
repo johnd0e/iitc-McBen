@@ -94,7 +94,7 @@ function createDefaultBaseMapLayers() {
   baseLayers['Google Default Ingress Map'] = L.gridLayer.googleMutant(
     { type:'roadmap',
       maxZoom: 21,
-      backgroundColor: '#0e3d4e', 
+      backgroundColor: '#0e3d4e',
       styles: [
           { featureType:"all", elementType:"all",
             stylers: [{visibility:"on"}, {hue:"#131c1c"}, {saturation:"-50"}, {invert_lightness:true}] },
