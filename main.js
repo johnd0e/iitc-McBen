@@ -26,7 +26,6 @@ window.iitcBuildDate = '@@BUILDDATE@@';
 // disable vanilla JS
 document.body.onload = function() {};
 window.onload = function() {};
-
   //originally code here parsed the <Script> tags from the page to find the one that defined the PLAYER object
   //however, that's already been executed, so we can just access PLAYER - no messing around needed!
 
