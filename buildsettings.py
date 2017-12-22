@@ -14,8 +14,8 @@ buildSettings = {
     # local: use this build if you're not modifying external resources
     # no external resources allowed - they're not needed any more
     'local': {
-        'resourceUrlBase': None,
-        'distUrlBase': None,
+        'resourceUrlBase': 'http://localhost:8100/local',
+        'distUrlBase': 'http://localhost:8100/local',
     },
 
     # local8000: if you need to modify external resources, this build will load them from
