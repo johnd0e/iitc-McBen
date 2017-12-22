@@ -333,7 +333,7 @@ RegionScoreboard = (function () {
             percentToString( score,total)+'\n';
       }
 
-    res +='<hr>\nEstimated:\n';
+      return res;
     }
 
     function estimatedScore() {
