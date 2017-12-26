@@ -1,188 +1,273 @@
-// REDEEMING ///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
 
-window.REDEEM_SHORT_NAMES = {
-  'portal shield':'S',
-  'force amp':'FA',
-  'link amp':'LA',
-  'heatsink':'H',
-  'multihack':'M',
-  'turret':'T',
-  'unusual object':'U',
-  'resonator':'R',
-  'xmp burster':'X',
-  'power cube':'C',
-  'media':'M',
-  'ultra strike':'US',
-}
+Redeem= (function () {
 
-/* These are HTTP status codes returned by the redemption API.
- * TODO: Move to another file? Use more generally across IITC?
- */
-window.REDEEM_STATUSES = {
-  429: 'You have been rate-limited by the server. Wait a bit and try again.',
-  500: 'Internal server error'
-};
+  const REDEEM_SHORT_NAMES = {
+    'portal shield':'S',
+    'force amp':'FA',
+    'link amp':'LA',
+    'heatsink':'H',
+    'multihack':'M',
+    'turret':'T',
+    'unusual object':'U',
+    'resonator':'R',
+    'xmp burster':'X',
+    'power cube':'C',
+    'media':'M',
+    'ultra strike':'US',
+  }
 
-window.handleRedeemResponse = function(data, textStatus, jqXHR) {
-  var passcode = jqXHR.passcode;
+  const REDEEM_STATUSES = {
+    429: 'You have been rate-limited by the server. Wait a bit and try again.',
+    500: 'Internal server error'
+  };
 
-  if(data.error) {
-    console.error('Error redeeming passcode "'+passcode+'": ' + data.error)
-    dialog({
-      title: 'Error: ' + passcode,
-      html: '<strong>' + data.error + '</strong>'
+
+  var requested_code;
+  var request_result;
+
+
+  function showDialog() {
+
+    let html = 
+      '<input id="redeem" placeholder="Redeem code…" type="text" onClick="this.setSelectionRange(0, this.value.length)"/>'+
+      '<button id="redeembtm" type="button" class="ui-button ui-corner-all ui-widget">OK</button>'+
+      '<div id="result"></div>';
+
+
+    let dia = dialog({
+      title: 'Redeem Passcode',
+      id: 'RedeemDialog',
+      html: html,
+      buttons: { 'close': closeDialog, 
+                 'format': { id: 'format', class: 'left', click: changeFormat },
+                 'copy': { text: 'copy', class: 'left', click: copyText }
+               },
     });
-    return;
-  }
-  if(!data.rewards) {
-    console.error('Error redeeming passcode "'+passcode+'": ', data)
-    dialog({
-      title: 'Error: ' + passcode,
-      html: '<strong>An unexpected error occured</strong>'
-    });
-    return;
-  }
 
-  if(data.playerData) {
-    window.PLAYER = data.playerData;
-    window.setupPlayerStat();
-  }
 
-  var format = "long";
-  try {
-    format = localStorage["iitc-passcode-format"];
-  } catch(e) {}
+    $('#dialog-RedeemDialog').parent().find('.ui-dialog-buttonset button:contains("OK")').hide()
+    $('#dialog-RedeemDialog').parent().find('.ui-dialog-buttonset button#format').text(localStorage['iitc-passcode-format'] || 'long');
 
-  var formatHandlers = {
-    "short": formatPasscodeShort,
-    "long": formatPasscodeLong
-  }
-  if(!formatHandlers[format])
-    format = "long";
+    $("#dialog-RedeemDialog #redeem").keypress(onKeypressed);
+    $("#dialog-RedeemDialog #redeembtm").click( function() {redeemCode($('#dialog-RedeemDialog #redeem').val());} );
 
-  var html = formatHandlers[format](data.rewards);
-
-  var buttons = {};
-  Object.keys(formatHandlers).forEach(function(label) {
-    if(label == format) return;
-
-    buttons[label.toUpperCase()] = function() {
-      $(this).dialog("close");
-      localStorage["iitc-passcode-format"] = label;
-      handleRedeemResponse(data, textStatus, jqXHR);
+    if (requested_code) {
+      $("#dialog-RedeemDialog #redeem").val(requested_code)
+      disableInput();
     }
-  });
-
-  // Display it
-  dialog({
-    title: 'Passcode: ' + passcode,
-    html: html,
-    buttons: buttons
-  });
-};
-
-window.formatPasscodeLong = function(data) {
-  var html = '<p><strong>Passcode confirmed. Acquired items:</strong></p><ul class="redeemReward">';
-
-  if(data.other) {
-    data.other.forEach(function(item) {
-      html += '<li>' + window.escapeHtmlSpecialChars(item) + '</li>';
-    });
   }
 
-  if(0 < data.xm)
-    html += '<li>' + window.escapeHtmlSpecialChars(data.xm) + ' XM</li>';
-  if(0 < data.ap)
-    html += '<li>' + window.escapeHtmlSpecialChars(data.ap) + ' AP</li>';
-
-  if(data.inventory) {
-    data.inventory.forEach(function(type) {
-      type.awards.forEach(function(item) {
-        html += '<li>' + item.count + 'x ';
-
-        var l = item.level;
-        if(0 < l) {
-          l = parseInt(l);
-          html += '<span class="itemlevel" style="color:' + COLORS_LVL[l] + '">L' + l + '</span> ';
-        }
-
-        html += window.escapeHtmlSpecialChars(type.name) + '</li>';
-      });
-    });
+  function closeDialog() {
+    $('#dialog-RedeemDialog').dialog('close');
+    request_result=undefined;
   }
 
-  html += '</ul>'
-  return html;
-}
+  function disableInput() {
+    $('#dialog-RedeemDialog #result').html('validating....');
 
-window.formatPasscodeShort = function(data) {
-
-  if(data.other) {
-    var awards = data.other.map(window.escapeHtmlSpecialChars);
-  } else {
-    var awards = [];
+    $('#dialog-RedeemDialog #redeem').attr('disabled','disabled');
+    $("#dialog-RedeemDialog #redeembtm").attr('disabled','disabled');
   }
 
-  if(0 < data.xm)
-    awards.push(window.escapeHtmlSpecialChars(data.xm) + ' XM');
-  if(0 < data.ap)
-    awards.push(window.escapeHtmlSpecialChars(data.ap) + ' AP');
+  function showResult(html) {
 
-  if(data.inventory) {
-    data.inventory.forEach(function(type) {
-      type.awards.forEach(function(item) {
-        var str = "";
-        if(item.count > 1)
-          str += item.count + "&nbsp;";
+    if ($('#dialog-RedeemDialog').length==0) showDialog();
 
-        if(window.REDEEM_SHORT_NAMES[type.name.toLowerCase()]) {
-          var shortName = window.REDEEM_SHORT_NAMES[type.name.toLowerCase()];
-
-          var l = item.level;
-          if(0 < l) {
-            l = parseInt(l);
-            str += '<span class="itemlevel" style="color:' + COLORS_LVL[l] + '">' + shortName + l + '</span>';
-          } else {
-            str += shortName;
-          }
-        } else { // no short name known
-          var l = item.level;
-          if(0 < l) {
-            l = parseInt(l);
-            str += '<span class="itemlevel" style="color:' + COLORS_LVL[l] + '">L' + l + '</span> ';
-          }
-          str += type.name;
-        }
-
-        awards.push(str);
-      });
-    });
+    $('#dialog-RedeemDialog #redeem').removeAttr('disabled');
+    $('#dialog-RedeemDialog #redeembtm').removeAttr('disabled');
+    $('#dialog-RedeemDialog #result').html(html);
   }
 
-  return '<p class="redeemReward">' + awards.join(', ') + '</p>'
-}
 
-window.setupRedeem = function() {
-  $("#redeem").keypress(function(e) {
+  function onKeypressed(e) {
     if((e.keyCode ? e.keyCode : e.which) !== 13) return;
-
     var passcode = $(this).val();
-    passcode = passcode.replace(/[^\x20-\x7E]+/g, ''); //removes non-printable characters
+    passcode = passcode.replace(/[^\x20-\x7E]+/g, ''); 
     if(!passcode) return;
 
-    var jqXHR = window.postAjax('redeemReward', {passcode:passcode}, window.handleRedeemResponse, function(response) {
-      var extra = '';
-      if(response.status) {
-        extra = (window.REDEEM_STATUSES[response.status] || 'The server indicated an error.') + ' (HTTP ' + response.status + ')';
-      } else {
-        extra = 'No status code was returned.';
-      }
-      dialog({
-        title: 'Request failed: ' + data.passcode,
-        html: '<strong>The HTTP request failed.</strong> ' + extra
+    redeemCode(passcode)
+  }
+
+
+  function redeemCode(passcode) {
+    requested_code = passcode;
+    disableInput();
+
+    // DEBUG-Code:
+      // window.setTimeout(function() {handleRedeemError( {status: 501} ) }, 1000);
+      /*var data = 
+      { rewards: {
+          other: [ "bli bla blub","super item"],
+          xm: 1000,
+          ap: 500,
+          inventory: [ {name:"xmp burster", awards: [{count: 10, level: 5}, {count: 11, level: 6}] },
+            {name:"resonator", awards: [{count: 10, level: 8}, {count: 11, level: 7}] }  ]
+        }
+      };
+      window.setTimeout(function() {handleRedeemResponse(data);},2000);
+      return;
+    */
+
+    window.postAjax('redeemReward', {passcode:passcode}, handleRedeemResponse, handleRedeemError );
+  }
+
+
+  function handleRedeemResponse(data) {
+
+    if (data.error) {
+      showResult('<strong>' + data.error + '</strong>');
+      return;
+    }
+
+    if (!data.rewards) {
+      showResult('<strong>An unexpected error occured</strong>');
+      return;
+    }
+
+    if (data.playerData) {
+      window.PLAYER = data.playerData;
+      window.setupPlayerStat();
+    }    
+
+    requested_code=undefined;;
+    request_result = data.rewards;
+    outputReward();
+  }
+
+  function changeFormat() {
+    let newformat = (localStorage['iitc-passcode-format']!='short') ? 'short' : 'long';
+    localStorage['iitc-passcode-format']=newformat;
+
+    $('#dialog-RedeemDialog').parent().find('.ui-dialog-buttonset button#format').text(newformat);
+    outputReward();
+  }
+
+  function outputReward() {
+    let formater = formatPasscodeLong;
+    if (localStorage['iitc-passcode-format'] ==='short') {
+      formater = formatPasscodeShort;
+    }
+
+    if (request_result) {
+      showResult(formater(request_result));
+    }
+  }
+
+
+  function formatPasscodeLong (data) {
+    var html = '<strong>Passcode confirmed. Acquired items:</strong></p><ul class="redeemReward">';
+
+    if(data.other) {
+      data.other.forEach(function(item) {
+        html += '<li>' + window.escapeHtmlSpecialChars(item) + '</li>';
       });
-    });
-    jqXHR.passcode = passcode;
-  });
-};
+    }
+
+    if (data.xm > 0)
+      html += '<li>' + window.escapeHtmlSpecialChars(data.xm) + ' XM</li>';
+    if (data.ap > 0)
+      html += '<li>' + window.escapeHtmlSpecialChars(data.ap) + ' AP</li>';
+
+    if(data.inventory) {
+      data.inventory.forEach(function(type) {
+        type.awards.forEach(function(item) {
+          html += '<li>' + item.count + 'x ';
+
+          var l = item.level;
+          if(l > 0) {
+            l = parseInt(l);
+            html += '<span class="itemlevel" style="color:' + COLORS_LVL[l] + '">L' + l + '</span> ';
+          }
+
+          html += window.escapeHtmlSpecialChars(type.name) + '</li>';
+        });
+      });
+    }
+
+    html += '</ul>'
+    return html;
+  }
+
+  window.formatPasscodeShort = function(data) {
+
+    let awards = [];
+    if(data.other) {
+      awards = data.other.map(window.escapeHtmlSpecialChars);
+    }
+
+    if(0 < data.xm)
+      awards.push(window.escapeHtmlSpecialChars(data.xm) + ' XM');
+    if(0 < data.ap)
+      awards.push(window.escapeHtmlSpecialChars(data.ap) + ' AP');
+
+    if(data.inventory) {
+      data.inventory.forEach(function(type) {
+        type.awards.forEach(function(item) {
+          var str = "";
+          if(item.count > 1)
+            str += item.count + "&nbsp;";
+
+          let shortName = REDEEM_SHORT_NAMES[type.name.toLowerCase()];
+          let level = parseInt(item.level);
+
+          if (shortName) {
+            if (level>0) {
+              str += '<span class="itemlevel" style="color:' + COLORS_LVL[level] + '">' + shortName + level + '</span>';
+            } else {
+              str += shortName;
+            }
+          } else {
+            
+            if(level>0) {
+              str += '<span class="itemlevel" style="color:' + COLORS_LVL[level] + '">L' + level + '</span> ';
+            }
+            str += type.name;
+          }
+
+          awards.push(str);
+        });
+      });
+    }
+
+    return '<p class="redeemReward">' + awards.join(', ') + '</p>'
+  }
+
+
+  function copyText() {
+    let text = $('#dialog-RedeemDialog .redeemReward').html();
+    if (!text) return;
+    let input = document.createElement('textarea'); 
+    document.body.append(input);
+    text = text.replace(/<\/li>/g,'\n')
+    text = text.replace(/&nbsp;/g,' ')
+    text = text.replace(/<.+?>/g,'')
+    input.value = text;
+    input.select();
+    document.execCommand("Copy");
+    document.body.removeChild(input);
+  }
+
+  function handleRedeemError(response) {
+    var text = '<strong>Server error</strong><p>';
+    if(response.status) {
+      text += (REDEEM_STATUSES[response.status] || 'The server indicated an error.') + ' (HTTP ' + response.status + ')';
+    }
+
+    showResult(text);
+  }
+
+
+  function setup() {
+    $('#toolbox').append('<a onclick="window.Redeem.showDialog()" title="Redeem Passcodes">Passcode</a>')
+  }
+
+
+  return {
+    setup : setup,
+    showDialog: showDialog,
+  };
+
+}());
+
+
+

@@ -310,7 +310,6 @@ function boot() {
   window.setupMap();
   window.setupOMS();
   window.search.setup();
-  window.setupRedeem();
   window.setupLargeImagePreview();
   window.setupSidebarToggle();
   window.updateGameScore();

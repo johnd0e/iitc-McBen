@@ -86,7 +86,6 @@ document.body.innerHTML = ''
   + '      <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>'
   + '    </div>'
   + '    <div id="portaldetails"></div>'
-  + '    <input id="redeem" placeholder="Redeem code…" type="text"/>'
   + '    <div id="toolbox">'
   + '      <a onmouseover="setPermaLink(this)" onclick="setPermaLink(this);return androidPermalink()" title="URL link to this map view">Permalink</a>'
   + '      <a onclick="window.aboutIITC()" style="cursor: help">About IITC</a>'
@@ -216,6 +215,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 
   // fixed Addons
   RegionScoreboard.setup();
+  Redeem.setup();
 
 } // end of wrapper
 
