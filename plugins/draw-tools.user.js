@@ -110,6 +110,7 @@ window.plugin.drawTools.addDrawControl = function() {
   var drawControl = new L.Control.Draw({
     draw: {
       rectangle: false,
+      circlemarker: false,
       polygon: {
         shapeOptions: window.plugin.drawTools.polygonOptions,
         snapPoint: window.plugin.drawTools.getSnapLatLng,
