@@ -236,48 +236,52 @@ window.setupQRLoadLib = function() {
 
 
 window.setupPlugins = function() {
-  if(window.bootPlugins) {
-    // check to see if a known 'bad' plugin is installed. If so, alert the user, and don't boot any plugins
-    var badPlugins = {
-      'arc': 'Contains hidden code to report private data to a 3rd party server: <a href="https://plus.google.com/105383756361375410867/posts/4b2EjP3Du42">details here</a>',
-    };
+  if (window.checkForBadPlugins()) return;
+  if (!window.bootPlugins) return;
 
-    // remove entries from badPlugins which are not installed
-    $.each(badPlugins, function(name,desc) {
-      if (!(window.plugin && window.plugin[name])) {
-        // not detected: delete from the list
-        delete badPlugins[name];
-      }
-    });
-
-    // if any entries remain in the list, report this to the user and don't boot ANY plugins
-    // (why not any? it's tricky to know which of the plugin boot entries were safe/unsafe)
-    if (Object.keys(badPlugins).length > 0) {
-      var warning = 'One or more known unsafe plugins were detected. For your safety, IITC has disabled all plugins.<ul>';
-      $.each(badPlugins,function(name,desc) {
-        warning += '<li><b>'+name+'</b>: '+desc+'</li>';
-      });
-      warning += '</ul><p>Please uninstall the problem plugins and reload the page. See this <a href="http://iitc.me/faq/#uninstall">FAQ entry</a> for help.</p><p><i>Note: It is tricky for IITC to safely disable just problem plugins</i></p>';
-
-      dialog({
-        title: 'Plugin Warning',
-        html: warning,
-        width: 400
-      });
-    } else {
-      // no known unsafe plugins detected - boot all plugins
-      $.each(window.bootPlugins, function(ind, ref) {
-        try {
-          ref();
-        } catch(err) {
-          console.error("error starting plugin: index "+ind+", error: "+err);
-          debugger;
-        }
-      });
+  $.each(window.bootPlugins, function(ind, ref) {
+    try {
+      ref();
+    } catch(err) {
+      console.error("error starting plugin: index "+ind+", error: "+err);
+      debugger;
     }
-  }
+  });
 }
 
+window.checkForBadPlugins = function() {
+  if (!window.plugin) return false;
+
+  let badPlugins = {
+    'arc': 'Contains hidden code to report private data to a 3rd party server: <a href="https://plus.google.com/105383756361375410867/posts/4b2EjP3Du42">details here</a>',
+  };
+
+  $.each(badPlugins, function(name,desc) {
+    if (!window.plugin[name]) {
+      delete badPlugins[name];
+    }
+  });
+
+  // if any entries remain in the list, report this to the user and don't boot ANY plugins
+  // (why not any? it's tricky to know which of the plugin boot entries were safe/unsafe)
+  if (Object.keys(badPlugins).length > 0) {
+    let warning = 'One or more known unsafe plugins were detected. For your safety, IITC has disabled all plugins.<ul>';
+    $.each(badPlugins,function(name,desc) {
+      warning += '<li><b>'+name+'</b>: '+desc+'</li>';
+    });
+    warning += '</ul><p>Please uninstall the problem plugins and reload the page. See this <a href="http://iitc.me/faq/#uninstall">FAQ entry</a> for help.</p><p><i>Note: It is tricky for IITC to safely disable just problem plugins</i></p>';
+
+    dialog({
+      title: 'Plugin Warning',
+      html: warning,
+      width: 400
+    });
+
+    return true;
+  }
+
+  return false;
+}
 
 // BOOTING ///////////////////////////////////////////////////////////
 
@@ -336,13 +340,18 @@ function boot() {
 
   window.setupPlugins();
 
+  // fixed Plugins
+  RegionScoreboard.setup();
+  Redeem.setup();
+
+
   window.setMapBaseLayer();
   window.setupLayerChooserApi();
 
   window.runOnSmartphonesAfterBoot();
 
   window.iitcLoaded = true;
-  setTimeout(function(){window.runHooks('iitcLoaded');}, 1);
+  setTimeout(function(){window.runHooks('iitcLoaded');}, 1); // delay message to give GM/TM time to load all scripts
 
 
   if (typeof android !== 'undefined' && android && android.bootFinished) {

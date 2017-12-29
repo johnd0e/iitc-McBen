@@ -213,10 +213,6 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 
 @@INJECTCODE@@
 
-  // fixed Addons
-  RegionScoreboard.setup();
-  Redeem.setup();
-
 } // end of wrapper
 
 // inject code into site context
