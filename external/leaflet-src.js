@@ -1,5 +1,5 @@
 /* @preserve
- * Leaflet 1.2.0+Detached: b1e59c92479e43363bb8a267571d0805f230bf0f.b1e59c9, a JS library for interactive maps. http://leafletjs.com
+ * Leaflet 1.3.0+Detached: 1a38558f7b22f5ffacda5f6a1b8e60d54c361873.1a38558, a JS library for interactive maps. http://leafletjs.com
  * (c) 2010-2017 Vladimir Agafonkin, (c) 2010-2011 CloudMade
  */
 
@@ -9,7 +9,7 @@
 	(factory((global.L = {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "1.2.0+HEAD.b1e59c9";
+var version = "1.3.0+HEAD.1a38558";
 
 /*
  * @namespace Util
@@ -842,7 +842,7 @@ Point.prototype = {
 		return this;
 	},
 
-	// @method ceil(): Point
+	// @method trunc(): Point
 	// Returns a copy of the current point with truncated coordinates (rounded towards zero).
 	trunc: function () {
 		return this.clone()._trunc();
@@ -1650,7 +1650,7 @@ var Earth = extend({}, CRS, {
 
 var SphericalMercator = {
 
-	R: 6367000,
+	R: 6378137,
 	MAX_LATITUDE: 85.0511287798,
 
 	project: function (latlng) {
@@ -1673,7 +1673,7 @@ var SphericalMercator = {
 	},
 
 	bounds: (function () {
-		var d = 6367000 * Math.PI;
+		var d = 6378137 * Math.PI;
 		return new Bounds([-d, -d], [d, d]);
 	})()
 };
@@ -2242,8 +2242,7 @@ function on(obj, types, fn, context) {
 var eventsKey = '_leaflet_events';
 
 // @function off(el: HTMLElement, types: String, fn: Function, context?: Object): this
-// Removes a previously added listener function. If no function is specified,
-// it will remove all the listeners of that particular DOM event from the element.
+// Removes a previously added listener function.
 // Note that if you passed a custom context to on, you must pass the same
 // context to `off` in order to remove the listener.
 
@@ -6236,7 +6235,7 @@ var LonLat = {
  */
 
 var Mercator = {
-	R: 6367000,
+	R: 6378137,
 	R_MINOR: 6356752.314245179,
 
 	bounds: new Bounds([-20037508.34279, -15496570.73972], [20037508.34279, 18764656.23138]),
@@ -6951,8 +6950,11 @@ var Icon = Class.extend({
 	 * will be aligned so that this point is at the marker's geographical location. Centered
 	 * by default if size is specified, also can be set in CSS with negative margins.
 	 *
-	 * @option popupAnchor: Point = null
+	 * @option popupAnchor: Point = [0, 0]
 	 * The coordinates of the point from which popups will "open", relative to the icon anchor.
+	 *
+	 * @option tooltipAnchor: Point = [0, 0]
+	 * The coordinates of the point from which tooltips will "open", relative to the icon anchor.
 	 *
 	 * @option shadowUrl: String = null
 	 * The URL to the icon shadow image. If not specified, no shadow image will be created.
@@ -6969,6 +6971,11 @@ var Icon = Class.extend({
 	 * @option className: String = ''
 	 * A custom class name to assign to both icon and shadow images. Empty by default.
 	 */
+
+	options: {
+		popupAnchor: [0, 0],
+		tooltipAnchor: [0, 0],
+	},
 
 	initialize: function (options) {
 		setOptions(this, options);
@@ -7454,8 +7461,9 @@ var Marker = Layer.extend({
 			if (options.title) {
 				icon.title = options.title;
 			}
-			if (options.alt) {
-				icon.alt = options.alt;
+
+			if (icon.tagName === 'IMG') {
+				icon.alt = options.alt || '';
 			}
 		}
 
@@ -7599,11 +7607,11 @@ var Marker = Layer.extend({
 	},
 
 	_getPopupAnchor: function () {
-		return this.options.icon.options.popupAnchor || [0, 0];
+		return this.options.icon.options.popupAnchor;
 	},
 
 	_getTooltipAnchor: function () {
-		return this.options.icon.options.tooltipAnchor || [0, 0];
+		return this.options.icon.options.tooltipAnchor;
 	}
 });
 
@@ -9046,9 +9054,12 @@ var ImageOverlay = Layer.extend({
 	},
 
 	_initImage: function () {
-		var img = this._image = create$1('img',
-			'leaflet-image-layer ' + (this._zoomAnimated ? 'leaflet-zoom-animated ' : '') +
-			 (this.options.className || ''));
+		var wasElementSupplied = this._url.tagName === 'IMG';
+		var img = this._image = wasElementSupplied ? this._url : create$1('img');
+
+		addClass(img, 'leaflet-image-layer');
+		if (this._zoomAnimated) { addClass(img, 'leaflet-zoom-animated'); }
+		if (this.options.className) { addClass(img, this.options.className); }
 
 		img.onselectstart = falseFn;
 		img.onmousemove = falseFn;
@@ -9064,6 +9075,11 @@ var ImageOverlay = Layer.extend({
 
 		if (this.options.zIndex) {
 			this._updateZIndex();
+		}
+
+		if (wasElementSupplied) {
+			this._url = img.src;
+			return;
 		}
 
 		img.src = this._url;
@@ -9167,7 +9183,16 @@ var VideoOverlay = ImageOverlay.extend({
 		// Fired when the video has finished loading the first frame
 		vid.onloadeddata = bind(this.fire, this, 'load');
 
-		if (wasElementSupplied) { return; }
+		if (wasElementSupplied) {
+			var sourceElements = vid.getElementsByTagName('source');
+			var sources = [];
+			for (var j = 0; j < sourceElements.length; j++) {
+				sources.push(sourceElements[j].src);
+			}
+
+			this._url = (sourceElements.length > 0) ? sources : [vid.src];
+			return;
+		}
 
 		if (!isArray(this._url)) { this._url = [this._url]; }
 
