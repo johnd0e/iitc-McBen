@@ -6,8 +6,8 @@
 // @updateURL      @@UPDATEURL@@
 // @downloadURL    @@DOWNLOADURL@@
 // @description    [@@BUILDNAME@@-@@BUILDDATE@@] Total conversion for the ingress intel map.
-// @match          *://*.ingress.com/intel
-// @match          *://*.ingress.com/mission*
+// @match          *://*.ingress.com/intel*
+// @match          *://*.ingress.com/mission/*
 // @grant unsafeWindow
 // ==/UserScript==
 
