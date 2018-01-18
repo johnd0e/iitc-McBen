@@ -9,6 +9,7 @@
 // @match          *://*.ingress.com/intel*
 // @match          *://*.ingress.com/mission/*
 // @grant unsafeWindow
+// @run-at         document-end
 // ==/UserScript==
 
 
