@@ -344,6 +344,7 @@ function boot() {
   RegionScoreboard.setup();
   Redeem.setup();
 
+  Menu.setup();
 
   window.setMapBaseLayer();
   window.setupLayerChooserApi();

@@ -1335,3 +1335,20 @@ g.checkpoint:hover circle {
 .leaflet-control-layers-list li:hover ul {
   height: 2em;
 }
+
+
+#mainmenu {
+  position: absolute;
+  top: 0px;
+  left: 100px;
+  z-index: 1001;
+  background: white;
+}
+
+#mainmenu ul {
+  list-style-type: none;
+}
+
+#mainmenu li {
+  list-style-type: none;
+}
