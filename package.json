@@ -11,16 +11,7 @@
     "map",
     "intel"
   ],
-  "author": "Stefan Breunig",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jonatkins/ingress-intel-total-conversion/issues"
-  },
-  "homepage": "https://github.com/jonatkins/ingress-intel-total-conversion#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jonatkins/ingress-intel-total-conversion.git"
-  },
   "devDependencies": {
     "babel-core": "^6.23.0",
     "babel-loader": "^6.3.0",
