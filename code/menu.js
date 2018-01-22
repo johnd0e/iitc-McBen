@@ -1,103 +1,56 @@
-Menu= (function () {
+Menu= (function () { 
+
+	function setup() {
+		let $container = $('<div id="menuContainer">')
+
+		let $button = $('<div id="menuToggle">')
+			.append($('<input type="checkbox" />'))
+			.append($('<span>'))
+			.append($('<span>'))
+			.append($('<span>'));
+
+		let $menu = $('<div id="menu">')
+
+		$menu.append(
+			'<button onclick="myFunction()" class="dropbtn">Dropdown</button>'+
+  		'<div id="myDropdown" class="dropdown-content">'+
+    	'<a href="#">Link 1</a><a href="#">Link 2</a><a href="#">Link 3</a>'+
+  		'</div>');
 
 
-  function moveFromToolBox() {
-    $('#toolbox a').each( parseToolBox );
+		$container.append($button);
+		$container.append($menu);
 
-    $('#mainmenu > ul > li:not(:has(>ul))').remove();
+		$('body').append($container);
+
+		window.setTimeout(createMenu,100)
+	}
+
+  createMenu() {
+
   }
 
-  function parseToolBox() {
-    let $link = $(this);
+  addMenu(item) {
+  	let path = item.split('/');
+  	if (path.length<1) path.splice(1,0,'misc');
 
-    let menu = {
-      name: $link.text(),
-      title:  $link.attr('title'),
-      onclick: $link.attr('onclick'),
-      key: $link.attr('accesskey'),
-    };
+  	let base = $('#menu > li#'+path[0]+' ul');
+  	if (base.length===0) {
+  		let base = $('<ul />')
+  		let submenu = $('<li id="'+path[0]+'">'+path[0]+'</li>')
+  		submenu.append(base)
+			$('#menu').append(submenu);
+  	}
 
-    addMenu(menu);
+  	for 
+		let submenu = $('<li id="'+path[0]+'">'+path[0]+'</li>')
   }
 
-  function addMenu(menu_data) {
-    let $entry = createMenuLabel(menu_data.name);
 
-    if (menu_data.onclick) {
-      let fct = menu_data.onclick;
-      if (typeof(fct)==='string') fct = new Function(fct);
-      $entry.click(fct);
-      $entry.css('cursor','pointer');
-    }
-
-    if (menu_data.title) $entry.attr('title',menu_data.title);
-  }
-
-  function createMenuLabel(name) {
-    let $root = $('#mainmenu > ul')
-
-    let names = name.split('/');
-    if (names.length===1) names.splice(0,0,'Misc');
-
-    return getOrCreateMenuLabel($root, names);
-  }
-
-  function getOrCreateMenuLabel($root, names) {
-    let $base = $root.find('> li').filter( function () {
-      return $(this).contents().not($(this).children()).text() === names[0];
-    });
-
-    if ($base.length===0)  {
-      $base = $('<li>'+names[0]+'</li>');
-      $root.append($base);
-    };
-
-    names.splice(0,1);
-
-    if (names.length===0) return $base;
-
-    let $sub =  $base.find('> ul');
-    if ($sub.length===0)  {
-      $sub = $('<ul>');
-      $base.append($sub);
-    };
-
-    return getOrCreateMenuLabel($sub, names);
-  }
-
-  function createBasicMenu() {
-    let $root = $('#mainmenu > ul')
-    getOrCreateMenuLabel($root,['View']);
-    getOrCreateMenuLabel($root,['Misc']);
-    getOrCreateMenuLabel($root,['Help']);
-
-    addMenu({name: 'Help/About IITC', onclick: window.aboutIITC });
-    addMenu({name: 'View/Zoom Control', onclick: toggleZoomControl});
-    addMenu({name: 'View/Toolbox', onclick: toggleToolbox});
-  }
-
-  function toggleZoomControl() {
-    $(".leaflet-control-zoom").toggle();
-  }
-
-  function toggleToolbox() {
-    $("#toolbox").toggle();
-  }
-
-  function setup() {
-
-    let menu = $('<div id="mainmenu"><ul id="mainmenutop"></ul></div>')
-    $( document.body ).append(menu);
-
-    createBasicMenu();
-
-    window.setTimeout(Menu.moveFromToolBox,100);
-  }
 
   return {
-    setup : setup,
-    addMenu: addMenu,
-    moveFromToolBox: moveFromToolBox
+		setup: setup,
+		addMenu: addMenu,
   };
 
 }());
