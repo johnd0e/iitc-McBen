@@ -61,7 +61,8 @@ window.aboutIITC = function() {
   dialog({
     title: 'IITC ' + v,
     html: a,
-    dialogClass: 'ui-dialog-aboutIITC'
+    dialogClass: 'ui-dialog-aboutIITC',
+    id: 'aboutIITC'
   });
 }
 
