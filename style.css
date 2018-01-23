@@ -1347,8 +1347,28 @@ g.checkpoint:hover circle {
 
 #mainmenu ul {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 #mainmenu li {
   list-style-type: none;
+  padding: 12px;
+}
+
+#mainmenutop > li {
+  float: left;
+  border-left: 1px solid;
+}
+
+#mainmenutop > li > ul{
+  display: none;
+}
+
+#mainmenutop > li:hover > ul{
+  display: block;
+}
+
+#mainmenutop > li:last {
+  border-right: 2px solid #888;
 }
