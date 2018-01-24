@@ -8,6 +8,7 @@ window._highlighters = null;
 window._current_highlighter = localStorage.portal_highlighter;
 
 window._no_highlighter = 'No Highlights';
+window._menu_path = 'View/Highlight'
 
 
 window.addPortalHighlighter = function(name, data) {
@@ -33,7 +34,7 @@ window.addPortalHighlighter = function(name, data) {
     if (typeof android !== 'undefined' && android && android.setActiveHighlighter)
       android.setActiveHighlighter(name);
 
-    // call the setSelected callback 
+    // call the setSelected callback
     if (_highlighters[_current_highlighter].setSelected) {
       _highlighters[_current_highlighter].setSelected(true);
     }
@@ -50,21 +51,22 @@ window.updatePortalHighlighterControl = function() {
   }
 
   if(_highlighters !== null) {
-    if($('#portal_highlight_select').length === 0) {
-      $("body").append("<select id='portal_highlight_select'></select>");
-      $("#portal_highlight_select").change(function(){ changePortalHighlights($(this).val());});
-      $(".leaflet-top.leaflet-left").css('padding-top', '20px');
-      $(".leaflet-control-scale-line").css('margin-top','25px');
-    }
-    $("#portal_highlight_select").html('');
-    $("#portal_highlight_select").append($("<option>").attr('value',_no_highlighter).text(_no_highlighter));
-    var h_names = Object.keys(_highlighters).sort();
-    
-    $.each(h_names, function(i, name) {  
-      $("#portal_highlight_select").append($("<option>").attr('value',name).text(name));
+    Menu.removeMenu(window._menu_path);
+
+    Menu.addMenu( {
+      name: window._menu_path+'/'+window._no_highlighter,
+      onclick: function() { changePortalHighlights();},
+      isToggle: true,
     });
 
-    $("#portal_highlight_select").val(_current_highlighter);
+    let h_names = Object.keys(_highlighters).sort();
+    $.each(h_names, function(i, name) {
+      Menu.addMenu( {
+        name: window._menu_path+'/'+name,
+        onclick: function() { changePortalHighlights(name);},
+        isToggle: true,
+      });
+    });
   }
 }
 
@@ -75,13 +77,27 @@ window.changePortalHighlights = function(name) {
     _highlighters[_current_highlighter].setSelected(false);
   }
 
+  if (_current_highlighter && _highlighters[_current_highlighter]) {
+    Menu.setChecked(window._menu_path+'/'+_current_highlighter, false);
+  }
+
   _current_highlighter = name;
   if (typeof android !== 'undefined' && android && android.setActiveHighlighter)
     android.setActiveHighlighter(name);
 
   // now call the setSelected callback for the new highlighter
-  if (_current_highlighter && _highlighters[_current_highlighter] && _highlighters[_current_highlighter].setSelected) {
-    _highlighters[_current_highlighter].setSelected(true);
+  if (name && _highlighters[name] && _highlighters[name].setSelected) {
+    _highlighters[name].setSelected(true);
+  }
+
+
+
+  if (name && _highlighters[name]) {
+    Menu.setChecked(window._menu_path+'/'+name, true);
+    Menu.setChecked(window._menu_path+'/'+window._no_highlighter, false);
+  }
+  else {
+    Menu.setChecked(window._menu_path+'/'+window._no_highlighter, true);
   }
 
   resetHighlightedPortals();
@@ -89,7 +105,7 @@ window.changePortalHighlights = function(name) {
 }
 
 window.highlightPortal = function(p) {
-  
+
   if(_highlighters !== null && _highlighters[_current_highlighter] !== undefined) {
     _highlighters[_current_highlighter].highlight({portal: p});
   }
