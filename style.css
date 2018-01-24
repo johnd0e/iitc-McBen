@@ -1336,6 +1336,7 @@ g.checkpoint:hover circle {
   height: 2em;
 }
 
+/* ---------------------------------- */
 
 #mainmenu {
   position: absolute;
@@ -1343,32 +1344,77 @@ g.checkpoint:hover circle {
   left: 100px;
   z-index: 1001;
   background: white;
+  display: block;
+  margin: 0;
+  padding: 0;
+
+  border: 1px solid;
+  border-radius: 2px;
+  border-color: #080808;
 }
 
 #mainmenu ul {
-  list-style-type: none;
+  list-style: inside none;
   margin: 0;
   padding: 0;
 }
 
 #mainmenu li {
-  list-style-type: none;
+  list-style: inside none;
   padding: 12px;
+  cursor: pointer;
 }
 
-#mainmenutop > li {
+#mainmenu > ul > li {
+  list-style: inside none;
   float: left;
-  border-left: 1px solid;
+  display: inline-block;
+  position: relative;
+  border-right: 1px solid #080808;
 }
 
-#mainmenutop > li > ul{
+#mainmenu > ul > li:first {
+  border-radius: 2px 0 0 2px;
+}
+
+
+#mainmenu ul li > ul{
   display: none;
+  width: 200px;
+  position: absolute;
+  top: 38px;
+  border-radius: 0 0 5px 5px;
+  padding: 6px 0;
+  background: #fff;
 }
 
-#mainmenutop > li:hover > ul{
+#mainmenu ul li > ul li {
+  position: relative;
+  padding: 4px;
+}
+
+#mainmenu ul ul ul {
+  position: absolute;
+  top: 24px;
+}
+
+#mainmenu li:hover {
+  background: #eee;
+}
+
+#mainmenu ul li:hover > ul{
   display: block;
 }
 
-#mainmenutop > li:last {
-  border-right: 2px solid #888;
+#mainmenu i.checker {
+  width: 1.2em;
 }
+
+#mainmenu i.checker:before {
+  content: '';
+}
+
+#mainmenu i.checker.checked:before {
+  content: '✔';
+}
+
