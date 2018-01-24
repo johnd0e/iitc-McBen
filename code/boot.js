@@ -340,10 +340,9 @@ function boot() {
 
   window.setupPlugins();
 
-  // fixed Plugins
+  // static Plugins
   RegionScoreboard.setup();
   Redeem.setup();
-
   Menu.setup();
 
   window.setMapBaseLayer();

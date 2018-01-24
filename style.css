@@ -1406,6 +1406,10 @@ g.checkpoint:hover circle {
   display: block;
 }
 
+#mainmenu li.disabled {
+  color: #666;
+}
+
 #mainmenu i.checker {
   width: 1.2em;
 }

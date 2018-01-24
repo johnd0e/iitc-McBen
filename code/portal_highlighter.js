@@ -43,7 +43,7 @@ window.addPortalHighlighter = function(name, data) {
   updatePortalHighlighterControl();
 }
 
-// (re)creates the highlighter dropdown list
+
 window.updatePortalHighlighterControl = function() {
   if (typeof android !== 'undefined' && android && android.addPortalHighlighter) {
     $('#portal_highlight_select').remove();
@@ -53,10 +53,13 @@ window.updatePortalHighlighterControl = function() {
   if(_highlighters !== null) {
     Menu.removeMenu(window._menu_path);
 
+    let some_active = (_current_highlighter && _highlighters[_current_highlighter]);
+
     Menu.addMenu( {
       name: window._menu_path+'/'+window._no_highlighter,
       onclick: function() { changePortalHighlights();},
       isToggle: true,
+      default_checked: (!some_active)
     });
 
     let h_names = Object.keys(_highlighters).sort();
@@ -65,10 +68,12 @@ window.updatePortalHighlighterControl = function() {
         name: window._menu_path+'/'+name,
         onclick: function() { changePortalHighlights(name);},
         isToggle: true,
+        default_checked: (_current_highlighter===name)
       });
     });
   }
 }
+
 
 window.changePortalHighlights = function(name) {
 
@@ -104,12 +109,14 @@ window.changePortalHighlights = function(name) {
   localStorage.portal_highlighter = name;
 }
 
+
 window.highlightPortal = function(p) {
 
   if(_highlighters !== null && _highlighters[_current_highlighter] !== undefined) {
     _highlighters[_current_highlighter].highlight({portal: p});
   }
 }
+
 
 window.resetHighlightedPortals = function() {
   $.each(portals, function(guid, portal) {

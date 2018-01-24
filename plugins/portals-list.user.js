@@ -398,7 +398,12 @@ var setup =  function() {
     android.addPane("plugin-portalslist", "Portals list", "ic_action_paste");
     addHook("paneChanged", window.plugin.portalslist.onPaneChanged);
   } else {
-    $('#toolbox').append('<a onclick="window.plugin.portalslist.displayPL()" title="Display a list of portals in the current view [t]" accesskey="t">Portals list</a>');
+    Menu.addMenu( {
+      name: 'Info/Portals list',
+      onclick: window.plugin.portalslist.displayPL,
+      tooltip: "Display a list of portals in the current view [t]",
+      key: 't'
+    })
   }
 
   $("<style>")

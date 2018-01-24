@@ -430,36 +430,19 @@ window.plugin.uniques.showAllHiddenPortals = function() {
   })
 }
 
-window.plugin.uniques.visitedButtonText = function() {
-  var buttonText;
-  if(window.plugin.uniques.hideVisitedPortals)
-    buttonText = "Show";
-  else
-    buttonText = "Hide";
-  return buttonText + " Visited Portals";
-}
-
-window.plugin.uniques.capturedButtonText = function() {
-  var buttonText;
-  if(window.plugin.uniques.hideCapturedPortals)
-    buttonText = "Show";
-  else
-    buttonText = "Hide";
-  return buttonText + " Captured Portals";
-}
 
 window.plugin.uniques.hideVisited = function() {
   if(window.plugin.uniques.isHighlightActive) {
     if (window.plugin.uniques.hideVisitedPortals) {
       window.plugin.uniques.hideVisitedPortals = false;
-      $('#hide-captured').removeClass('disabled');
     }
     else {
       window.plugin.uniques.hideVisitedPortals = true;
-      $('#hide-captured').addClass('disabled');
     }
     window.plugin.uniques.removeHiddenPortals();
-    $('#hide-visited').text(window.plugin.uniques.visitedButtonText());
+
+    Menu.setChecked('View/Uniques/Show Visited Portals',!window.plugin.uniques.hideVisitedPortals);
+    Menu.setDisable('View/Uniques/Show Captured Portals',window.plugin.uniques.hideVisitedPortals);
   }
 }
 
@@ -472,7 +455,8 @@ window.plugin.uniques.hideCaptured = function() {
       window.plugin.uniques.hideCapturedPortals = true;
     }
     window.plugin.uniques.removeHiddenPortals();
-    $('#hide-captured').text(window.plugin.uniques.capturedButtonText());
+
+    Menu.setChecked('View/Uniques/Show Captured Portals',!window.plugin.uniques.hideCapturedPortals);
   }
 }
 
@@ -535,7 +519,19 @@ window.plugin.uniques.setupCSS = function() {
 }
 
 window.plugin.uniques.setupToolbox = function() {
-  $('#toolbox').append('<a onclick="window.plugin.uniques.manualOpt();return false;" accesskey="u" title="[u]">Uniques Opt</a>');
+  Menu.addMenu({
+    name: 'View/Uniques/Show Visited Portals',
+    isToggle: true,
+    onclick: window.plugin.uniques.hideVisited,
+    default_checked: true
+  });
+
+  Menu.addMenu({
+    name: 'View/Uniques/Show Captured Portals',
+    isToggle: true,
+    onclick: window.plugin.uniques.hideCaptured,
+    default_checked: true
+  });
 }
 
 window.plugin.uniques.setupContent = function() {
@@ -623,20 +619,6 @@ window.plugin.uniques.setupPortalsList = function() {
 	});
 }
 
-window.plugin.uniques.manualOpt = function() {
-  var html = '<div class="uniqueOptions">'
-           + '<a onclick="window.plugin.uniques.hideVisited();" id="hide-visited" tabindex="0">' + window.plugin.uniques.visitedButtonText() + '</a>'
-           + '<a onclick="window.plugin.uniques.hideCaptured();return false;" id="hide-captured" tabindex="0" class="' + (window.plugin.uniques.hideVisitedPortals ? 'disabled' : '') + '">'
-          + window.plugin.uniques.capturedButtonText() + '</a>'
-           + '</div>';
-
-  dialog({
-    html: html,
-    id: 'plugin-unique-options',
-    dialogClass: 'ui-dialog-uniqueOptions',
-    title: 'Unique Portal Options'
-  });
-}
 
 window.plugin.uniques.onMissionChanged = function(data) {
 	if(!data.local) return;

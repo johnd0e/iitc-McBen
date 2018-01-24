@@ -27,8 +27,11 @@ window.artifact.setup = function() {
   artifact._layer = new L.LayerGroup();
   addLayerGroup ('Artifacts', artifact._layer, true);
 
-  $('#toolbox').append(' <a onclick="window.artifact.showArtifactList()" title="Show artifact portal list">Artifacts</a>');
-
+  Menu.addMenu({
+    name: 'Info/Artifacts',
+    tooltip: "Show artifact portal list",
+    onclick: window.artifact.showArtifactList
+  })
 }
 
 window.artifact.requestData = function() {
@@ -43,7 +46,7 @@ window.artifact.idleResume = function() {
   if (artifact.idle) {
     artifact.idle = false;
     artifact.requestData();
-  } 
+  }
 }
 
 window.artifact.handleSuccess = function(data) {
@@ -96,7 +99,7 @@ window.artifact.processResult = function (portals) {
   for (var guid in portals) {
     var ent = portals[guid];
     var data = decodeArray.portalSummary(ent);
-    
+
     if (!data.artifactBrief) {
       // 2/12/2017 - Shard removed from a portal leaves it in artifact results but has no artifactBrief
       continue;

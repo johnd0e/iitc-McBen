@@ -28,7 +28,7 @@ Redeem= (function () {
 
   function showDialog() {
 
-    let html = 
+    let html =
       '<input id="redeem" placeholder="Redeem code…" type="text" onClick="this.setSelectionRange(0, this.value.length)"/>'+
       '<button id="redeembtm" type="button" class="ui-button ui-corner-all ui-widget">OK</button>'+
       '<div id="result"></div>';
@@ -38,7 +38,7 @@ Redeem= (function () {
       title: 'Redeem Passcode',
       id: 'RedeemDialog',
       html: html,
-      buttons: { 'close': closeDialog, 
+      buttons: { 'close': closeDialog,
                  'format': { id: 'format', class: 'left', click: changeFormat },
                  'copy': { text: 'copy', class: 'left', click: copyText }
                },
@@ -82,7 +82,7 @@ Redeem= (function () {
   function onKeypressed(e) {
     if((e.keyCode ? e.keyCode : e.which) !== 13) return;
     var passcode = $(this).val();
-    passcode = passcode.replace(/[^\x20-\x7E]+/g, ''); 
+    passcode = passcode.replace(/[^\x20-\x7E]+/g, '');
     if(!passcode) return;
 
     redeemCode(passcode)
@@ -92,21 +92,6 @@ Redeem= (function () {
   function redeemCode(passcode) {
     requested_code = passcode;
     disableInput();
-
-    // DEBUG-Code:
-      // window.setTimeout(function() {handleRedeemError( {status: 501} ) }, 1000);
-      /*var data = 
-      { rewards: {
-          other: [ "bli bla blub","super item"],
-          xm: 1000,
-          ap: 500,
-          inventory: [ {name:"xmp burster", awards: [{count: 10, level: 5}, {count: 11, level: 6}] },
-            {name:"resonator", awards: [{count: 10, level: 8}, {count: 11, level: 7}] }  ]
-        }
-      };
-      window.setTimeout(function() {handleRedeemResponse(data);},2000);
-      return;
-    */
 
     window.postAjax('redeemReward', {passcode:passcode}, handleRedeemResponse, handleRedeemError );
   }
@@ -127,7 +112,7 @@ Redeem= (function () {
     if (data.playerData) {
       window.PLAYER = data.playerData;
       window.setupPlayerStat();
-    }    
+    }
 
     requested_code=undefined;;
     request_result = data.rewards;
@@ -188,7 +173,7 @@ Redeem= (function () {
     return html;
   }
 
-  window.formatPasscodeShort = function(data) {
+  function formatPasscodeShort(data) {
 
     let awards = [];
     if(data.other) {
@@ -217,7 +202,7 @@ Redeem= (function () {
               str += shortName;
             }
           } else {
-            
+
             if(level>0) {
               str += '<span class="itemlevel" style="color:' + COLORS_LVL[level] + '">L' + level + '</span> ';
             }
@@ -236,7 +221,7 @@ Redeem= (function () {
   function copyText() {
     let text = $('#dialog-RedeemDialog .redeemReward').html();
     if (!text) return;
-    let input = document.createElement('textarea'); 
+    let input = document.createElement('textarea');
     document.body.append(input);
     text = text.replace(/<\/li>/g,'\n')
     text = text.replace(/&nbsp;/g,' ')
@@ -258,7 +243,12 @@ Redeem= (function () {
 
 
   function setup() {
-    $('#toolbox').append('<a onclick="window.Redeem.showDialog()" title="Redeem Passcodes">Passcode</a>')
+
+    Menu.addMenu({
+      name: 'Action/Passcode',
+      tooltip: 'Redeem Passcodes',
+      onclick: showDialog
+    })
   }
 
 

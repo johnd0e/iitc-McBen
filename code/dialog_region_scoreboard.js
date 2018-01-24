@@ -411,7 +411,11 @@ RegionScoreboard = (function () {
   }
 
   function setup() {
-    $('#toolbox').append('<a onclick="window.RegionScoreboard.showDialog()" title="View regional scoreboard">Region scores</a>')
+    Menu.addMenu({
+      name: 'Info/Region scores',
+      tooltip: 'View regional scoreboard',
+      onclick: window.RegionScoreboard.showDialog
+    })
   }
 
   return {
@@ -597,9 +601,9 @@ RegionScoreboard.HistoryChart = (function () {
   }
 
   function formatNumber(num) {
-    return (num>=1000000000 ? (num/1000000000).toFixed()+'B' : 
-            num>=1000000 ? (num/1000000).toFixed()+'M' : 
-            num>=1000 ? (num/1000).toFixed()+'k' : 
+    return (num>=1000000000 ? (num/1000000000).toFixed()+'B' :
+            num>=1000000 ? (num/1000000).toFixed()+'M' :
+            num>=1000 ? (num/1000).toFixed()+'k' :
             num);
   }
 
@@ -610,4 +614,4 @@ RegionScoreboard.HistoryChart = (function () {
 }());
 
 
- 
+

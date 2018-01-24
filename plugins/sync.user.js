@@ -24,12 +24,12 @@
 
 ////////////////////////////////////////////////////////////////////////
 // Notice for developers:
-// 
-// You should treat the data stored on Google Realtime API as volatile. 
-// Because if there are change in Google API client ID, Google will 
-// treat it as another application and could not access the data created 
-// by old client ID. Store any important data locally and only use this 
-// plugin as syncing function. 
+//
+// You should treat the data stored on Google Realtime API as volatile.
+// Because if there are change in Google API client ID, Google will
+// treat it as another application and could not access the data created
+// by old client ID. Store any important data locally and only use this
+// plugin as syncing function.
 //
 // Google Realtime API reference
 // https://developers.google.com/drive/realtime/application
@@ -128,7 +128,7 @@ window.plugin.sync.RegisteredMap.prototype.updateMap = function(keyArray) {
     if (this.lastUpdateUUID.length > 0)
       this.lastUpdateUUID.removeRange(0, this.lastUpdateUUID.length);
     this.lastUpdateUUID.setText(this.uuid);
-  
+
     $.each(keyArray, function(ind, key) {
       var value = window.plugin[_this.pluginName][_this.fieldName][key];
       if(typeof(value) !== 'undefined') {
@@ -253,7 +253,7 @@ window.plugin.sync.RegisteredMap.prototype.loadRealtimeDocument = function(callb
     } else if(e.type === gapi.drive.realtime.ErrorType.NOT_FOUND) {
       _this.forceFileSearch = true;
     } else if(e.type === gapi.drive.realtime.ErrorType.CLIENT_ERROR) {
-      // Workaround: if Realtime API open a second document and the file do not exist, 
+      // Workaround: if Realtime API open a second document and the file do not exist,
       // it will rasie 'CLIENT_ERROR' instead of 'NOT_FOUND'. So we do a force file search here.
       _this.forceFileSearch = true;
     } else {
@@ -669,7 +669,7 @@ window.plugin.sync.storeLocal = function(mapping) {
 window.plugin.sync.loadLocal = function(mapping) {
   var objectJSON = localStorage[mapping.key];
   if(!objectJSON) return;
-  plugin.sync[mapping.field] = mapping.convertFunc 
+  plugin.sync[mapping.field] = mapping.convertFunc
                           ? mapping.convertFunc(JSON.parse(objectJSON))
                           : JSON.parse(objectJSON);
 }
@@ -719,7 +719,12 @@ window.plugin.sync.setupDialog = function() {
                          + 'disabled="disabled">Authorize</button>'
                          + '<div id="sync-log"></div>'
                          + '</div>';
-  $('#toolbox').append('<a id="sync-show-dialog" onclick="window.plugin.sync.showDialog();">Sync</a> ');
+
+  Menu.addMenu({
+    name: 'Help/Sync',
+    onclick: window.plugin.sync.showDialog,
+    id: 'sync-show-dialog'
+  })
 }
 
 window.plugin.sync.setupCSS = function() {
