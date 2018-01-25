@@ -9867,12 +9867,12 @@ Layer.include({
 
 	// @method togglePopup(): this
 	// Opens or closes the popup bound to this layer depending on its current state.
-	togglePopup: function (target) {
+	togglePopup: function () {
 		if (this._popup) {
 			if (this._popup._map) {
 				this.closePopup();
 			} else {
-				this.openPopup(target);
+				this.openPopup();
 			}
 		}
 		return this;
