@@ -76,33 +76,34 @@ window.plugin.crossLinks.greatCircleArcIntersect = function (a0,a1,b0,b1) {
   return false;
 };
 
-var d2r = Math.PI / 180;
+const d2r = Math.PI / 180;
 
-var toCartesian= function(lat,lng) {
+let toCartesian= function(lat,lng) {
   lat *=d2r;
   lng *=d2r;
   var o = Math.cos(lat);
   return [o * Math.cos(lng), o * Math.sin(lng), Math.sin(lat)]
 }
 
-var cross= function (t, n) {
+let cross= function (t, n) {
   return [t[1] * n[2] - t[2] * n[1], t[2] * n[0] - t[0] * n[2], t[0] * n[1] - t[1] * n[0]]
 }
 
-var normalize = function (t) {
+let normalize = function (t) {
   var n = 1/Math.sqrt(t[0] * t[0] + t[1] * t[1] + t[2] * t[2]);
   t[0] *= n, t[1] *= n, t[2] *= n
 }
 
-var dot = function(t, n) {
+let dot = function(t, n) {
   return t[0] * n[0] + t[1] * n[1] + t[2] * n[2]
 }
+//////////////////////////////////////////////////////////
 
 
 window.plugin.crossLinks.testPolyLine = function (polyline, link,closed) {
 
-    var a = link.getLatLngs();
-    var b = polyline.getLatLngs();
+    let a = link.getLatLngs();
+    let b = polyline.getLatLngs();
 
     for (var i=0;i<b.length-1;++i) {
       if (window.plugin.crossLinks.greatCircleArcIntersect(a[0],a[1],b[i],b[i+1])) return true;
