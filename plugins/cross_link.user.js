@@ -81,8 +81,8 @@ var d2r = Math.PI / 180;
 var toCartesian= function(lat,lng) {
   lat *=d2r;
   lng *=d2r;
-  var o = Math.cos(lng);
-  return [o * Math.cos(lat), o * Math.sin(lat), Math.sin(lng)]
+  var o = Math.cos(lat);
+  return [o * Math.cos(lng), o * Math.sin(lng), Math.sin(lat)]
 }
 
 var cross= function (t, n) {
