@@ -6,15 +6,9 @@
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
 // @updateURL      @@UPDATEURL@@
 // @downloadURL    @@DOWNLOADURL@@
-// @description    [@@BUILDNAME@@-@@BUILDDATE@@] EXPERIMENTAL: Checks for existing links that cross planned links. Requires draw-tools plugin.
-// @include        https://*.ingress.com/intel*
-// @include        http://*.ingress.com/intel*
-// @match          https://*.ingress.com/intel*
-// @match          http://*.ingress.com/intel*
-// @include        https://*.ingress.com/mission/*
-// @include        http://*.ingress.com/mission/*
-// @match          https://*.ingress.com/mission/*
-// @match          http://*.ingress.com/mission/*
+// @description    [@@BUILDNAME@@-@@BUILDDATE@@] Checks for existing links that cross planned links. Requires draw-tools plugin.
+// @match          *://*.ingress.com/intel*
+// @match          *://*.ingress.com/mission/*
 // @grant          none
 // ==/UserScript==
 
@@ -26,7 +20,7 @@
 window.plugin.crossLinks = function() {};
 
 
-window.plugin.crossLinks.greatCircleArcIntersect = function(a0,a1,b0,b1) {
+window.plugin.crossLinks.greatCircleArcIntersect_OLD = function(a0,a1,b0,b1) {
   // based on the formula at http://williams.best.vwh.net/avform.htm#Int
 
   // method:
@@ -153,21 +147,116 @@ window.plugin.crossLinks.greatCircleArcIntersect = function(a0,a1,b0,b1) {
 }
 
 
+//////////////////////////////////////////////////////////
+window.plugin.crossLinks.greatCircleArcIntersect = function (a0,a1,b0,b1) {
+
+  // zero length line tests
+  if (a0.equals(a1)) return false;
+  if (b0.equals(b1)) return false;
+
+  // lines have a common point
+  if (a0.equals(b0) || a0.equals(b1)) return false;
+  if (a1.equals(b0) || a1.equals(b1)) return false;
+
+  // check for 'horizontal' overlap in lngitude
+  if (Math.min(a0.lng,a1.lng) > Math.max(b0.lng,b1.lng)) return false;
+  if (Math.max(a0.lng,a1.lng) < Math.min(b0.lng,b1.lng)) return false;
+
+  // convert to 3d
+  var ca0 = toCartesian(a0.lat, a0.lng),
+      ca1 = toCartesian(a1.lat, a1.lng),
+      cb0 = toCartesian(b0.lat, b0.lng),
+      cb1 = toCartesian(b1.lat, b1.lng);
+
+  // plane normales
+  var da = cross(ca0, ca1); 
+  var db = cross(cb0, cb1); 
+  var da0 = cross(da, ca0); 
+  var da1 = cross(da, ca1); 
+  var db0 = cross(db, cb0);
+  var db1 = cross(db, cb1);
+
+  // the intersection line <=> collision point
+  var p = cross(da, db); 
+  normalize(p);
+
+  // angels to positions
+  var s = dot(p, da0);
+  var d = dot(p, da1);
+  var l = dot(p, db0);
+  var f = dot(p, db1);
+
+  if (s > 0 && d < 0 && l > 0 && f < 0) {
+    return true;
+  }
+
+  if (s < 0 && d > 0 && l < 0 && f > 0) {
+    // p inverted
+    return true;
+  }
+
+  return false;
+};
+
+const d2r = Math.PI / 180;
+
+let toCartesian= function(lat,lng) {
+  lat *=d2r;
+  lng *=d2r;
+  var o = Math.cos(lat);
+  return [o * Math.cos(lng), o * Math.sin(lng), Math.sin(lat)]
+}
+
+let cross= function (t, n) {
+  return [t[1] * n[2] - t[2] * n[1], t[2] * n[0] - t[0] * n[2], t[0] * n[1] - t[1] * n[0]]
+}
+
+let normalize = function (t) {
+  var n = 1/Math.sqrt(t[0] * t[0] + t[1] * t[1] + t[2] * t[2]);
+  t[0] *= n, t[1] *= n, t[2] *= n
+}
+
+let dot = function(t, n) {
+  return t[0] * n[0] + t[1] * n[1] + t[2] * n[2]
+}
+//////////////////////////////////////////////////////////
+
+var total0=0;
+var total1=0;
+
 
 window.plugin.crossLinks.testPolyLine = function (polyline, link,closed) {
 
-    var a = link.getLatLngs();
-    var b = polyline.getLatLngs();
+  let a = link.getLatLngs();
+  let b = polyline.getLatLngs();
 
-    for (var i=0;i<b.length-1;++i) {
-        if (window.plugin.crossLinks.greatCircleArcIntersect(a[0],a[1],b[i],b[i+1])) return true;
-    }
 
-    if (closed) {
-        if (window.plugin.crossLinks.greatCircleArcIntersect(a[0],a[1],b[b.length-1],b[0])) return true;
-    }
+  for (let i=0;i<b.length-1;++i) {
+    let t0 = performance.now();
+    let c_old = window.plugin.crossLinks.greatCircleArcIntersect_OLD(a[0],a[1],b[i],b[i+1]);
+    let t1 = performance.now();
 
-    return false;
+    let c_new = window.plugin.crossLinks.greatCircleArcIntersect(a[0],a[1],b[i],b[i+1]);
+    let t2 = performance.now();
+
+    total0 += (t1-t0);
+    total1 += (t2-t1);
+
+    if (c_old !== c_new) alert("crosslink error");
+    console.assert(c_old === c_new);
+    if (c_new) return true;
+  }
+
+  if (closed) {
+    let c_old = window.plugin.crossLinks.greatCircleArcIntersect_OLD(a[0],a[1],b[b.length-1],b[0]);
+    let c_new = window.plugin.crossLinks.greatCircleArcIntersect(a[0],a[1],b[b.length-1],b[0]);
+    
+    if (c_old !== c_new) alert("crosslink error");
+    console.assert(c_old === c_new);
+    if (c_new) return true;
+  }
+
+  return false;
 }
 
 window.plugin.crossLinks.onLinkAdded = function (data) {
@@ -179,13 +268,20 @@ window.plugin.crossLinks.onLinkAdded = function (data) {
 window.plugin.crossLinks.checkAllLinks = function() {
     if (window.plugin.crossLinks.disabled) return;
 
-    console.debug("Cross-Links: checking all links");
+
+    console.log("Cross-Links: checking all links");
+    console.log(performance.now());
+    
     plugin.crossLinks.linkLayer.clearLayers();
     plugin.crossLinks.linkLayerGuids = {};
 
     $.each(window.links, function(guid, link) {
         plugin.crossLinks.testLink(link);
     });
+
+    console.log(performance.now());
+    console.log("Total-Time_old: "+ total0);
+    console.log("Total-Time_new: "+ total1);
 }
 
 window.plugin.crossLinks.testLink = function (link) {
@@ -255,7 +351,6 @@ window.plugin.crossLinks.testForDeletedLinks = function () {
     window.plugin.crossLinks.linkLayer.eachLayer( function(layer) {
         var guid = layer.options.guid;
         if (!window.links[guid]) {
-            console.log("link removed");
             plugin.crossLinks.linkLayer.removeLayer(layer);
             delete plugin.crossLinks.linkLayerGuids[guid];
         }
