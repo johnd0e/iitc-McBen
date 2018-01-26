@@ -8,7 +8,7 @@ window._highlighters = null;
 window._current_highlighter = localStorage.portal_highlighter;
 
 window._no_highlighter = 'No Highlights';
-window._menu_path = 'View/Highlight'
+window._menu_path = 'View/Highlight';
 
 
 window.addPortalHighlighter = function(name, data) {
@@ -18,7 +18,7 @@ window.addPortalHighlighter = function(name, data) {
 
   // old-format highlighters just passed a callback function. this is the same as just a highlight method
   if (!data.highlight) {
-    data = {highlight: data}
+    data = {highlight: data};
   }
 
   _highlighters[name] = data;
@@ -30,7 +30,7 @@ window.addPortalHighlighter = function(name, data) {
     _current_highlighter = name;
   }
 
-  if (_current_highlighter == name) {
+  if (_current_highlighter === name) {
     if (typeof android !== 'undefined' && android && android.setActiveHighlighter)
       android.setActiveHighlighter(name);
 
@@ -41,7 +41,7 @@ window.addPortalHighlighter = function(name, data) {
 
   }
   updatePortalHighlighterControl();
-}
+};
 
 
 window.updatePortalHighlighterControl = function() {
@@ -72,7 +72,7 @@ window.updatePortalHighlighterControl = function() {
       });
     });
   }
-}
+};
 
 
 window.changePortalHighlights = function(name) {
@@ -107,7 +107,7 @@ window.changePortalHighlights = function(name) {
 
   resetHighlightedPortals();
   localStorage.portal_highlighter = name;
-}
+};
 
 
 window.highlightPortal = function(p) {
@@ -115,11 +115,11 @@ window.highlightPortal = function(p) {
   if(_highlighters !== null && _highlighters[_current_highlighter] !== undefined) {
     _highlighters[_current_highlighter].highlight({portal: p});
   }
-}
+};
 
 
 window.resetHighlightedPortals = function() {
   $.each(portals, function(guid, portal) {
     setMarkerStyle(portal, guid === selectedPortal);
   });
-}
+};

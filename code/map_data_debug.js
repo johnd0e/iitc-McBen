@@ -7,33 +7,33 @@ window.RenderDebugTiles = function() {
   this.FADE_TIME = 2.0;
 
   this.debugTileLayer = L.layerGroup();
-  window.addLayerGroup("DEBUG Data Tiles", this.debugTileLayer, false);
+  window.addLayerGroup('DEBUG Data Tiles', this.debugTileLayer, false);
 
   this.debugTileToRectangle = {};
   this.debugTileClearTimes = {};
   this.timer = undefined;
-}
+};
 
 window.RenderDebugTiles.prototype.reset = function() {
   this.debugTileLayer.clearLayers();
   this.debugTileToRectangle = {};
   this.debugTileClearTimes = {};
-}
+};
 
 window.RenderDebugTiles.prototype.create = function(id,bounds) {
   var s = {color: '#666', weight: 2, opacity: 0.4, fillColor: '#666', fillOpacity: 0.1, interactive: false};
 
-  var bounds = new L.LatLngBounds(bounds);
-  bounds = bounds.pad(-0.02);
+  let newbounds = new L.LatLngBounds(bounds);
+  newbounds = newbounds.pad(-0.02);
 
-  var l = L.rectangle(bounds,s);
+  var l = L.rectangle(newbounds,s);
   this.debugTileToRectangle[id] = l;
   this.debugTileLayer.addLayer(l);
   if (map.hasLayer(this.debugTileLayer)) {
     // only bring to back if we have the debug layer turned on
     l.bringToBack();
   }
-}
+};
 
 window.RenderDebugTiles.prototype.setColour = function(id,bordercol,fillcol) {
   var l = this.debugTileToRectangle[id];
@@ -41,7 +41,7 @@ window.RenderDebugTiles.prototype.setColour = function(id,bordercol,fillcol) {
     var s = {color: bordercol, fillColor: fillcol};
     l.setStyle(s);
   }
-}
+};
 
 window.RenderDebugTiles.prototype.setState = function(id,state) {
   var col = '#f0f';
@@ -68,7 +68,7 @@ window.RenderDebugTiles.prototype.setState = function(id,state) {
       this.startTimer(clearDelay*1000);
     }
   }
-}
+};
 
 
 window.RenderDebugTiles.prototype.startTimer = function(waitTime) {
@@ -79,7 +79,7 @@ window.RenderDebugTiles.prototype.startTimer = function(waitTime) {
       _this.timer = setTimeout ( function() { _this.timer = undefined; _this.runClearPass(); }, waitTime );
     }, 0);
   }
-}
+};
 
 window.RenderDebugTiles.prototype.runClearPass = function() {
 
@@ -101,4 +101,4 @@ window.RenderDebugTiles.prototype.runClearPass = function() {
   if (Object.keys(this.debugTileClearTimes).length > 0) {
     this.startTimer(this.CLEAR_CHECK_TIME*1000);
   }
-}
+};

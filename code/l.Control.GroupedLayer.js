@@ -76,8 +76,8 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   _initLayout: function () {
-    var className = 'leaflet-control-layers',
-        container = this._container = L.DomUtil.create('div', className);
+    let className = 'leaflet-control-layers';
+    let container = this._container = L.DomUtil.create('div', className);
 
     //Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
     container.setAttribute('aria-haspopup', true);
@@ -132,11 +132,11 @@ L.Control.GroupedLayers = L.Control.extend({
     var id = L.stamp(layer);
 
     var obj = {
-        layer: layer,
-        name: name,
-        overlay: overlay,
-        childs: null,
-      };
+      layer: layer,
+      name: name,
+      overlay: overlay,
+      childs: null,
+    };
 
     if (group && overlay) {
       var group_obj = this._getGroup(group);
@@ -204,7 +204,7 @@ L.Control.GroupedLayers = L.Control.extend({
   _update: function () {
     // update layer menu in IITCm  - TODO: convert to hooks
     try {
-      if(typeof android != 'undefined')
+      if(typeof android !== 'undefined')
         window.layerChooser.getLayers();
     } catch(e) {
       console.error(e);
@@ -217,10 +217,10 @@ L.Control.GroupedLayers = L.Control.extend({
     this._baseLayersList.innerHTML = '';
     this._overlaysList.innerHTML = '';
 
-    for (var i=0,l=this._mlayers.length;i<l;++i) {    
+    for (var i=0,l=this._mlayers.length;i<l;++i) {
       var obj = this._mlayers[i];
       if (obj.childs!==null && obj.overlay) {
-        this._addGroup(obj);  
+        this._addGroup(obj);
       } else {
         this._addItem(obj);
       }
@@ -260,12 +260,12 @@ L.Control.GroupedLayers = L.Control.extend({
     var main_button = this._createItemButton(obj,false);
     list.appendChild(main_button);
 
-    for (var i=0,l=obj.childs.length;i<l;++i) {   
+    for (var i=0,l=obj.childs.length;i<l;++i) {
       var child_obj = obj.childs[i];
       var checked = this._map.hasLayer(child_obj.layer);
       var button = this._createItemButton(child_obj, checked, this._onInputClick);
 
-      var sublist = document.createElement('ul'); 
+      var sublist = document.createElement('ul');
       sublist.appendChild(button);
 
       list.appendChild(sublist);
@@ -276,8 +276,8 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   _createItemButton: function (obj, checked, clickevent) {
-    var label = document.createElement('label'),
-        input;
+    let label = document.createElement('label');
+    let input;
 
     if (obj.overlay) {
       input = this._createOverlayCheckbox(checked);
@@ -327,8 +327,8 @@ L.Control.GroupedLayers = L.Control.extend({
 
 
   _onInputClick: function () {
-    var inputs = this._form.getElementsByTagName('input'),
-        inputsLen = inputs.length;
+    let inputs = this._form.getElementsByTagName('input');
+    let inputsLen = inputs.length;
 
     this._handlingClick = true;
 
@@ -375,7 +375,7 @@ L.Control.GroupedLayers = L.Control.extend({
         if (!obj.overlay) {
           for (var i=this._mlayers.length-1;i>=0;--i) {
             var other = this._mlayers[i];
-            if (other.overlay && other.layer && L.stamp(other.layer)!=id && this._map.hasLayer(other.layer)) {
+            if (other.overlay && other.layer && L.stamp(other.layer)!==id && this._map.hasLayer(other.layer)) {
               this._map.removeLayer(other.layer);
             }
           }
@@ -432,11 +432,11 @@ L.Control.GroupedLayers = L.Control.extend({
     var baseLayersJSON = JSON.stringify(baseLayers);
 
     if (typeof android !== 'undefined' && android && android.setLayers) {
-        if(this.androidTimer) clearTimeout(this.androidTimer);
-        this.androidTimer = setTimeout(function() {
-            this.androidTimer = null;
-            android.setLayers(baseLayersJSON, overlayLayersJSON);
-        }, 1000);
+      if(this.androidTimer) clearTimeout(this.androidTimer);
+      this.androidTimer = setTimeout(function() {
+        this.androidTimer = null;
+        android.setLayers(baseLayersJSON, overlayLayersJSON);
+      }, 1000);
     }
 
     return {

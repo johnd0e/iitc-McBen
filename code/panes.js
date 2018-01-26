@@ -4,11 +4,11 @@
 window.currentPane = '';
 
 window.show = function(id) {
-  if(window.currentPane == id) return;
+  if(window.currentPane === id) return;
   window.currentPane = id;
   window.hideall();
 
-  runHooks("paneChanged", id);
+  runHooks('paneChanged', id);
 
   switch(id) {
     case 'all':
@@ -32,11 +32,11 @@ window.show = function(id) {
   if (typeof android !== 'undefined' && android && android.switchToPane) {
     android.switchToPane(id);
   }
-}
+};
 
 window.hideall = function() {
   $('#chatcontrols, #chat, #chatinput, #sidebartoggle, #scrollwrapper, #updatestatus, #portal_highlight_select').hide();
   $('#farm_level_select').hide();
   $('#map').css('visibility', 'hidden');
   $('.ui-tooltip').remove();
-}
+};

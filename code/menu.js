@@ -102,7 +102,7 @@ Menu= (function () {
     if ($base.length===0)  {
       $base = $('<li>'+names[0]+'</li>');
       $root.append($base);
-    };
+    }
 
     names.splice(0,1);
 
@@ -112,16 +112,16 @@ Menu= (function () {
     if ($sub.length===0)  {
       $sub = $('<ul>');
       $base.append($sub);
-    };
+    }
 
     return getOrCreateMenuLabelSub($sub, names);
   }
 
   function getRoot() {
-    let $root = $('#mainmenu > ul')
+    let $root = $('#mainmenu > ul');
     if ($root.length===0) {
       // FIXME: dynamic creation is required 'cause loading order of plugins might vary
-      let menu = $('<div id="mainmenu"><ul></ul></div>')
+      let menu = $('<div id="mainmenu"><ul></ul></div>');
       $(document.body).append(menu);
       $root = $('#mainmenu > ul');
       createBasicMenu($root);
@@ -145,15 +145,15 @@ Menu= (function () {
 
 
   function toggleZoomControl() {
-    let $ctrl = $(".leaflet-control-zoom");
+    let $ctrl = $('.leaflet-control-zoom');
     $ctrl.toggle();
-    setChecked('View/Zoom Control', $ctrl.is(":visible"));
+    setChecked('View/Zoom Control', $ctrl.is(':visible'));
   }
 
   function toggleToolbox() {
-    let $ctrl = $("#toolbox");
+    let $ctrl = $('#toolbox');
     $ctrl.toggle();
-    setChecked('View/Toolbox', $ctrl.is(":visible"));
+    setChecked('View/Toolbox', $ctrl.is(':visible'));
   }
 
   function setup() {

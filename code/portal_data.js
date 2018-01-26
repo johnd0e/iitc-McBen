@@ -10,21 +10,21 @@ window.getPortalLinks = function(guid) {
   $.each(window.links, function(g,l) {
     var d = l.options.data;
 
-    if (d.oGuid == guid) {
+    if (d.oGuid === guid) {
       links.out.push(g);
     }
-    if (d.dGuid == guid) {
+    if (d.dGuid === guid) {
       links.in.push(g);
     }
   });
 
   return links;
-}
+};
 
 window.getPortalLinksCount = function(guid) {
   var links = getPortalLinks(guid);
   return links.in.length+links.out.length;
-}
+};
 
 
 // search through the fields for all that reference a portal
@@ -34,21 +34,21 @@ window.getPortalFields = function(guid) {
   $.each(window.fields, function(g,f) {
     var d = f.options.data;
 
-    if ( d.points[0].guid == guid
-      || d.points[1].guid == guid
-      || d.points[2].guid == guid ) {
+    if ( d.points[0].guid === guid
+      || d.points[1].guid === guid
+      || d.points[2].guid === guid ) {
 
       fields.push(g);
     }
   });
 
   return fields;
-}
+};
 
 window.getPortalFieldsCount = function(guid) {
   var fields = getPortalFields(guid);
   return fields.length;
-}
+};
 
 
 // find the lat/lon for a portal, using any and all available data
@@ -69,7 +69,7 @@ window.findPortalLatLng = function(guid) {
     var f = window.fields[fguid].options.data;
 
     for (var i in f.points) {
-      if (f.points[i].guid == guid) {
+      if (f.points[i].guid === guid) {
         return L.latLng (f.points[i].latE6/1E6, f.points[i].lngE6/1E6);
       }
     }
@@ -78,10 +78,10 @@ window.findPortalLatLng = function(guid) {
   // and finally search through links
   for (var lguid in window.links) {
     var l = window.links[lguid].options.data;
-    if (l.oGuid == guid) {
+    if (l.oGuid === guid) {
       return L.latLng (l.oLatE6/1E6, l.oLngE6/1E6);
     }
-    if (l.dGuid == guid) {
+    if (l.dGuid === guid) {
       return L.latLng (l.dLatE6/1E6, l.dLngE6/1E6);
     }
   }
@@ -98,13 +98,13 @@ window.findPortalLatLng = function(guid) {
   var GC_KEEP  = 10000; // keep the 4000 most recent items
 
   window.findPortalGuidByPositionE6 = function(latE6, lngE6) {
-    var item = cache[latE6+","+lngE6];
+    var item = cache[latE6+','+lngE6];
     if(item) return item[0];
 
     // now try searching through currently rendered portals
     for(var guid in window.portals) {
       var data = window.portals[guid].options.data;
-      if(data.latE6 == latE6 && data.lngE6 == lngE6) return guid;
+      if(data.latE6 === latE6 && data.lngE6 === lngE6) return guid;
     }
 
     // now try searching through fields
@@ -113,22 +113,22 @@ window.findPortalLatLng = function(guid) {
 
       for(var i in points) {
         var point = points[i];
-        if(point.latE6 == latE6 && point.lngE6 == lngE6) return point.guid;
+        if(point.latE6 === latE6 && point.lngE6 === lngE6) return point.guid;
       }
     }
 
     // and finally search through links
     for(var lguid in window.links) {
       var l = window.links[lguid].options.data;
-      if(l.oLatE6 == latE6 && l.oLngE6 == lngE6) return l.oGuid;
-      if(l.dLatE6 == latE6 && l.dLngE6 == lngE6) return l.dGuid;
+      if(l.oLatE6 === latE6 && l.oLngE6 === lngE6) return l.oGuid;
+      if(l.dLatE6 === latE6 && l.dLngE6 === lngE6) return l.dGuid;
     }
 
     return null;
   };
 
   window.pushPortalGuidPositionCache = function(guid, latE6, lngE6) {
-    cache[latE6+","+lngE6] = [guid, Date.now()];
+    cache[latE6+','+lngE6] = [guid, Date.now()];
     cache_level += 1;
 
     if(cache_level > GC_LIMIT) {
@@ -136,10 +136,10 @@ window.findPortalLatLng = function(guid) {
         .map(function(latlng) { return [latlng, cache[latlng][1]]; })  // map them to [latlng, timestamp]
         .sort(function(a,b) { return b[1] - a[1]; }) // sort them
         .slice(GC_KEEP) // drop the MRU
-        .forEach(function(item) { delete cache[item[0]] }); // delete the rest
-      cache_level = Object.keys(cache).length
+        .forEach(function(item) { delete cache[item[0]]; }); // delete the rest
+      cache_level = Object.keys(cache).length;
     }
-  }
+  };
 })();
 
 
@@ -159,15 +159,15 @@ window.getPortalApGain = function(guid) {
   }
 
   return undefined;
-}
+};
 
 // given counts of resonators, links and fields, calculate the available AP
 // doesn't take account AP for resonator upgrades or AP for adding mods
 window.portalApGainMaths = function(resCount, linkCount, fieldCount) {
 
   var deployAp = (8-resCount)*DEPLOY_RESONATOR;
-  if (resCount == 0) deployAp += CAPTURE_PORTAL;
-  if (resCount != 8) deployAp += COMPLETION_BONUS;
+  if (resCount === 0) deployAp += CAPTURE_PORTAL;
+  if (resCount !== 8) deployAp += COMPLETION_BONUS;
   // there could also be AP for upgrading existing resonators, and for deploying mods - but we don't have data for that
   var friendlyAp = deployAp;
 
@@ -184,5 +184,5 @@ window.portalApGainMaths = function(resCount, linkCount, fieldCount) {
     destroyAp: destroyAp,
     destroyResoAp: destroyResoAp,
     captureAp: captureAp
-  }
-}
+  };
+};

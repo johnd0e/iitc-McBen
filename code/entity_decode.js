@@ -54,7 +54,7 @@
   function parseArtifactDetail(arr) {
     if (arr == null) { return null; }
     // empty artifact data is pointless - ignore it
-    if (arr.length == 3 && arr[0] == "" && arr[1] == "" && arr[2].length == 0) { return null; }
+    if (arr.length == 3 && arr[0] == '' && arr[1] == '' && arr[2].length == 0) { return null; }
     return {
       type: arr[0],
       displayName: arr[1],
@@ -72,8 +72,8 @@
       team:          a[1],
       latE6:         a[2],
       lngE6:         a[3]
-    }
-  };
+    };
+  }
 
   var SUMMARY_PORTAL_DATA_LENGTH = 14;
   function summaryPortalData(a) {
@@ -89,7 +89,7 @@
       artifactBrief: parseArtifactBrief(a[12]),
       timestamp:     a[13]
     };
-  };
+  }
 
   var DETAILED_PORTAL_DATA_LENGTH = SUMMARY_PORTAL_DATA_LENGTH+4;
 
@@ -111,7 +111,7 @@
     }
 
     return $.extend(corePortalData(a), summaryPortalData(a));
-  }
+  };
 
   window.decodeArray.portalDetail = function(a) {
     if (!a) return undefined;
@@ -135,8 +135,7 @@
       owner:     a[SUMMARY_PORTAL_DATA_LENGTH+2],
       artifactDetail:  parseArtifactDetail(a[SUMMARY_PORTAL_DATA_LENGTH+3]),
     });
-    
-  }
+  };
 
 
 })();

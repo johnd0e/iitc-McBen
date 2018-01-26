@@ -158,7 +158,7 @@ function createDefaultOverlays() {
   map.addLayer (factionLayers[TEAM_NONE]);
 
   // to avoid any favouritism, we'll put the player's own faction layer first
-  if (PLAYER.team == 'RESISTANCE') {
+  if (PLAYER.team === 'RESISTANCE') {
     addDefaultLayer('Resistance',factionLayers[TEAM_RES]);
     addDefaultLayer('Enlightened',factionLayers[TEAM_ENL]);
   } else {
@@ -189,7 +189,7 @@ function createDefaultOverlays() {
 
   // NOTE: these events are fired by the layer chooser, so won't happen until that's created and added to the map
   window.map.on('overlayadd overlayremove', function(e) {
-    var displayed = (e.type == 'overlayadd');
+    var displayed = (e.type === 'overlayadd');
     switch (e.name) {
       case 'Resistance':
         setFactionLayersState (TEAM_RES, displayed);
@@ -222,9 +222,6 @@ function showHiddenLayerWarning(addLayers) {
 
 //adds a base layer to the map. done separately from the above, so that plugins that add base layers can be the default
 window.setMapBaseLayer = function() {
-  //create a map name -> layer mapping - depends on internals of L.Control.Layers
-  var nameToLayer = {};
-  var firstLayer = null;
 
   var baseLayer = window.layerChooser.findBaseLayerByName(localStorage['iitc-base-map'])
                   || window.layerChooser.getfirstBaseLayer();

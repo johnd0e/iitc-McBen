@@ -129,7 +129,7 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
     if (min > -1) $.extend(data, {ascendingTimestampOrder: true});
   }
   return data;
-}
+};
 
 
 
@@ -153,7 +153,7 @@ window.chat.requestFaction = function(getOlderMsgs, isRetry) {
       ? function() { window.chat._requestFactionRunning = false; }
       : function() { window.chat.requestFaction(getOlderMsgs, true) }
   );
-}
+};
 
 
 window.chat._faction = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
@@ -175,11 +175,11 @@ window.chat.handleFaction = function(data, olderMsgs) {
   runHooks('factionChatDataAvailable', {raw: data, result: data.result, processed: chat._faction.data});
 
   window.chat.renderFaction(oldMsgsWereAdded);
-}
+};
 
 window.chat.renderFaction = function(oldMsgsWereAdded) {
   chat.renderData(chat._faction.data, 'chatfaction', oldMsgsWereAdded);
-}
+};
 
 
 //
@@ -202,7 +202,7 @@ window.chat.requestPublic = function(getOlderMsgs, isRetry) {
       ? function() { window.chat._requestPublicRunning = false; }
       : function() { window.chat.requestPublic(getOlderMsgs, true) }
   );
-}
+};
 
 window.chat._public = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
 window.chat.handlePublic = function(data, olderMsgs) {
@@ -224,11 +224,11 @@ window.chat.handlePublic = function(data, olderMsgs) {
 
   window.chat.renderPublic(oldMsgsWereAdded);
 
-}
+};
 
 window.chat.renderPublic = function(oldMsgsWereAdded) {
   chat.renderData(chat._public.data, 'chatall', oldMsgsWereAdded);
-}
+};
 
 
 //
@@ -251,7 +251,7 @@ window.chat.requestAlerts = function(getOlderMsgs, isRetry) {
       ? function() { window.chat._requestAlertsRunning = false; }
       : function() { window.chat.requestAlerts(getOlderMsgs, true) }
   );
-}
+};
 
 
 window.chat._alerts = {data:{}, oldestTimestamp:-1, newestTimestamp:-1};
@@ -274,11 +274,11 @@ window.chat.handleAlerts = function(data, olderMsgs) {
 //  runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
 
   window.chat.renderAlerts(oldMsgsWereAdded);
-}
+};
 
 window.chat.renderAlerts = function(oldMsgsWereAdded) {
   chat.renderData(chat._alerts.data, 'chatalerts', oldMsgsWereAdded);
-}
+};
 
 
 
@@ -288,7 +288,7 @@ window.chat.renderAlerts = function(oldMsgsWereAdded) {
 
 window.chat.nicknameClicked = function(event, nickname) {
   var hookData = { event: event, nickname: nickname };
-  
+
   if (window.runHooks('nicknameClicked', hookData)) {
     window.chat.addNickname('@' + nickname);
   }
@@ -296,7 +296,7 @@ window.chat.nicknameClicked = function(event, nickname) {
   event.preventDefault();
   event.stopPropagation();
   return false;
-}
+};
 
 window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, isOlderMsgs) {
   $.each(newData.result, function(ind, json) {
@@ -337,8 +337,8 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
 
       case 'AT_PLAYER':
         var thisToPlayer = (markup[1].plain == ('@'+window.PLAYER.nickname));
-        var spanClass = thisToPlayer ? "pl_nudge_me" : (markup[1].team + " pl_nudge_player");
-        var atPlayerName = markup[1].plain.replace(/^@/, "");
+        var spanClass = thisToPlayer ? 'pl_nudge_me' : (markup[1].team + ' pl_nudge_player');
+        var atPlayerName = markup[1].plain.replace(/^@/, '');
         msg += $('<div/>').html($('<span/>')
                           .attr('class', spanClass)
                           .attr('onclick',"window.chat.nicknameClicked(event, '"+atPlayerName+"')")
@@ -392,7 +392,7 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
     storageHash.data[json[0]] = [json[1], auto, chat.renderMsg(msg, nick, time, team, msgToPlayer, systemNarrowcast), nick];
 
   });
-}
+};
 
 // Override portal names that are used over and over, such as 'US Post Office'
 window.chat.getChatPortalName = function(markup) {
@@ -402,7 +402,7 @@ window.chat.getChatPortalName = function(markup) {
     name = 'USPS: ' + address[0];
   }
   return name;
-}
+};
 
 // renders data from the data-hash to the element defined by the given
 // ID. Set 3rd argument to true if it is likely that old data has been
@@ -430,13 +430,13 @@ window.chat.renderData = function(data, element, likelyWereOldMsgs) {
   var scrollBefore = scrollBottom(elm);
   elm.html('<table>' + msgs + '</table>');
   chat.keepScrollPosition(elm, scrollBefore, likelyWereOldMsgs);
-}
+};
 
 
 window.chat.renderDivider = function(text) {
   var d = ' ──────────────────────────────────────────────────────────────────────────';
   return '<tr><td colspan="3" style="padding-top:3px"><summary>─ ' + text + d + '</summary></td></tr>';
-}
+};
 
 
 window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarrowcast) {
@@ -460,20 +460,20 @@ window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarro
   var s = 'style="cursor:pointer; color:'+color+'"';
   var i = ['<span class="invisep">&lt;</span>', '<span class="invisep">&gt;</span>'];
   return '<tr><td>'+t+'</td><td>'+i[0]+'<mark class="nickname" ' + s + '>'+ nick+'</mark>'+i[1]+'</td><td>'+msg+'</td></tr>';
-}
+};
 
 window.chat.addNickname= function(nick) {
   var c = document.getElementById("chattext");
   c.value = [c.value.trim(), nick].join(" ").trim() + " ";
-  c.focus()
-}
+  c.focus();
+};
 
 
 
 
 window.chat.getActive = function() {
   return $('#chatcontrols .active').text();
-}
+};
 
 window.chat.tabToChannel = function(tab) {
   if (tab == 'faction') return 'faction';
@@ -498,7 +498,7 @@ window.chat.toggle = function() {
     $('.leaflet-control').css('margin-left', '720px');
     chat.needMoreMessages();
   }
-}
+};
 
 
 // called by plugins (or other things?) that need to monitor COMM data streams when the user is not viewing them
@@ -523,7 +523,7 @@ window.chat.backgroundChannelData = function(instance,channel,flag) {
     });
   });
 
-}
+};
 
 
 window.chat.request = function() {
@@ -538,7 +538,7 @@ window.chat.request = function() {
   if (channel == 'alerts' || (window.chat.backgroundChannels && window.chat.backgroundChannels['alerts'])) {
     chat.requestAlerts(false);
   }
-}
+};
 
 
 // checks if there are enough messages in the selected chat tab and
@@ -564,7 +564,7 @@ window.chat.needMoreMessages = function() {
 
 
 window.chat.chooseTab = function(tab) {
-  if (tab != 'all' && tab != 'faction' && tab != 'alerts') {
+  if (tab !== 'all' && tab !== 'faction' && tab !== 'alerts') {
     console.warn('chat tab "'+tab+'" requested - but only "all", "faction" and "alerts" are valid - assuming "all" wanted');
     tab = 'all';
   }
@@ -579,11 +579,9 @@ window.chat.chooseTab = function(tab) {
   $('#chatcontrols .active').removeClass('active');
   $("#chatcontrols a:contains('" + tab + "')").addClass('active');
 
-  if (tab != oldTab) startRefreshTimeout(0.1*1000); //only chat uses the refresh timer stuff, so a perfect way of forcing an early refresh after a tab change
+  if (tab !== oldTab) startRefreshTimeout(0.1*1000); //only chat uses the refresh timer stuff, so a perfect way of forcing an early refresh after a tab change
 
   $('#chat > div').hide();
-
-  var elm;
 
   switch(tab) {
     case 'faction':
@@ -622,22 +620,22 @@ window.chat.chooseTab = function(tab) {
     elm.scrollTop(elm.data('needsScrollTop'));
     elm.data('needsScrollTop', null);
   }
-}
+};
 
 window.chat.show = function(name) {
-    window.isSmartphone()
+  window.isSmartphone()
         ? $('#updatestatus').hide()
         : $('#updatestatus').show();
-    $('#chat, #chatinput').show();
+  $('#chat, #chatinput').show();
 
-    window.chat.chooseTab(name);
-}
+  window.chat.chooseTab(name);
+};
 
 window.chat.chooser = function(event) {
   var t = $(event.target);
   var tab = t.text();
   window.chat.chooseTab(tab);
-}
+};
 
 // contains the logic to keep the correct scroll position.
 window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
@@ -656,7 +654,7 @@ window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
     box.data('ignoreNextScroll', true);
     box.scrollTop(box.scrollTop() + (scrollBottom(box)-scrollBefore));
   }
-}
+};
 
 
 
@@ -668,7 +666,7 @@ window.chat.keepScrollPosition = function(box, scrollBefore, isOldMsgs) {
 window.chat.setup = function() {
   if (localStorage['iitc-chat-tab']) {
     chat.chooseTab(localStorage['iitc-chat-tab']);
- }
+  }
 
   $('#chatcontrols, #chat, #chatinput').show();
 
@@ -715,7 +713,7 @@ window.chat.setup = function() {
   $(document).on('click', '.nickname', function(event) {
     return window.chat.nicknameClicked(event, $(this).text());
   });
-}
+};
 
 
 window.chat.setupTime = function() {
@@ -731,7 +729,7 @@ window.chat.setupTime = function() {
   };
   updateTime();
   window.addResumeFunction(updateTime);
-}
+};
 
 
 //
@@ -762,13 +760,13 @@ window.chat.setupPosting = function() {
     event.preventDefault();
     chat.postMsg();
   });
-}
+};
 
 
 window.chat.postMsg = function() {
   var c = chat.getActive();
-  if(c == 'alerts')
-    return alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
+  if(c === 'alerts')
+    return alert('Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can\'t chat to the \'alerts\' channel!)');
 
   var msg = $.trim($('#chatinput input').val());
   if(!msg || msg === '') return;
@@ -788,10 +786,12 @@ window.chat.postMsg = function() {
 
   var latlng = map.getCenter();
 
-  var data = {message: msg,
-              latE6: Math.round(latlng.lat*1E6),
-              lngE6: Math.round(latlng.lng*1E6),
-              tab: c};
+  var data = {
+    message: msg,
+    latE6: Math.round(latlng.lat*1E6),
+    lngE6: Math.round(latlng.lng*1E6),
+    tab: c
+  };
 
   var errMsg = 'Your message could not be delivered. You can copy&' +
                'paste it here and try again if you want:\n\n' + msg;
@@ -807,4 +807,4 @@ window.chat.postMsg = function() {
   );
 
   $('#chatinput input').val('');
-}
+};

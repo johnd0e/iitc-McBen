@@ -77,8 +77,7 @@ window.MapDataRequest = function() {
       _this.render.processGameEntities([data.ent]);
     }
   });
-
-}
+};
 
 
 window.MapDataRequest.prototype.start = function() {
@@ -97,7 +96,7 @@ window.MapDataRequest.prototype.start = function() {
   this.setStatus ('refreshing', undefined, -1);
 
   this.cache && this.cache.startExpireInterval (15);
-}
+};
 
 
 window.MapDataRequest.prototype.mapMoveStart = function() {
@@ -106,7 +105,7 @@ window.MapDataRequest.prototype.mapMoveStart = function() {
   this.setStatus('paused');
   this.clearTimeout();
   this.pauseRenderQueue(true);
-}
+};
 
 window.MapDataRequest.prototype.mapMoveEnd = function() {
   var bounds = clampLatLngBounds(map.getBounds());
@@ -131,7 +130,7 @@ window.MapDataRequest.prototype.mapMoveEnd = function() {
 
   this.setStatus('refreshing', undefined, -1);
   this.refreshOnTimeout(this.MOVE_REFRESH);
-}
+};
 
 window.MapDataRequest.prototype.idleResume = function() {
   // if we have no timer set and there are no active requests, refresh has gone idle and the timer needs restarting
@@ -142,7 +141,7 @@ window.MapDataRequest.prototype.idleResume = function() {
     this.setStatus('idle restart', undefined, -1);
     this.refreshOnTimeout(this.IDLE_RESUME_REFRESH);
   }
-}
+};
 
 
 window.MapDataRequest.prototype.clearTimeout = function() {
@@ -152,7 +151,7 @@ window.MapDataRequest.prototype.clearTimeout = function() {
     clearTimeout(this.timer);
     this.timer = undefined;
   }
-}
+};
 
 window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
   this.clearTimeout();
@@ -166,13 +165,13 @@ window.MapDataRequest.prototype.refreshOnTimeout = function(seconds) {
     _this.timer = setTimeout ( function() { _this.timer = undefined; _this.refresh(); }, seconds*1000);
   }, 0);
   this.timerExpectedTimeoutTime = new Date().getTime() + seconds*1000;
-}
+};
 
 
 window.MapDataRequest.prototype.setStatus = function(short,long,progress) {
   this.status = { short: short, long: long, progress: progress };
   window.renderUpdateStatus();
-}
+};
 
 
 window.MapDataRequest.prototype.getStatus = function() {
@@ -280,7 +279,7 @@ window.MapDataRequest.prototype.refresh = function() {
 //TODO: with recent backend changes there are now multiple zoom levels of data that is identical except perhaps for some
 // reduction of detail when zoomed out. to take good advantage of the cache, a check for cached data at a closer zoom
 // but otherwise the same parameters (min portal level, tiles per edge) will mean less downloads when zooming out
-// (however, the default code in getDataZoomForMapZoom currently reduces the need for this, as it forces the furthest 
+// (however, the default code in getDataZoomForMapZoom currently reduces the need for this, as it forces the furthest
 //  out zoom tiles for a detail level)
       if (this.cache && this.cache.isFresh(tile_id) ) {
         // data is fresh in the cache - just render it
@@ -336,7 +335,7 @@ window.MapDataRequest.prototype.refresh = function() {
     // all data was from the cache, nothing queued - run the queue 'immediately' so it handles the end request processing
     this.delayProcessRequestQueue (0,true);
   }
-}
+};
 
 
 window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFirst) {
@@ -346,7 +345,7 @@ window.MapDataRequest.prototype.delayProcessRequestQueue = function(seconds,isFi
       _this.timer = setTimeout ( function() { _this.timer = undefined; _this.processRequestQueue(isFirst); }, seconds*1000 );
     }, 0);
   }
-}
+};
 
 
 window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
@@ -412,7 +411,7 @@ window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
 
   progress = this.requestedTileCount > 0 ? (this.requestedTileCount-pendingTileCount) / this.requestedTileCount : undefined;
   this.setStatus ('loading', longText, progress);
-}
+};
 
 
 window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
@@ -440,11 +439,11 @@ window.MapDataRequest.prototype.sendTileRequest = function(tiles) {
   var savedThis = this;
 
   // NOTE: don't add the request with window.request.add, as we don't want the abort handling to apply to map data any more
-  window.postAjax('getEntities', data, 
+  window.postAjax('getEntities', data,
     function(data, textStatus, jqXHR) { savedThis.handleResponse (data, tiles, true); },  // request successful callback
     function() { savedThis.handleResponse (undefined, tiles, false); }  // request failed callback
   );
-}
+};
 
 window.MapDataRequest.prototype.requeueTile = function(id, error) {
   if (id in this.queuedTiles) {
@@ -487,7 +486,7 @@ window.MapDataRequest.prototype.requeueTile = function(id, error) {
 
     }
   } // else the tile wasn't currently wanted (an old non-cancelled request) - ignore
-}
+};
 
 
 window.MapDataRequest.prototype.handleResponse = function (data, tiles, success) {
@@ -505,10 +504,10 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 
     //request failed - requeue all the tiles(?)
 
-    if (data && data.error && data.error == 'RETRY') {
+    if (data && data.error && data.error === 'RETRY') {
       // the server can sometimes ask us to retry a request. this is botguard related, I believe
 
-      for (var i in tiles) {
+      for (let i in tiles) {
         var id = tiles[i];
         retryTiles.push(id);
         this.debugTiles.setState (id, 'retrying');
@@ -517,7 +516,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
       window.runHooks('requestFinished', {success: false});
 
     } else {
-      for (var i in tiles) {
+      for (let i in tiles) {
         var id = tiles[i];
         errorTiles.push(id);
         this.debugTiles.setState (id, 'request-fail');
@@ -532,13 +531,13 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 
     var m = data.result.map;
 
-    for (var id in m) {
+    for (let id in m) {
       var val = m[id];
       unaccountedTiles.splice(unaccountedTiles.indexOf(id), 1);
       if ('error' in val) {
         // server returned an error for this individual data tile
 
-        if (val.error == "TIMEOUT") {
+        if (val.error === 'TIMEOUT') {
           // TIMEOUT errors for individual tiles are quite common. used to be unlimited retries, but not any more
           timeoutTiles.push (id);
         } else {
@@ -631,7 +630,7 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
 
 
   this.delayProcessRequestQueue(nextQueueDelay);
-}
+};
 
 
 window.MapDataRequest.prototype.resetRenderQueue = function() {
@@ -641,8 +640,8 @@ window.MapDataRequest.prototype.resetRenderQueue = function() {
     clearTimeout(this.renderQueueTimer);
     this.renderQueueTimer = undefined;
   }
-  this.renderQueuePaused = false;  
-}
+  this.renderQueuePaused = false;
+};
 
 
 window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
@@ -657,7 +656,7 @@ window.MapDataRequest.prototype.pushRenderQueue = function (id, data, status) {
   if (!this.renderQueuePaused) {
     this.startQueueTimer(this.RENDER_PAUSE);
   }
-}
+};
 
 window.MapDataRequest.prototype.startQueueTimer = function(delay) {
   if (this.renderQueueTimer === undefined) {
@@ -666,7 +665,7 @@ window.MapDataRequest.prototype.startQueueTimer = function(delay) {
       _this.renderQueueTimer = setTimeout ( function() { _this.renderQueueTimer = undefined; _this.processRenderQueue(); }, (delay||0)*1000 );
     }, 0);
   }
-}
+};
 
 window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
   this.renderQueuePaused = pause;
@@ -680,7 +679,7 @@ window.MapDataRequest.prototype.pauseRenderQueue = function(pause) {
       this.startQueueTimer(this.RENDER_PAUSE);
     }
   }
-}
+};
 
 window.MapDataRequest.prototype.processRenderQueue = function() {
   var drawEntityLimit = this.RENDER_BATCH_SIZE;
@@ -703,7 +702,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
       this.render.processGameEntities(drawThisPass);
     }
 
-    if (current.deleted.length == 0 && current.entities.length == 0) {
+    if (current.deleted.length === 0 && current.entities.length === 0) {
       this.renderQueue.splice(0,1);
       this.debugTiles.setState(current.id, current.status);
     }
@@ -713,7 +712,7 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 
   if (this.renderQueue.length > 0) {
     this.startQueueTimer(this.RENDER_PAUSE);
-  } else if (Object.keys(this.queuedTiles).length == 0) {
+  } else if (Object.keys(this.queuedTiles).length === 0) {
 
     this.render.endRenderPass();
 
@@ -738,4 +737,4 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 
   }
 
-}
+};

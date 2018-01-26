@@ -45,15 +45,15 @@ window.ornaments.addPortal = function(portal) {
   if (portal.options.data.ornaments) {
     window.ornaments._portals[guid] = portal.options.data.ornaments.map(function(ornament) {
       var layer = window.ornaments._layer;
-      if (ornament.startsWith("pe")) {
-        if (ornament === "peFRACK") {
+      if (ornament.startsWith('pe')) {
+        if (ornament === 'peFRACK') {
           layer = window.ornaments._frackers;
         } else {
           layer = window.ornaments._beacons;
         }
       }
       var icon = L.icon({
-        iconUrl: "//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/" + ornament + ".png",
+        iconUrl: '//commondatastorage.googleapis.com/ingress.com/img/map_icons/marker_images/' + ornament + '.png',
         iconSize: [size, size],
         iconAnchor: [size/2, size/2],
       });

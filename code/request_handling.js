@@ -12,7 +12,7 @@ window.statusStaleMapTiles = 0;
 window.statusErrorMapTiles = 0;
 
 
-window.requests = function() {}
+window.requests = function() {};
 
 //time of last refresh
 window.requests._lastRefreshTime = 0;
@@ -21,12 +21,12 @@ window.requests._quickRefreshPending = false;
 window.requests.add = function(ajax) {
   window.activeRequests.push(ajax);
   renderUpdateStatus();
-}
+};
 
 window.requests.remove = function(ajax) {
   window.activeRequests.splice(window.activeRequests.indexOf(ajax), 1);
   renderUpdateStatus();
-}
+};
 
 window.requests.abort = function() {
   $.each(window.activeRequests, function(ind, actReq) {
@@ -39,7 +39,7 @@ window.requests.abort = function() {
   window.chat._requestFactionRunning  = false;
 
   renderUpdateStatus();
-}
+};
 
 
 
@@ -52,7 +52,7 @@ window.startRefreshTimeout = function(override) {
   // status bar
   window.renderUpdateStatus();
   if(refreshTimeout) clearTimeout(refreshTimeout);
-  if(override == -1) return;  //don't set a new timeout
+  if(override === -1) return;  //don't set a new timeout
 
   var t = 0;
   if(override) {
@@ -70,11 +70,10 @@ window.startRefreshTimeout = function(override) {
     var adj = ZOOM_LEVEL_ADJ * (18 - map.getZoom());
     if(adj > 0) t += adj*1000;
   }
-  var next = new Date(new Date().getTime() + t).toLocaleTimeString();
-//  console.log('planned refresh in ' + (t/1000) + ' seconds, at ' + next);
+
   refreshTimeout = setTimeout(window.requests._callOnRefreshFunctions, t);
   renderUpdateStatus();
-}
+};
 
 window.requests._onRefreshFunctions = [];
 window.requests._callOnRefreshFunctions = function() {
@@ -95,13 +94,13 @@ window.requests._callOnRefreshFunctions = function() {
   $.each(window.requests._onRefreshFunctions, function(ind, f) {
     f();
   });
-}
+};
 
 
 // add method here to be notified of auto-refreshes
 window.requests.addRefreshFunction = function(f) {
   window.requests._onRefreshFunctions.push(f);
-}
+};
 
 window.requests.isLastRequest = function(action) {
   var result = true;
@@ -112,4 +111,4 @@ window.requests.isLastRequest = function(action) {
     }
   });
   return result;
-}
+};

@@ -36,11 +36,11 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
     window.requests.remove(jqXHR);
 
     // the Niantic server can return a HTTP success, but the JSON response contains an error. handle that sensibly
-    if (data && data.error && data.error == 'out of date') {
+    if (data && data.error && data.error === 'out of date') {
       window.failedRequestCount++;
       // let's call the error callback in thos case...
       if (errorCallback) {
-        errorCallback(jqXHR, textStatus, "data.error == 'out of date'");
+        errorCallback(jqXHR, textStatus, 'data.error == \'out of date\'');
       }
 
       window.outOfDateUserPrompt();
@@ -58,7 +58,7 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
     if (errorCallback) {
       // NOTE: error called on a setTimeout - as it won't be expected to be synchronous
       // ensures no recursion issues if the error handler immediately resends the request
-      setTimeout(function(){errorCallback(null, undefined, "window.blockOutOfDateRequests is set");}, 10);
+      setTimeout(function(){errorCallback(null, undefined, 'window.blockOutOfDateRequests is set');}, 10);
     }
     return;
   }
@@ -84,12 +84,12 @@ window.postAjax = function(action, data, successCallback, errorCallback) {
   requests.add(result);
 
   return result;
-}
+};
 
 
 window.outOfDateUserPrompt = function()
 {
-  // we block all requests while the dialog is open. 
+  // we block all requests while the dialog is open.
   if (!window.blockOutOfDateRequests) {
     window.blockOutOfDateRequests = true;
 
@@ -117,4 +117,4 @@ window.outOfDateUserPrompt = function()
 
   }
 
-}
+};

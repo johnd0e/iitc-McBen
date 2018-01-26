@@ -14,7 +14,7 @@ Redeem= (function () {
     'power cube':'C',
     'media':'M',
     'ultra strike':'US',
-  }
+  };
 
   const REDEEM_STATUSES = {
     429: 'You have been rate-limited by the server. Wait a bit and try again.',
@@ -38,21 +38,22 @@ Redeem= (function () {
       title: 'Redeem Passcode',
       id: 'RedeemDialog',
       html: html,
-      buttons: { 'close': closeDialog,
-                 'format': { id: 'format', class: 'left', click: changeFormat },
-                 'copy': { text: 'copy', class: 'left', click: copyText }
-               },
+      buttons: {
+        'close': closeDialog,
+        'format': { id: 'format', class: 'left', click: changeFormat },
+        'copy': { text: 'copy', class: 'left', click: copyText }
+      },
     });
 
 
-    $('#dialog-RedeemDialog').parent().find('.ui-dialog-buttonset button:contains("OK")').hide()
+    $('#dialog-RedeemDialog').parent().find('.ui-dialog-buttonset button:contains("OK")').hide();
     $('#dialog-RedeemDialog').parent().find('.ui-dialog-buttonset button#format').text(localStorage['iitc-passcode-format'] || 'long');
 
-    $("#dialog-RedeemDialog #redeem").keypress(onKeypressed);
-    $("#dialog-RedeemDialog #redeembtm").click( function() {redeemCode($('#dialog-RedeemDialog #redeem').val());} );
+    $('#dialog-RedeemDialog #redeem').keypress(onKeypressed);
+    $('#dialog-RedeemDialog #redeembtm').click( function() {redeemCode($('#dialog-RedeemDialog #redeem').val());} );
 
     if (requested_code) {
-      $("#dialog-RedeemDialog #redeem").val(requested_code)
+      $('#dialog-RedeemDialog #redeem').val(requested_code);
       disableInput();
     }
   }
@@ -66,12 +67,12 @@ Redeem= (function () {
     $('#dialog-RedeemDialog #result').html('validating....');
 
     $('#dialog-RedeemDialog #redeem').attr('disabled','disabled');
-    $("#dialog-RedeemDialog #redeembtm").attr('disabled','disabled');
+    $('#dialog-RedeemDialog #redeembtm').attr('disabled','disabled');
   }
 
   function showResult(html) {
 
-    if ($('#dialog-RedeemDialog').length==0) showDialog();
+    if ($('#dialog-RedeemDialog').length===0) showDialog();
 
     $('#dialog-RedeemDialog #redeem').removeAttr('disabled');
     $('#dialog-RedeemDialog #redeembtm').removeAttr('disabled');
@@ -85,7 +86,7 @@ Redeem= (function () {
     passcode = passcode.replace(/[^\x20-\x7E]+/g, '');
     if(!passcode) return;
 
-    redeemCode(passcode)
+    redeemCode(passcode);
   }
 
 
@@ -114,13 +115,13 @@ Redeem= (function () {
       window.setupPlayerStat();
     }
 
-    requested_code=undefined;;
+    requested_code=undefined;
     request_result = data.rewards;
     outputReward();
   }
 
   function changeFormat() {
-    let newformat = (localStorage['iitc-passcode-format']!='short') ? 'short' : 'long';
+    let newformat = (localStorage['iitc-passcode-format']!=='short') ? 'short' : 'long';
     localStorage['iitc-passcode-format']=newformat;
 
     $('#dialog-RedeemDialog').parent().find('.ui-dialog-buttonset button#format').text(newformat);
@@ -169,7 +170,7 @@ Redeem= (function () {
       });
     }
 
-    html += '</ul>'
+    html += '</ul>';
     return html;
   }
 
@@ -188,9 +189,9 @@ Redeem= (function () {
     if(data.inventory) {
       data.inventory.forEach(function(type) {
         type.awards.forEach(function(item) {
-          var str = "";
+          var str = '';
           if(item.count > 1)
-            str += item.count + "&nbsp;";
+            str += item.count + '&nbsp;';
 
           let shortName = REDEEM_SHORT_NAMES[type.name.toLowerCase()];
           let level = parseInt(item.level);
@@ -214,7 +215,7 @@ Redeem= (function () {
       });
     }
 
-    return '<p class="redeemReward">' + awards.join(', ') + '</p>'
+    return '<p class="redeemReward">' + awards.join(', ') + '</p>';
   }
 
 
@@ -223,12 +224,12 @@ Redeem= (function () {
     if (!text) return;
     let input = document.createElement('textarea');
     document.body.append(input);
-    text = text.replace(/<\/li>/g,'\n')
-    text = text.replace(/&nbsp;/g,' ')
-    text = text.replace(/<.+?>/g,'')
+    text = text.replace(/<\/li>/g,'\n');
+    text = text.replace(/&nbsp;/g,' ');
+    text = text.replace(/<.+?>/g,'');
     input.value = text;
     input.select();
-    document.execCommand("Copy");
+    document.execCommand('Copy');
     document.body.removeChild(input);
   }
 
@@ -248,7 +249,7 @@ Redeem= (function () {
       name: 'Action/Passcode',
       tooltip: 'Redeem Passcodes',
       onclick: showDialog
-    })
+    });
   }
 
 

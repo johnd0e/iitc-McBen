@@ -67,7 +67,7 @@ window.search.Query.prototype.hide = function() {
   this.removeSelectedResult();
 };
 window.search.Query.prototype.addResult = function(result) {
-  if(this.results.length == 0) {
+  if(this.results.length === 0) {
     // remove 'No results'
     this.list.empty();
   }
@@ -80,13 +80,13 @@ window.search.Query.prototype.addResult = function(result) {
       this.onResultSelected(result, ev);
     }.bind(this))
     .keypress(function(ev) {
-      if((ev.keyCode || ev.charCode || ev.which) == 32) {
+      if ((ev.keyCode || ev.charCode || ev.which) === 32) {
         ev.preventDefault();
         ev.type = 'click';
         $(this).trigger(ev);
         return;
       }
-      if((ev.keyCode || ev.charCode || ev.which) == 13) {
+      if ((ev.keyCode || ev.charCode || ev.which) === 13) {
         ev.preventDefault();
         ev.type = 'dblclick';
         $(this).trigger(ev);
@@ -119,7 +119,7 @@ window.search.Query.prototype.onResultSelected = function(result, ev) {
     if(result.onSelected(result, ev)) return;
   }
 
-  if(ev.type == 'dblclick') {
+  if(ev.type === 'dblclick') {
     if(result.position) {
       map.setView(result.position, 17);
     } else if(result.bounds) {
@@ -156,13 +156,16 @@ window.search.Query.prototype.onResultSelected = function(result, ev) {
     map.addLayer(result.layer);
 
   if(window.isSmartphone()) window.show('map');
-}
+};
+
+
 window.search.Query.prototype.removeSelectedResult = function() {
   if(this.selectedResult) {
     if(this.selectedResult.layer) map.removeLayer(this.selectedResult.layer);
     if(this.selectedResult.onRemove) this.selectedResult.onRemove(this.selectedResult);
   }
-}
+};
+
 
 window.search.doSearch = function(term, confirmed) {
   term = term.trim();
@@ -178,15 +181,15 @@ window.search.doSearch = function(term, confirmed) {
 
   // don't make the same query again
   if(window.search.lastSearch
-  && window.search.lastSearch.confirmed == confirmed
-  && window.search.lastSearch.term == term)
+  && window.search.lastSearch.confirmed === confirmed
+  && window.search.lastSearch.term === term)
     return;
 
   if(window.search.lastSearch) window.search.lastSearch.hide();
   window.search.lastSearch = null;
 
   // clear results
-  if(term == '') return;
+  if(term === '') return;
 
   if(useAndroidPanes()) show('info');
 
@@ -199,7 +202,7 @@ window.search.doSearch = function(term, confirmed) {
 window.search.setup = function() {
   $('#search')
     .keypress(function(e) {
-      if((e.keyCode ? e.keyCode : e.which) != 13) return;
+      if((e.keyCode ? e.keyCode : e.which) !== 13) return;
       e.preventDefault();
 
       var term = $(this).val();
@@ -231,14 +234,14 @@ addHook('search', function(query) {
 
     if(data.title.toLowerCase().indexOf(term) !== -1) {
       var team = portal.options.team;
-      var color = team==TEAM_NONE ? '#CCC' : COLORS[team];
+      var color = team===TEAM_NONE ? '#CCC' : COLORS[team];
       query.addResult({
         title: data.title,
         description: teams[team] + ', L' + data.level + ', ' + data.health + '%, ' + data.resCount + ' Resonators',
         position: portal.getLatLng(),
         icon: 'data:image/svg+xml;base64,'+btoa('@@INCLUDESTRING:images/icon-portal.svg@@'.replace(/%COLOR%/g, color)),
         onSelected: function(result, event) {
-          if(event.type == 'dblclick') {
+          if(event.type === 'dblclick') {
             zoomToAndShowPortal(guid, portal.getLatLng());
           } else if(window.portals[guid]) {
             if(!map.getBounds().contains(result.position)) map.setView(result.position);
@@ -262,7 +265,7 @@ addHook('search', function(query) {
   if(!locations) return;
   locations.forEach(function(location) {
     var pair = location.split(',').map(function(s) { return parseFloat(s).toFixed(6); });
-    var ll = pair.join(",");
+    var ll = pair.join(',');
     var latlng = L.latLng(pair.map(function(s) { return parseFloat(s); }));
     if(added[ll]) return;
     added[ll] = true;
@@ -274,7 +277,7 @@ addHook('search', function(query) {
       onSelected: function(result, event) {
         for(var guid in window.portals) {
           var p = window.portals[guid].getLatLng();
-          if((p.lat.toFixed(6)+","+p.lng.toFixed(6)) == ll) {
+          if((p.lat.toFixed(6)+','+p.lng.toFixed(6)) == ll) {
             renderPortalDetails(guid);
             return;
           }
@@ -292,7 +295,7 @@ addHook('search', function(query) {
   if(!query.confirmed) return;
 
   $.getJSON(NOMINATIM + encodeURIComponent(query.term), function(data) {
-    if(data.length == 0) {
+    if(data.length === 0) {
       query.addResult({
         title: 'No results on OpenStreetMap',
         icon: '//www.openstreetmap.org/favicon.ico',
@@ -324,8 +327,8 @@ addHook('search', function(query) {
 
       var b = item.boundingbox;
       if(b) {
-        var southWest = new L.LatLng(b[0], b[2]),
-            northEast = new L.LatLng(b[1], b[3]);
+        var southWest = new L.LatLng(b[0], b[2]);
+        var northEast = new L.LatLng(b[1], b[3]);
         result.bounds = new L.LatLngBounds(southWest, northEast);
       }
 

@@ -3,7 +3,7 @@
 // so we need to extract some essential parameters from the code for IITC to use
 
 window.extractFromStock = function() {
-  window.niantic_params = {}
+  window.niantic_params = {};
 
   // extract the former nemesis.dashboard.config.CURRENT_VERSION from the code
   var reVersion = new RegExp('"X-CSRFToken".*[a-z].v="([a-f0-9]{40})";');
@@ -23,7 +23,7 @@ window.extractFromStock = function() {
             // looks like we've found an object of the format "XX.prototype.YY"...
             var item = topObject.prototype[secLevel];
 
-            if (item && typeof(item) == "function") {
+            if (item && typeof(item) === 'function') {
               // a function - test it against the relevant regular expressions
               var funcStr = item.toString();
 
@@ -43,7 +43,7 @@ window.extractFromStock = function() {
         if (topObject.length>0) {
           var justInts = true;
           for (var i=0; i<topObject.length; i++) {
-            if (typeof(topObject[i]) !== 'number' || topObject[i] != parseInt(topObject[i])) {
+            if (typeof(topObject[i]) !== 'number' || topObject[i] !== parseInt(topObject[i])) {
               justInts = false;
               break;
             }
@@ -59,10 +59,10 @@ window.extractFromStock = function() {
               // a. portal level limits. decreasing numbers, starting at 8
               // b. tiles per edge. increasing numbers. current max is 36000, 9000 was the previous value - 18000 is a likely possibility too
 
-              if (topObject[0] == 8) {
+              if (topObject[0] === 8) {
                 // check for tile levels
                 var decreasing = true;
-                for (var i=1; i<topObject.length; i++) {
+                for (let i=1; i<topObject.length; i++) {
                   if (topObject[i-1] < topObject[i]) {
                     decreasing = false;
                     break;
@@ -77,7 +77,7 @@ window.extractFromStock = function() {
               // 2015-06-25 - changed to top value of 64000, then to 32000 - allow for them to restore it just in case
               if (topObject[topObject.length-1] >= 9000 && topObject[topObject.length-1] <= 64000) {
                 var increasing = true;
-                for (var i=1; i<topObject.length; i++) {
+                for (let i=1; i<topObject.length; i++) {
                   if (topObject[i-1] > topObject[i]) {
                     increasing = false;
                     break;

@@ -17,35 +17,35 @@ RegionScoreboard = (function () {
     this.checkpoints = [];
 
     this.hasNoTopAgents = function () {
-        return this.topAgents.length===0;
-      };
+      return this.topAgents.length===0;
+    };
 
     this.getAvgScore = function(faction) {
-          return parseInt(this.gameScore[ faction===TEAM_ENL? 0:1 ]);
-      };
+      return parseInt(this.gameScore[ faction===TEAM_ENL? 0:1 ]);
+    };
 
     this.getAvgScoreMax = function() {
-          return Math.max(this.getAvgScore(TEAM_ENL), this.getAvgScore(TEAM_RES), 1);
-      };
+      return Math.max(this.getAvgScore(TEAM_ENL), this.getAvgScore(TEAM_RES), 1);
+    };
 
     this.getCPScore = function(cp) {
       return this.checkpoints[cp];
-      };
+    };
 
     this.getScoreMax = function(min_value) {
-          var max = min_value || 0;
-          for (var i=1; i<this.checkpoints.length; i++) {
-              var cp = this.checkpoints[i];
-              max = Math.max(max,cp[0],cp[1]);
-          }
-          return max;
-      };
+      var max = min_value || 0;
+      for (var i=1; i<this.checkpoints.length; i++) {
+        var cp = this.checkpoints[i];
+        max = Math.max(max,cp[0],cp[1]);
+      }
+      return max;
+    };
 
     this.getCPSum = function() {
       var sums=[0,0];
       for (var i=1; i<this.checkpoints.length; i++) {
-          sums[0] += this.checkpoints[i][0];
-          sums[1] += this.checkpoints[i][1];
+        sums[0] += this.checkpoints[i][0];
+        sums[1] += this.checkpoints[i][1];
       }
 
       return sums;
@@ -75,14 +75,14 @@ RegionScoreboard = (function () {
 
 
     this.getScoreMedian = function(faction) {
-        if (this.median[faction]<0) {
-            var idx = faction==TEAM_RES? 1:0;
-            var values = this.checkpoints.map( function (val) { return val[idx];} );
-            values = values.filter(function(n){ return n !== undefined; });
-            this.median[faction] = this.findMedian(values);
-        }
+      if (this.median[faction]<0) {
+        var idx = faction==TEAM_RES? 1:0;
+        var values = this.checkpoints.map( function (val) { return val[idx];} );
+        values = values.filter(function(n){ return n !== undefined; });
+        this.median[faction] = this.findMedian(values);
+      }
 
-        return this.median[faction];
+      return this.median[faction];
     };
 
     this.findMedian = function(values) {
@@ -91,26 +91,26 @@ RegionScoreboard = (function () {
 
       if (len===0) return 0;
 
-        var l=0, m=len-1;
-        var b,i,j,x;
-        while (l<m) {
-            x=values[rank];
-            i=l;
-            j=m;
-            do {
-                while (values[i]<x) i++;
-                while (x<values[j]) j--;
-                if (i<=j) {
-                    b = values[i];
-                    values[i] = values[j];
-                    values[j] = b;
-                    i++ ; j-- ;
-                }
-            } while (i<=j);
-            if (j<rank) l=i ;
-            if (rank<i) m=j ;
-        }
-        return values[rank];
+      var l=0, m=len-1;
+      var b,i,j,x;
+      while (l<m) {
+        x=values[rank];
+        i=l;
+        j=m;
+        do {
+          while (values[i]<x) i++;
+          while (x<values[j]) j--;
+          if (i<=j) {
+            b = values[i];
+            values[i] = values[j];
+            values[j] = b;
+            i++ ; j-- ;
+          }
+        } while (i<=j);
+        if (j<rank) l=i ;
+        if (rank<i) m=j ;
+      }
+      return values[rank];
     };
 
     this.getLastCP = function() {
@@ -129,8 +129,8 @@ RegionScoreboard = (function () {
     };
 
     for (var i=0; i<serverResult.scoreHistory.length; i++) {
-        var h = serverResult.scoreHistory[i];
-        this.checkpoints[parseInt(h[0])] = [parseInt(h[1]), parseInt(h[2])];
+      var h = serverResult.scoreHistory[i];
+      this.checkpoints[parseInt(h[0])] = [parseInt(h[1]), parseInt(h[2])];
     }
 
     var now = new Date().getTime();
@@ -158,13 +158,13 @@ RegionScoreboard = (function () {
   }
 
   function onRequestSuccess(data) {
-      if (data.result === undefined) {
-        return onRequestFailure();
-      }
+    if (data.result === undefined) {
+      return onRequestFailure();
+    }
 
-      regionScore = new RegionScore(data.result);
-      updateDialog();
-      startTimer();
+    regionScore = new RegionScore(data.result);
+    updateDialog();
+    startTimer();
   }
 
   function updateDialog(logscale) {
@@ -187,7 +187,7 @@ RegionScoreboard = (function () {
 
     $('.cellscore', mainDialog).accordion({
       header: 'b',
-      heightStyle: "fill"
+      heightStyle: 'fill'
     });
 
     $('input.logscale', mainDialog).change(function(){
@@ -226,7 +226,7 @@ RegionScoreboard = (function () {
 
       elem.tooltip({
         content: convertTextToTableMagic(tooltip),
-        position: {my: "center bottom", at: "center top-10"},
+        position: {my: 'center bottom', at: 'center top-10'},
         show: 100
       });
     });
@@ -265,44 +265,44 @@ RegionScoreboard = (function () {
 
     table += '</table>';
     return table;
-   }
+  }
 
   function createAgentTable() {
-      var agentTable = '<table><tr><th>#</th><th>Agent</th></tr>';
+    var agentTable = '<table><tr><th>#</th><th>Agent</th></tr>';
 
-      for (var i=0; i<regionScore.topAgents.length; i++) {
-          var agent = regionScore.topAgents[i];
-          agentTable += '<tr><td>'+(i+1)+'</td><td class="nickname '+(agent.team=='RESISTANCE'?'res':'enl')+'">'+agent.nick+'</td></tr>';
-      }
+    for (var i=0; i<regionScore.topAgents.length; i++) {
+      var agent = regionScore.topAgents[i];
+      agentTable += '<tr><td>'+(i+1)+'</td><td class="nickname '+(agent.team=='RESISTANCE'?'res':'enl')+'">'+agent.nick+'</td></tr>';
+    }
 
-      if (regionScore.hasNoTopAgents()) {
-        agentTable += '<tr><td colspan="2"><i>no top agents</i></td></tr>';
-      }
-      agentTable += '</table>';
+    if (regionScore.hasNoTopAgents()) {
+      agentTable += '<tr><td colspan="2"><i>no top agents</i></td></tr>';
+    }
+    agentTable += '</table>';
 
-      return agentTable;
-   }
+    return agentTable;
+  }
 
   function createResults() {
 
-      var maxAverage = regionScore.getAvgScoreMax();
-      var order = (PLAYER.team == 'RESISTANCE' ? [TEAM_RES,TEAM_ENL]:[TEAM_ENL,TEAM_RES]);
+    var maxAverage = regionScore.getAvgScoreMax();
+    var order = (PLAYER.team == 'RESISTANCE' ? [TEAM_RES,TEAM_ENL]:[TEAM_ENL,TEAM_RES]);
 
-      var result = '<table id="overview" title="">';
-      for (var t=0; t<2; t++) {
-          var faction = order[t];
-          var team = window.TEAM_NAMES[faction];
-          var teamClass = window.TEAM_TO_CSS[faction];
-          var teamCol = COLORS[faction];
-          var barSize = Math.round(regionScore.getAvgScore(faction)/maxAverage*100);
-          result += '<tr><th class="'+teamClass+'">'+team+'</th>' +
-                  '<td class="'+teamClass+'">'+digits(regionScore.getAvgScore(faction))+'</td>' +
-                  '<td style="width:100%"><div style="background:'+teamCol+'; width: '+barSize+'%; height: 1.3ex; border: 2px outset '+teamCol+'; margin-top: 2px"> </td>' +
-                  '<td class="'+teamClass+'"><small>( '+digits(regionScore.getAvgScoreAtCP(faction,35))+' )</small></td>' +
-                  '</tr>';
-      }
+    var result = '<table id="overview" title="">';
+    for (var t=0; t<2; t++) {
+      var faction = order[t];
+      var team = window.TEAM_NAMES[faction];
+      var teamClass = window.TEAM_TO_CSS[faction];
+      var teamCol = COLORS[faction];
+      var barSize = Math.round(regionScore.getAvgScore(faction)/maxAverage*100);
+      result += '<tr><th class="'+teamClass+'">'+team+'</th>' +
+              '<td class="'+teamClass+'">'+digits(regionScore.getAvgScore(faction))+'</td>' +
+              '<td style="width:100%"><div style="background:'+teamCol+'; width: '+barSize+'%; height: 1.3ex; border: 2px outset '+teamCol+'; margin-top: 2px"> </td>' +
+              '<td class="'+teamClass+'"><small>( '+digits(regionScore.getAvgScoreAtCP(faction,35))+' )</small></td>' +
+              '</tr>';
+    }
 
-      return result+'</table>';
+    return result+'</table>';
   }
 
   function createResultTooltip() {
@@ -385,7 +385,7 @@ RegionScoreboard = (function () {
 
   function onTimer() {
     var d = regionScore.getCheckpointEnd(regionScore.getLastCP()+1)-(new Date());
-    $("#cycletimer",mainDialog).html(formatMinutes( Math.max(0,Math.floor(d/1000))) );
+    $('#cycletimer',mainDialog).html(formatMinutes( Math.max(0,Math.floor(d/1000))) );
   }
 
   function formatMinutes(sec) {
@@ -415,7 +415,7 @@ RegionScoreboard = (function () {
       name: 'Info/Region scores',
       tooltip: 'View regional scoreboard',
       onclick: window.RegionScoreboard.showDialog
-    })
+    });
   }
 
   return {
@@ -455,7 +455,7 @@ RegionScoreboard.HistoryChart = (function () {
            '</svg></div>';
 
     return svg;
-   }
+  }
 
   function svgFactionPath() {
 
@@ -476,7 +476,7 @@ RegionScoreboard.HistoryChart = (function () {
       }
 
       if (teamPaths.length > 0) {
-          svgPath += '<polyline points="'+teamPaths.join(' ')+'" stroke="'+col+'" fill="none" />';
+        svgPath += '<polyline points="'+teamPaths.join(' ')+'" stroke="'+col+'" fill="none" />';
       }
     }
 
@@ -516,39 +516,39 @@ RegionScoreboard.HistoryChart = (function () {
   }
 
   function createTicks(max) {
-      var ticks = createTicksHorz();
+    var ticks = createTicksHorz();
 
-      function addVTick(i) {
-          var y = scaleFct(i);
+    function addVTick(i) {
+      var y = scaleFct(i);
 
-          ticks.push('M40,'+y+' L390,'+y);
-          svgTickText.push('<text x="35" y="'+y+'" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="end" fill="#fff">'+formatNumber(i)+'</text>');
+      ticks.push('M40,'+y+' L390,'+y);
+      svgTickText.push('<text x="35" y="'+y+'" font-size="12" font-family="Roboto, Helvetica, sans-serif" text-anchor="end" fill="#fff">'+formatNumber(i)+'</text>');
+    }
+
+    // vertical
+    // first we calculate the power of 10 that is smaller than the max limit
+    var vtickStep = Math.pow(10,Math.floor(Math.log10(max)));
+    if(logscale) {
+      for(var i=0;i<4;i++) {
+
+        addVTick(vtickStep);
+        vtickStep /= 10;
+      }
+    } else {
+      // this could be between 1 and 10 grid lines - so we adjust to give nicer spacings
+      if (vtickStep < (max/5)) {
+        vtickStep *= 2;
+      } else if (vtickStep > (max/2)) {
+        vtickStep /= 2;
       }
 
-      // vertical
-      // first we calculate the power of 10 that is smaller than the max limit
-      var vtickStep = Math.pow(10,Math.floor(Math.log10(max)));
-      if(logscale) {
-          for(var i=0;i<4;i++) {
-
-            addVTick(vtickStep);
-            vtickStep /= 10;
-          }
-      } else {
-          // this could be between 1 and 10 grid lines - so we adjust to give nicer spacings
-          if (vtickStep < (max/5)) {
-              vtickStep *= 2;
-          } else if (vtickStep > (max/2)) {
-              vtickStep /= 2;
-          }
-
-          for (var ti=vtickStep; ti<=max; ti+=vtickStep) {
-            addVTick(ti);
-          }
+      for (var ti=vtickStep; ti<=max; ti+=vtickStep) {
+        addVTick(ti);
       }
+    }
 
 
-      return ('<path d="'+ticks.join(' ')+'" stroke="#fff" opacity="0.3" />');
+    return ('<path d="'+ticks.join(' ')+'" stroke="#fff" opacity="0.3" />');
   }
 
   function createTicksHorz() {
