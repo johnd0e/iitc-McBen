@@ -25,7 +25,6 @@ window.setupLargeImagePreview = function() {
   });
 }
 
-
 window.setupStyles = function() {
   $('head').append('<style>' +
     [ '#largepreview.enl img { border:2px solid '+COLORS[TEAM_ENL]+'; } ',
@@ -103,9 +102,6 @@ window.setupMap = function() {
   // ensures order of calls
   map.on('movestart', function() { window.mapRunsUserAction = true; window.requests.abort(); window.startRefreshTimeout(-1); });
   map.on('moveend', function() { window.mapRunsUserAction = false; window.startRefreshTimeout(ON_MOVE_REFRESH*1000); });
-
-  map.on('zoomend', function() { window.layerChooserSetDisabledStates(); });
-  window.layerChooserSetDisabledStates();
 
   // on zoomend, check to see the zoom level is an int, and reset the view if not
   // (there's a bug on mobile where zoom levels sometimes end up as fractional levels. this causes the base map to be invisible)
