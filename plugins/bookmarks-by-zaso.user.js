@@ -1234,17 +1234,59 @@
     plugin.bookmarks.htmlSetbox = '<div id="bkmrksSetbox">' + actions + '</div>';
   }
 
+
+  window.plugin.bookmarks.setupHTML = function() {
+    if (window.plugin.bookmarks.isSmart) {
+      $('body').append(window.plugin.bookmarks.htmlBkmrksBox);
+      $('#bookmarksBox').css("display", "none").addClass("mobile");
+
+      if(window.useAndroidPanes())
+        android.addPane("plugin-bookmarks", "Bookmarks", "ic_action_star");
+      window.addHook('paneChanged', window.plugin.bookmarks.onPaneChanged);
+    } else {
+      Menu.addMenu({name: 'View/Bookmarks', onclick: "window.plugin.bookmarks.switchStatusBkmrksBox(\'switch\')", key: 'v'});
+      $('body').append(window.plugin.bookmarks.htmlBkmrksBox);
+      //$('body').append(window.plugin.bookmarks.htmlBoxTrigger + window.plugin.bookmarks.htmlBkmrksBox);
+      $('#bookmarksBox').draggable({ handle:'.handle', containment:'window' });
+      $("#bookmarksBox #bookmarksMin , #bookmarksBox ul li, #bookmarksBox ul li a, #bookmarksBox ul li a span, #bookmarksBox h5, #bookmarksBox .addForm a").disableSelection();
+      $('#bookmarksBox').css({'top':window.plugin.bookmarks.statusBox.pos.x, 'left':window.plugin.bookmarks.statusBox.pos.y});
+    }
+
+    Menu.addMenu({name: 'Options/Bookmarks/Reset bookmarks', onclick: window.plugin.bookmarks.optReset});
+    Menu.addMenu({name: 'Options/Bookmarks/Copy bookmarks', onclick: window.plugin.bookmarks.optCopy});
+    Menu.addMenu({name: 'Options/Bookmarks/Paste bookmarks', onclick: window.plugin.bookmarks.optPaste});
+
+    if(plugin.bookmarks.isAndroid()) {
+      Menu.addMenu({name: 'Options/Bookmarks/Import bookmarks', onclick: window.plugin.bookmarks.optImport});
+      Menu.addMenu({name: 'Options/Bookmarks/Export bookmarks', onclick: window.plugin.bookmarks.optExport});
+    }
+
+    Menu.addMenu({name: 'Options/Bookmarks/Rename Folder', onclick: window.plugin.bookmarks.optRename});
+    if(!plugin.bookmarks.isAndroid()) {
+      Menu.addMenu({name: 'Options/Bookmarks/Save box position', onclick: 'window.plugin.bookmarks.optBox("save")'});
+      Menu.addMenu({name: 'Options/Bookmarks/Reset box position', onclick: 'window.plugin.bookmarks.optBox("reset")'});
+    }
+
+    Menu.addMenu({name: 'Action/Auto draw', onclick: window.plugin.bookmarks.dialogDrawer,key:'q',tooltip: "Draw lines/triangles between bookmarked portals [q]"});
+
+    if(window.plugin.bookmarks.isSmart) {
+//      $('#bookmarksBox.mobile #topBar').prepend(window.plugin.bookmarks.htmlCallSetBox+window.plugin.bookmarks.htmlCalldrawBox); // wonk in progress
+      $('#bookmarksBox.mobile #topBar').append(plugin.bookmarks.htmlMoveBtn);
+    }
+
+  }
+
 /***************************************************************************************************************************************************************/
 
   var setup = function() {
     window.plugin.bookmarks.isSmart = window.isSmartphone();
 
     // Fired when a bookmarks/folder is removed, added or sorted, also when a folder is opened/closed.
-    if($.inArray('pluginBkmrksEdit', window.VALID_HOOKS) < 0) { window.VALID_HOOKS.push('pluginBkmrksEdit'); }
+    window.pluginCreateHook('pluginBkmrksEdit');
     // Fired when the "Bookmarks Options" panel is opened (you can add new options);
-    if($.inArray('pluginBkmrksOpenOpt', window.VALID_HOOKS) < 0) { window.VALID_HOOKS.push('pluginBkmrksOpenOpt'); }
+    window.pluginCreateHook('pluginBkmrksOpenOpt');
     // Fired when the sync is finished;
-    if($.inArray('pluginBkmrksSyncEnd', window.VALID_HOOKS) < 0) { window.VALID_HOOKS.push('pluginBkmrksSyncEnd'); }
+    window.pluginCreateHook('pluginBkmrksSyncEnd');
 
     // If the storage not exists or is a old version
     window.plugin.bookmarks.createStorage();
@@ -1255,26 +1297,7 @@
     window.plugin.bookmarks.loadStorageBox();
     window.plugin.bookmarks.setupContent();
     window.plugin.bookmarks.setupCSS();
-
-    if(!window.plugin.bookmarks.isSmart) {
-      $('body').append(window.plugin.bookmarks.htmlBoxTrigger + window.plugin.bookmarks.htmlBkmrksBox);
-      $('#bookmarksBox').draggable({ handle:'.handle', containment:'window' });
-      $("#bookmarksBox #bookmarksMin , #bookmarksBox ul li, #bookmarksBox ul li a, #bookmarksBox ul li a span, #bookmarksBox h5, #bookmarksBox .addForm a").disableSelection();
-      $('#bookmarksBox').css({'top':window.plugin.bookmarks.statusBox.pos.x, 'left':window.plugin.bookmarks.statusBox.pos.y});
-    }else{
-      $('body').append(window.plugin.bookmarks.htmlBkmrksBox);
-      $('#bookmarksBox').css("display", "none").addClass("mobile");
-
-      if(window.useAndroidPanes())
-        android.addPane("plugin-bookmarks", "Bookmarks", "ic_action_star");
-      window.addHook('paneChanged', window.plugin.bookmarks.onPaneChanged);
-    }
-    $('#toolbox').append(window.plugin.bookmarks.htmlCallSetBox+window.plugin.bookmarks.htmlCalldrawBox);
-
-    if(window.plugin.bookmarks.isSmart) {
-//      $('#bookmarksBox.mobile #topBar').prepend(window.plugin.bookmarks.htmlCallSetBox+window.plugin.bookmarks.htmlCalldrawBox); // wonk in progress
-      $('#bookmarksBox.mobile #topBar').append(plugin.bookmarks.htmlMoveBtn);
-    }
+    window.plugin.bookmarks.setupHTML();
 
     window.plugin.bookmarks.loadList('maps');
     window.plugin.bookmarks.loadList('portals');

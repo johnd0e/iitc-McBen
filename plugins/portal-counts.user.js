@@ -7,33 +7,14 @@
 // @updateURL      @@UPDATEURL@@
 // @downloadURL    @@DOWNLOADURL@@
 // @description    [@@BUILDNAME@@-@@BUILDDATE@@] Display a list of all localized portals by level and faction.
-// @include        https://*.ingress.com/intel*
-// @include        http://*.ingress.com/intel*
-// @match          https://*.ingress.com/intel*
-// @match          http://*.ingress.com/intel*
-// @include        https://*.ingress.com/mission/*
-// @include        http://*.ingress.com/mission/*
-// @match          https://*.ingress.com/mission/*
-// @match          http://*.ingress.com/mission/*
+// @match          *://*.ingress.com/intel*
+// @match          *://*.ingress.com/mission/*
 // @grant          none
 // ==/UserScript==
 
 @@PLUGINSTART@@
 
 // PLUGIN START ////////////////////////////////////////////////////////
-
-/* whatsnew
-* 0.1.0  : display graphs
-* 0.0.10 : show in nav drawer on mobile devices
-* 0.0.9  : fix for new intel map
-* 0.0.8  : use dialog() instead of alert()
-* 0.0.6  : ignoring outside bounds portals (even if close to)
-* 0.0.5  : changed table layout, added some colors
-* 0.0.4  : reverse show order of portals, using MAX_PORTAL_LEVEL now for array, changed table layout to be more compact, cleaned up code
-* 0.0.3  : fixed incorrect rounded portal levels, adjusted viewport
-* 0.0.2  : fixed counts to be reset after scrolling
-* 0.0.1  : initial release, show count of portals
-*/
 
 // use own namespace for plugin
 window.plugin.portalcounts = {
@@ -333,7 +314,11 @@ var setup =  function() {
     android.addPane('plugin-portalcounts', 'Portal counts', 'ic_action_data_usage');
     addHook('paneChanged', window.plugin.portalcounts.onPaneChanged);
   } else {
-    $('#toolbox').append(' <a onclick="window.plugin.portalcounts.getPortals()" title="Display a summary of portals in the current view">Portal counts</a>');
+    Menu.addMenu({
+      name: 'Info/Portal counts',
+      onclick: window.plugin.portalcounts.getPortals,
+      tooltip: 'Display a summary of portals in the current view'
+    })
   }
 
   $('head').append('<style>' +
