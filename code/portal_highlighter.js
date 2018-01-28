@@ -59,7 +59,7 @@ window.updatePortalHighlighterControl = function() {
       name: window._menu_path+'/'+window._no_highlighter,
       onclick: function() { changePortalHighlights();},
       isToggle: true,
-      default_checked: (!some_active)
+      checked: (!some_active)
     });
 
     let h_names = Object.keys(_highlighters).sort();
@@ -68,7 +68,7 @@ window.updatePortalHighlighterControl = function() {
         name: window._menu_path+'/'+name,
         onclick: function() { changePortalHighlights(name);},
         isToggle: true,
-        default_checked: (_current_highlighter===name)
+        checked: (_current_highlighter===name)
       });
     });
   }
