@@ -223,6 +223,14 @@ String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
 
+String.prototype.capitalizeAll = function() {
+  return this
+    .toLowerCase()
+    .split(' ')
+    .map( word => word[0].toUpperCase() + word.substr(1) )
+    .join(' ');
+ }
+ 
 // http://stackoverflow.com/a/646643/1684530 by Bergi and CMS
 if (typeof String.prototype.startsWith !== 'function') {
   String.prototype.startsWith = function (str){

@@ -17,10 +17,10 @@ Menu= (function () {
   function addMenu(menu_data) {
     let $entry = getOrCreateMenuLabel(menu_data.name);
 
+
     if (menu_data.onclick) {
-      let fct = menu_data.onclick;
-      if (typeof(fct)==='string') fct = new Function(fct);
-      $entry.click(fct);
+      if (typeof(menu_data.onclick)==='string') menu_data.onclick = new Function(menu_data.onclick);
+      $entry.click(menu_data.onclick);
     }
 
     if (menu_data.id) $entry.attr('id',menu_data.id);
@@ -33,7 +33,18 @@ Menu= (function () {
 
       $entry.prepend(checker);
     }
+
+
+    if (menu_data.key && menu_data.onclick) {
+      let key = $('<span>')
+        .addClass('shortcut')
+        .text(menu_data.key.capitalizeAll());
+      $entry.append(key);
+
+      $(document).bind('keypress', menu_data.key, menu_data.onclick);
+    }
   }
+
 
   function moveFromToolBox() {
     $('#toolbox a').each( parseToolBox );
@@ -48,6 +59,7 @@ Menu= (function () {
     let $root = getRoot();
     getOrCreateMenuLabelSub($root, ['Help']).appendTo($root);  // keep 'Help' to rigth
   }
+
 
   function parseToolBox() {
     let $link = $(this);
@@ -66,7 +78,6 @@ Menu= (function () {
 
     addMenu(menu);
   }
-
  
 
   function removeMenu(name) {
@@ -74,10 +85,12 @@ Menu= (function () {
     $entry.remove();
   }
 
+
   function setChecked(name, checked) {
     let $entry = getOrCreateMenuLabel(name);
     $entry.find('i.checker').toggleClass('checked',checked);
   }
+
 
   function setDisable(name, disable) {
     let $entry = getOrCreateMenuLabel(name);

@@ -1380,7 +1380,7 @@ g.checkpoint:hover circle {
 
 #mainmenu ul li > ul{
   display: none;
-  width: 150px;
+  width: 200px;
   position: absolute;
   top: 38px;
   border-radius: 0 0 5px 5px;
@@ -1426,3 +1426,6 @@ g.checkpoint:hover circle {
   content: '✔';
 }
 
+#mainmenu .shortcut {
+  float: right;
+}

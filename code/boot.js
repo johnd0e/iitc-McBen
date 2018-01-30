@@ -367,6 +367,7 @@ function boot() {
 
 @@INCLUDERAW:external/jquery-3.3.1.min.js@@
 @@INCLUDERAW:external/jquery-ui-1.12.1.min.js@@
+@@INCLUDERAW:external/jquery.hotkeys.js@@
 
 try { console.log('done loading included JS'); } catch(e) {}
 
