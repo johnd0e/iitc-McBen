@@ -3,11 +3,16 @@ var webpack = require('webpack');
 var GMPlugin = require('./greasemonkey-plugin');
 
 
+
+
+
+
+
+
 module.exports = {
 
   entry: [
     './main.js',
-    //'webpack-dev-server/client?http://localhost:8080' // not for RELEASE
   ],
 
   performance: { hints: false }, // not for RELEASE
@@ -22,7 +27,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        enforce: "pre",
+        enforce: 'pre',
         loader: path.join(__dirname,'macro-loader.js'),
         options: {
           distUrlBase: 'None'
@@ -50,6 +55,6 @@ module.exports = {
   },
 
   plugins: [
-   new GMPlugin({})
+    new GMPlugin({})
   ]
-}
+};

@@ -1,11 +1,11 @@
-var path = require('path');
-var glob = require("glob");
-var GMPlugin = require('./greasemonkey-plugin');
+const path = require('path');
+const glob = require('glob');
+const GMPlugin = require('./greasemonkey-plugin');
 
-var files = glob.sync("./plugins/*.user.js")
+var files = glob.sync('./plugins/*.user.js');
 files = files.reduce(function(map, obj) {
-    map[obj] = obj;
-    return map;
+  map[obj] = obj;
+  return map;
 }, {});
 
 
@@ -13,11 +13,13 @@ module.exports = {
 
   entry: files,
 
+
+
   performance: { hints: false }, // not for RELEASE
 
   output: {
     path: path.resolve(__dirname, '../dist2'),
-    filename: "[name]",
+    filename: '[name]',
     publicPath: '/'
   },
 
@@ -25,7 +27,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        enforce: "pre",
+        enforce: 'pre',
         loader: path.join(__dirname,'macro-loader.js')
       },
       {
@@ -52,4 +54,4 @@ module.exports = {
   plugins: [
     new GMPlugin({})
   ]
-}
+};
