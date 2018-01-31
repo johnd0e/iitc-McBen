@@ -1,69 +1,79 @@
-const express = require('express')
+const express = require('express');
 const fs = require('fs');
+const glob = require('glob');
 
 const port = 8100;
-const basedir = 'dist2/';
-
-
-var app = express()
-app.get('/', sendIndex);
-app.get('/index', sendIndex);
-app.get('/:name', sendFile);
-
-app.listen(port, function () {
-  console.log(`Server: http://localhost:${port}`);
-});
-
-
-function sendFile(req, res, next) {
-
-  var options = {
-    root: __dirname + '//..//out/',
-    dotfiles: 'deny',
-    headers: {
-        'x-timestamp': Date.now(),
-        'x-sent': true
-    }
-  };
-
-  var fileName = req.params.name;
-  res.sendFile(fileName, options, err => {
-    if (err) {
-      next(err);
-    }
-  });
-};
+const publicDir = 'dist2/';
 
 
 
-function sendIndex(req, res) {
+
+
+IndexPage = function(req, res) {
 
   function scriptList() {
 
-    let script_meta = [];
-    fs.readdirSync(basedir).forEach(file => {
-      let meta = readScriptMeta(file);
-      script_meta.push(meta)
-    });
+    let script_meta = getAllScripts();
 
-    var html='';
-    script_meta.forEach(meta => {
-      html += createScriptBlock( meta );
-    });
+
+    let main_idx = script_meta.findIndex( x => x['name']=== 'IITC: Ingress intel map total conversion' );
+    var html = createScriptBlock( script_meta[main_idx] );
+    script_meta.splice(main_idx,1);
+
+
+    let grouped = groupBy(script_meta,'category');
+
+    for (var category in grouped) {
+      html += `<label class='collapse' for='${category}'><h1>${category}</h1></label>`;
+      html += `<input id='${category}' type='checkbox' checked>`;
+      html += '<div>';
+
+      grouped[category].forEach( meta => {
+        html += createScriptBlock( meta );
+      });
+
+      html += '</div>';
+    }
 
     return html;
   }
 
 
+  function groupBy(xs, key) {
+    return xs.reduce(function(rv, x) {
+      v = x[key] || 'none';
+      rv[v] = rv[v] || [];
+      rv[v].push(x);
+      return rv;
+    }, {});
+  }
+
+
+  function getAllScripts() {
+    let script_meta = [];
+    let files = glob.sync(publicDir+'**/*.user.js');
+    files.forEach(file => {
+      let meta = readScriptMeta(file);
+      script_meta.push(meta);
+    });
+
+    return script_meta;
+  }
+
+
   function readScriptMeta(filename) {
-    let contents = fs.readFileSync(basedir+filename).toString();
+    let contents = fs.readFileSync(filename).toString();
 
-    let meta = { filename: filename };
+    let meta = { filename: filename.substr(publicDir.length) };
 
-    let regex = /^\s*\/\/\s*@(\w+)\s+(.+)$/mg // example: "// @key values"
-    let match = regex.exec(contents)
-    while (match != null) {
-      meta[match[1]] = match[2]
+    let metaregex = /\/\/\s*==UserScript==([^]*?)\/\/\s*==\/UserScript==\n/m;
+    let matches = metaregex.exec(contents);
+    if (matches.length===0) return meta;
+
+    let regex = /^\s*\/\/\s*@(\w+)\s+(.+)$/mg;// example: "// @key values"
+    let match = regex.exec(matches[1]);
+    while (match !== null) {
+      meta[match[1]] = match[2];
       match = regex.exec(contents);
     }
 
@@ -72,14 +82,13 @@ function sendIndex(req, res) {
 
   function createScriptBlock(meta) {
     let name = meta['name'] || 'unknown';
-    let desc = meta['description'] // .gsub(/^\[.*\]/,'')
+    let desc = meta['description']; // .gsub(/^\[.*\]/,'')
 
-    return `<div><a href=''>${name} (${meta['filename']})</a>  ver: ${meta['version']}<br></div>`;
-
-    `<div class='script'>
+    return `
+    <div class='script'>
       <a href='${meta['filename']}'>${name}</a> <span>${meta['version']}</span><br>
       <div class='desc'>${desc}</div>
-    </div>`
+    </div>`;
   }
 
   function css() {
@@ -108,13 +117,24 @@ function sendIndex(req, res) {
     `;
   }
 
+
   res.send('<!DOCTYPE html><html><head><style>'+
     css()+
     '</style></head><body>'+
     scriptList()+'</body>'
   );
-}
+};
 
 
 
 
+
+
+var app = express();
+app.get('/', IndexPage);
+app.get('/index', IndexPage);
+app.use(express.static(publicDir));
+
+app.listen(port, function () {
+  console.log('ScriptServer listening at http://localhost:%s', port);
+});
