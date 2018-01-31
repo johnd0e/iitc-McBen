@@ -60,7 +60,7 @@ class GMBannerPlugin {
     const options = this.mergeAllOptions(chunk);
     const std_entries=['name', 'category', 'version', 'namespace', 'updateURL', 'downloadURL', 'description','match', 'grant'];
 
-    var entries=[];
+    let entries=[];
     std_entries.forEach( (cat)=>{
       if (options[cat]) {
         this.createMetaEntry(entries,cat,options[cat]);
