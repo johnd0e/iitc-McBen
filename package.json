@@ -28,7 +28,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/.bin/webpack --config build_code/webpack.config.js",
-    "build2": "./node_modules/.bin/webpack --config build_code/webpack.config_plugins.js",
     "start": "node fileserver.js"
   }
 }

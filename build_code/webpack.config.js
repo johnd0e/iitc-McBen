@@ -1,25 +1,26 @@
-var path = require('path');
-var webpack = require('webpack');
-var GMPlugin = require('./greasemonkey-plugin');
+const path = require('path');
+const glob = require('glob');
+const GMPlugin = require('./greasemonkey-plugin');
 
+var files = glob.sync('./plugins/*.user.js');
+files = files.reduce(function(map, obj) {
+  map[obj] = obj;
+  return map;
+}, {});
 
-
-
-
+files['total-conversion-build.user.js']='./main.js';
 
 
 
 module.exports = {
 
-  entry: [
-    './main.js',
-  ],
+  entry: files,
 
   performance: { hints: false }, // not for RELEASE
 
   output: {
     path: path.resolve(__dirname, '../dist2'),
-    filename: 'total-conversion-build.user.js',
+    filename: '[name]',
     publicPath: '/'
   },
 
@@ -27,21 +28,11 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        enforce: 'pre',
-        loader: path.join(__dirname,'macro-loader.js'),
-        options: {
-          distUrlBase: 'None'
-        }
+        use: [
+          path.join(__dirname,'greasemonkey-loader.js'),
+          { loader: path.join(__dirname,'macro-loader.js'), options: { distUrlBase: 'None' } }
+        ]
       },
-      {
-        test: /\.js$/,
-        loader: path.join(__dirname,'greasemonkey-loader.js'),
-      },
-      /*{
-        test: /\.js$/,
-        loader: 'babel-loader',
-        options: { compact: false}, //, presets: ['es2015'] },
-      },*/
       {
         test: /\.css$/,
         loaders: ['style-loader','css-loader']

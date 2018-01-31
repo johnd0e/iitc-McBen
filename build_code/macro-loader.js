@@ -12,12 +12,12 @@ function macro_loader(source) {
   this.cacheable();
 
   let now = new Date();
-  buildDate = strftime('%Y-%m-%d-%H%M%S',now)
+  buildDate = strftime('%Y-%m-%d-%H%M%S',now);
   dateTimeVersion = strftime('%Y%m%d.',now) + strftime('%H%M%S',now).replace(/^0*/g, '');
 
   if (this.options.distUrlBase) {
-    downloadUrl = path.join(this.options.distUrlBase, this._module.rawRequest)
-    updateUrl = downloadUrl.replace(/\.user\.js$/, '.meta.js')
+    downloadUrl = path.join(this.options.distUrlBase, this._module.rawRequest);
+    updateUrl = downloadUrl.replace(/\.user\.js$/, '.meta.js');
   }
 
   buildName = this.options.buildName || 'none';
@@ -145,8 +145,8 @@ function loaderMD(match,param) {
 }
 
 function loaderImage(match,param) {
-    var binary = fs.readFileSync(param);
-    return 'data:image/png;base64,'+binary.toString('base64');
+  let binary = fs.readFileSync(param);
+  return 'data:image/png;base64,'+binary.toString('base64');
 }
 
 function loadCode() {
