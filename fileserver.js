@@ -3,7 +3,8 @@ const fs = require('fs');
 const glob = require('glob');
 
 const port = 8100;
-const publicDir = 'dist2/';
+//const publicDir = 'dist2/';
+const publicDir = 'build/local/';
 
 
 
