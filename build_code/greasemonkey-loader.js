@@ -23,7 +23,7 @@ function parseMetaBlock(metaString) {
 
   let meta = {};
 
-  let regex = /^\s*\/\/\s*@(\w+)\s+(.+)$/mg;// example: "// @key values"
+  let regex = /^\s*\/\/\s*@(\S+)[ \t]+(\S.+)$/mg;// example: "// @key values"
   let match = regex.exec(metaString);
   while (match !== null) {
 

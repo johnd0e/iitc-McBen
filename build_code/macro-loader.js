@@ -166,7 +166,7 @@ function loadCode() {
 
 function doReplacemenets(source,run=0) {
 
-  if (run>30) throw("macro-loader too much recursions");
+  if (run>30) throw('macro-loader too much recursions');
 
   let old_source = source;
 
@@ -184,8 +184,8 @@ function doReplacemenets(source,run=0) {
   source = source.replace(/@@DATETIMEVERSION@@/g, dateTimeVersion);
 
   source = source.replace(/@@BUILDNAME@@/g, buildName);
-  source = source.replace(/@@UPDATEURL@@/g, updateUrl);
-  source = source.replace(/@@DOWNLOADURL@@/g, downloadUrl);
+  source = source.replace(/@@UPDATEURL@@/g, updateUrl || '');
+  source = source.replace(/@@DOWNLOADURL@@/g, downloadUrl  || '');
 
   //source = source.replace(/@@PLUGINNAME@@/g, pluginName);
 
