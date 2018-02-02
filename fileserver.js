@@ -3,9 +3,11 @@ const fs = require('fs');
 const glob = require('glob');
 
 const port = 8100;
-//const publicDir = 'dist2/';
-const publicDir = 'build/local/';
+var publicDir = 'build/local/';
 
+if (process.argv.length > 2) {
+  publicDir = process.argv[2];
+}
 
 
 
@@ -138,4 +140,5 @@ app.use(express.static(publicDir));
 
 app.listen(port, function () {
   console.log('ScriptServer listening at http://localhost:%s', port);
+  console.log('  serving files from %s', publicDir);
 });

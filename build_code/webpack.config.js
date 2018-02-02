@@ -1,20 +1,27 @@
 const path = require('path');
 const glob = require('glob');
-const GMPlugin = require('./greasemonkey-plugin');
+const webpack = require('webpack');
+const GMAddonBannerPlugin = require('./greasemonkey-plugin');
 
-var files = glob.sync('./plugins/*.user.js');
-files = files.reduce(function(map, obj) {
-  map[obj] = obj;
-  return map;
-}, {});
 
-files['total-conversion-build.user.js']='./main.js';
 
+function getSourceFiles() {
+
+  var files = glob.sync('./plugins/*.user.js');
+  files = files.reduce(function(map, obj) {
+    map[obj] = obj;
+    return map;
+  }, {});
+
+  files['total-conversion-build.user.js']='./main.js';
+
+  return files;
+}
 
 
 module.exports = {
 
-  entry: files,
+  entry: getSourceFiles(),
 
   performance: { hints: false }, // not for RELEASE
 
@@ -46,6 +53,17 @@ module.exports = {
   },
 
   plugins: [
-    new GMPlugin({})
+    new GMAddonBannerPlugin(
+      {
+        namespace:      'https://github.com/jonatkins/ingress-intel-total-conversion',
+        updateURL:      'http://localhost:8100/[file]',
+        downloadURL:    'http://localhost:8100/[file]',
+        match:          ['*://*.ingress.com/intel*', '*://*.ingress.com/mission/*'],
+      }),
+
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery'
+    })
   ]
 };

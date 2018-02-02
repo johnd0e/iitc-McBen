@@ -4,9 +4,9 @@
 var ConcatSource = require('webpack-sources').ConcatSource;
 
 
-class GMBannerPlugin {
+class GMAddonBannerPlugin {
 
-  constructor (options) {
+  constructor(options) {
     this.options = options || {};
   }
 
@@ -80,8 +80,9 @@ class GMBannerPlugin {
   mergeAllOptions(chunk) {
     let options={};
 
+    let self = this;
     Object.keys(this.options).forEach(function(key) {
-      options[ key ] = this.options[ key ];
+      options[ key ] = self.options[ key ];
     });
 
     chunk.modules.forEach( module => {
@@ -111,4 +112,4 @@ class GMBannerPlugin {
 }
 
 
-module.exports = GMBannerPlugin;
+module.exports = GMAddonBannerPlugin;
