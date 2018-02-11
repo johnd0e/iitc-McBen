@@ -301,6 +301,9 @@ function boot() {
     popupAnchor: new L.Point(1, -34),
   }});
 
+
+  Settings.init();
+
   window.extractFromStock();
   window.setupIdle();
   window.setupTaphold();
@@ -323,6 +326,7 @@ function boot() {
   window.setupLayerChooserSelectOne();
   window.setupLayerChooserStatusRecorder();
 
+
   // read here ONCE, so the URL is only evaluated one time after the
   // necessary data has been loaded.
   urlPortalLL = getURLParam('pll');
@@ -336,7 +340,6 @@ function boot() {
 
   window.setupPlugins();
 
-  // static Plugins
   RegionScoreboard.setup();
   Redeem.setup();
   Menu.setup();

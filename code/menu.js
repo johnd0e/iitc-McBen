@@ -1,8 +1,5 @@
 Menu= (function () {
 
-  // TODO: accesskey
-  //  maybe use: https://github.com/jeresig/jquery.hotkeys
-
   /*
     addMenu({
       name: 'View/Example'
@@ -154,6 +151,9 @@ Menu= (function () {
     addMenu({name: 'Help/About IITC', onclick: window.aboutIITC });
     addMenu({name: 'View/Zoom Control', onclick: toggleZoomControl, isToggle: true, checked: true});
     addMenu({name: 'View/Toolbox', onclick: toggleToolbox, isToggle: true, checked: true});
+
+    if (Settings.get('iitc','hide_zoom',false)) toggleZoomControl();
+    if (Settings.get('iitc','hide_toolbox',false)) toggleToolbox();
   }
 
 
@@ -161,12 +161,14 @@ Menu= (function () {
     let $ctrl = $('.leaflet-control-zoom');
     $ctrl.toggle();
     setChecked('View/Zoom Control', $ctrl.is(':visible'));
+    Settings.set('iitc','hide_zoom',!$ctrl.is(':visible'));
   }
 
   function toggleToolbox() {
     let $ctrl = $('#toolbox');
     $ctrl.toggle();
     setChecked('View/Toolbox', $ctrl.is(':visible'));
+    Settings.set('iitc','hide_toolbox',!$ctrl.is(':visible'));
   }
 
   function setup() {
