@@ -1341,7 +1341,7 @@ g.checkpoint:hover circle {
 #mainmenu {
   position: absolute;
   top: 0px;
-  left: 100px;
+  left: 60px;
   z-index: 1001;
   background: white;
   display: block;
@@ -1361,7 +1361,7 @@ g.checkpoint:hover circle {
 
 #mainmenu li {
   list-style: inside none;
-  padding: 12px;
+  padding: 8px 12px 8px 12px;
   cursor: pointer;
 }
 
@@ -1382,7 +1382,7 @@ g.checkpoint:hover circle {
   display: none;
   width: 200px;
   position: absolute;
-  top: 38px;
+  top: 30px;
   border-radius: 0 0 5px 5px;
   padding: 6px 0;
   background: #fff;
@@ -1396,7 +1396,7 @@ g.checkpoint:hover circle {
 #mainmenu ul ul ul {
   position: absolute;
   top: 0px;
-  left: 100px;  
+  left: 100px;
   z-index: 1005;
 }
 
@@ -1410,6 +1410,12 @@ g.checkpoint:hover circle {
 
 #mainmenu li.disabled {
   color: #666;
+}
+
+#mainmenu li.has_sub:after {
+  content: '⏵';
+  text-align: right;
+  float:right
 }
 
 #mainmenu i.checker {

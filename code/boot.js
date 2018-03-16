@@ -81,6 +81,8 @@ window.setupMap = function() {
       $('<div>').width(708).height(108).addClass('leaflet-control').css({'pointer-events': 'none', 'margin': '0'}));
   }
 
+  $(map._controlContainer).css({top:50, position: 'relative'});
+
   setupLayers();
 
 
