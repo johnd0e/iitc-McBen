@@ -4,10 +4,10 @@ Menu= (function () {
     addMenu({
       name: 'View/Example'
       onclick: fct
-      id: 
+      id:
       tooltip: ''
       isToggle:
-      checked: 
+      checked:
       key:
     })
   */
@@ -51,7 +51,7 @@ Menu= (function () {
 
   function cleanupStylings() {
     $('#mainmenu > ul > li:not(:has(>ul))').remove();      // remove Empty Menus
-    $('#mainmenu > ul > li:has(>ul)').addClass('has-sub'); // append 'has-sub' class to menu headers
+    $('#mainmenu > ul > li > ul li:has(>ul)').addClass('has_sub'); // append 'has-sub' class to menu headers
 
     let $root = getRoot();
     getOrCreateMenuLabelSub($root, ['Help']).appendTo($root);  // keep 'Help' to rigth
@@ -68,14 +68,14 @@ Menu= (function () {
       key: $link.attr('accesskey'),
     };
 
-    if (!menu.onclick) { 
+    if (!menu.onclick) {
       var that = this; // FIXME: use something like getEventListeners (not availible on FF)
       menu.onclick = function () { that.click(); };
     }
 
     addMenu(menu);
   }
- 
+
 
   function removeMenu(name) {
     let $entry = getOrCreateMenuLabel(name);
@@ -145,7 +145,7 @@ Menu= (function () {
     getOrCreateMenuLabelSub($root,['View']);
     getOrCreateMenuLabelSub($root,['Info']);
     getOrCreateMenuLabelSub($root,['Misc']);
-    //getOrCreateMenuLabelSub($root,['Options']);
+    getOrCreateMenuLabelSub($root,['Options']);
     getOrCreateMenuLabelSub($root,['Help']);
 
     addMenu({name: 'Help/About IITC', onclick: window.aboutIITC });
