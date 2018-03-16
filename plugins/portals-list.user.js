@@ -191,7 +191,7 @@ window.plugin.portalslist.getPortals = function() {
     window.plugin.portalslist.fields.forEach(function(field, i) {
       cell = row.insertCell(-1);
 
-      var value = field.value(portal);
+      var value = ( field.value(portal) ) || '';
       obj.values.push(value);
 
       obj.sortValues.push(field.sortValue ? field.sortValue(value, portal) : value);
