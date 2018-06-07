@@ -96,13 +96,13 @@ function createDefaultBaseMapLayers() {
       maxZoom: 21,
       backgroundColor: '#0e3d4e',
       styles: [
-          { featureType:"all", elementType:"all",
-            stylers: [{visibility:"on"}, {hue:"#131c1c"}, {saturation:"-50"}, {invert_lightness:true}] },
-          { featureType:"water", elementType:"all",
-            stylers: [{visibility:"on"}, {hue:"#005eff"}, {invert_lightness:true}] },
-          { featureType:"poi", stylers:[{visibility:"off"}]},
-          { featureType:"transit", elementType:"all", stylers:[{visibility:"off"}] }
-        ]});
+        { featureType: 'all', elementType: 'all',
+          stylers: [{visibility:'on'}, {hue:'#131c1c'}, {saturation:'-50'}, {invert_lightness:true}] },
+        { featureType:'water', elementType:'all',
+          stylers: [{visibility:'on'}, {hue:'#005eff'}, {invert_lightness:true}] },
+        { featureType:'poi', stylers:[{visibility:'off'}]},
+        { featureType:'transit', elementType:'all', stylers:[{visibility:'off'}] }
+      ]});
   baseLayers['Google Roads'] = L.gridLayer.googleMutant({type:'roadmap', maxZoom: 21});
   baseLayers['Google Satellite'] = L.gridLayer.googleMutant({type:'satellite', maxZoom: 21});
   baseLayers['Google Hybrid'] = L.gridLayer.googleMutant({type:'hybrid', maxZoom: 21});
@@ -110,9 +110,14 @@ function createDefaultBaseMapLayers() {
 
 
   // pure OSM
-  var OSMAttr = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-  var OSMUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  baseLayers['OpenStreetMap'] = L.tileLayer(OSMUrl,{attribution:OSMAttr,maxZoom:18,maxNativeZoom:17});
+  let osmOpt = {
+    attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+    maxNativeZoom: 17,
+    maxZoom: 18,
+    subdomains: 'abc'
+  };
+  let OSMUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  baseLayers['OpenStreetMap'] = L.tileLayer(OSMUrl, osmOpt);
 
   return baseLayers;
 }
