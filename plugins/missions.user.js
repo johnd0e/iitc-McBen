@@ -801,36 +801,33 @@ window.plugin.missions = {
 		}, this);
 	},
 
-	onPortalChanged: function(type, guid, oldval) {
+	onPortalAdded: function(guid, oldval) {
 		var portal;
-		if (type === 'add' || type === 'update') {
-			// Compatibility
-			portal = window.portals[guid] || oldval;
-			if (!portal.options.data.mission && !portal.options.data.mission50plus) {
-				return;
-			}
-			if (this.markedStarterPortals[guid]) {
-				return;
-			}
+		// Compatibility
+		portal = window.portals[guid] || oldval;
+		if (!portal.options.data.mission && !portal.options.data.mission50plus) {
+			return;
+		}
+		if (this.markedStarterPortals[guid]) {
+			return;
+		}
 
-			this.markedStarterPortals[guid] = L.circleMarker(
-				L.latLng(portal.options.data.latE6 / 1E6, portal.options.data.lngE6 / 1E6), {
-					radius: portal.options.radius + Math.ceil(portal.options.radius / 2),
-					weight: 3,
-					opacity: 1,
-					color: this.MISSION_COLOR_START,
-					fill: false,
-					dashArray: null,
-					clickable: false
-				}
-			);
-			this.missionStartLayer.addLayer(this.markedStarterPortals[guid]);
-		} else if (type === 'delete') {
-			portal = oldval;
-			if (!this.markedStarterPortals[guid]) {
-				return;
+		this.markedStarterPortals[guid] = L.circleMarker(
+			L.latLng(portal.options.data.latE6 / 1E6, portal.options.data.lngE6 / 1E6), {
+				radius: portal.options.radius + Math.ceil(portal.options.radius / 2),
+				weight: 3,
+				opacity: 1,
+				color: this.MISSION_COLOR_START,
+				fill: false,
+				dashArray: null,
+				clickable: false
 			}
+		);
+		this.missionStartLayer.addLayer(this.markedStarterPortals[guid]);
+	},
 
+	onPortalRemoved: function(guid) {
+		if (this.markedStarterPortals[guid]) {
 			this.missionStartLayer.removeLayer(this.markedStarterPortals[guid]);
 			delete this.markedStarterPortals[guid];
 		}
@@ -1008,9 +1005,9 @@ window.plugin.missions = {
 		$('<style>').prop('type', 'text/css').html('@@INCLUDESTRING:plugins/missions.css@@').appendTo('head');
 
 		Menu.addMenu({
-      name: 'Info/Missions in Viev',
-      onclick: plugin.missions.openTopMissions
-    });
+      		name: 'Info/Missions in view',
+      		onclick: plugin.missions.openTopMissions
+    	});
 
 		if(window.useAndroidPanes()) {
 			this.mobilePane = document.createElement('div');
@@ -1046,34 +1043,17 @@ window.plugin.missions = {
 			addHook('paneChanged', this.onPaneChanged.bind(this));
 		}
 
-		// window.addPortalHighlighter('Mission start point', this.highlight.bind(this));
 		window.addHook('portalSelected', this.onPortalSelected.bind(this));
-
 		window.addHook('search', this.onSearch.bind(this));
 
-		/*
-		  I know iitc has portalAdded event but it is missing portalDeleted. So we have to resort to Object.observe
-		*/
 		var me = this;
-		if (Object.observe) { // Chrome
-			Object.observe(window.portals, function(changes) {
-				changes.forEach(function(change) {
-					me.onPortalChanged(change.type, change.name, change.oldValue);
-				});
-			});
-		} else { // Firefox why no Object.observer ? :<
-			window.addHook('portalAdded', function(data) {
-				me.onPortalChanged('add', data.portal.options.guid, data.portal);
-			});
-			// TODO: bug iitc dev for portalRemoved event
-			var oldDeletePortal = window.Render.prototype.deletePortalEntity;
-			window.Render.prototype.deletePortalEntity = function(guid) {
-				if (guid in window.portals) {
-					me.onPortalChanged('delete', guid, window.portals[guid]);
-				}
-				oldDeletePortal.apply(this, arguments);
-			};
-		}
+		window.addHook('portalAdded', function(data) {
+			me.onPortalAdded(data.portal.options.guid, data.portal);
+		});
+		window.addHook('portalRemoved', function(data) {
+			me.onPortalRemoved(data.portal.options.guid);
+		});
+
 
 		this.missionStartLayer = new L.LayerGroup();
 		this.missionLayer = new L.LayerGroup();

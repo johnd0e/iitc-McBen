@@ -11,7 +11,7 @@ window.chat.commTabs = [
   {channel:'all', name:'All', inputPrompt: 'broadcast:', inputColor:'#f66'},
   {channel:'faction', name:'Aaction', inputPrompt: 'tell faction:'},
   {channel:'alerts', name:'Alerts', inputPrompt: 'tell Jarvis:', inputColor: '#666', globalBounds: true, sendMessage: function() {
-    alert("Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can't chat to the 'alerts' channel!)");
+    alert('Jarvis: A strange game. The only winning move is not to play. How about a nice game of chess?\n(You can\'t chat to the \'alerts\' channel!)');
   }},
 ];
 
@@ -46,7 +46,7 @@ window.chat.handleTabCompletion = function() {
   newText += (atPresent ? '' : '@') + nick + ' ';
   newText += text.substring(curPos);
   el.val(newText);
-}
+};
 
 //
 // clear management
@@ -92,7 +92,7 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
   var ne = b.getNorthEast();
   var sw = b.getSouthWest();
   var data = {
-//    desiredNumItems: isFaction ? CHAT_FACTION_ITEMS : CHAT_PUBLIC_ITEMS ,
+  //    desiredNumItems: isFaction ? CHAT_FACTION_ITEMS : CHAT_PUBLIC_ITEMS ,
     minLatE6: Math.round(sw.lat*1E6),
     minLngE6: Math.round(sw.lng*1E6),
     maxLatE6: Math.round(ne.lat*1E6),
@@ -100,7 +100,7 @@ window.chat.genPostData = function(channel, storageHash, getOlderMsgs) {
     minTimestampMs: -1,
     maxTimestampMs: -1,
     tab: channel,
-  }
+  };
 
   if(getOlderMsgs) {
     // ask for older chat when scrolling up
@@ -270,8 +270,8 @@ window.chat.handleAlerts = function(data, olderMsgs) {
   chat.writeDataToHash(data, chat._alerts, undefined, olderMsgs); //NOTE: isPublic passed as undefined - it's nether public or private!
   var oldMsgsWereAdded = old !== chat._alerts.oldestTimestamp;
 
-// no hoot for alerts - API change planned here...
-//  runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
+  // no hook for alerts - API change planned here...
+  //  runHooks('alertsChatDataAvailable', {raw: data, result: data.result, processed: chat._alerts.data});
 
   window.chat.renderAlerts(oldMsgsWereAdded);
 };
@@ -316,66 +316,66 @@ window.chat.writeDataToHash = function(newData, storageHash, isPublicChannel, is
     if (storageHash.newestTimestamp === -1 || storageHash.newestTimestamp < time) storageHash.newestTimestamp = time;
 
     //remove "Your X on Y was destroyed by Z" from the faction channel
-//    if (systemNarrowcast && !isPublicChannel) return true;
+    //    if (systemNarrowcast && !isPublicChannel) return true;
 
     var msg = '', nick = '';
     $.each(json[2].plext.markup, function(ind, markup) {
       switch(markup[0]) {
-      case 'SENDER': // user generated messages
-        nick = markup[1].plain.slice(0, -2); // cut “: ” at end
-        break;
+        case 'SENDER': // user generated messages
+          nick = markup[1].plain.slice(0, -2); // cut “: ” at end
+          break;
 
-      case 'PLAYER': // automatically generated messages
-        nick = markup[1].plain;
-        team = markup[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
-        if(ind > 0) msg += nick; // don’t repeat nick directly
-        break;
+        case 'PLAYER': // automatically generated messages
+          nick = markup[1].plain;
+          team = markup[1].team === 'RESISTANCE' ? TEAM_RES : TEAM_ENL;
+          if(ind > 0) msg += nick; // don’t repeat nick directly
+          break;
 
-      case 'TEXT':
-        msg += $('<div/>').text(markup[1].plain).html().autoLink();
-        break;
+        case 'TEXT':
+          msg += $('<div/>').text(markup[1].plain).html().autoLink();
+          break;
 
-      case 'AT_PLAYER':
-        var thisToPlayer = (markup[1].plain == ('@'+window.PLAYER.nickname));
-        var spanClass = thisToPlayer ? 'pl_nudge_me' : (markup[1].team + ' pl_nudge_player');
-        var atPlayerName = markup[1].plain.replace(/^@/, '');
-        msg += $('<div/>').html($('<span/>')
-                          .attr('class', spanClass)
-                          .attr('onclick',"window.chat.nicknameClicked(event, '"+atPlayerName+"')")
-                          .text(markup[1].plain)).html();
-        msgToPlayer = msgToPlayer || thisToPlayer;
-        break;
+        case 'AT_PLAYER':
+          var thisToPlayer = (markup[1].plain == ('@'+window.PLAYER.nickname));
+          var spanClass = thisToPlayer ? 'pl_nudge_me' : (markup[1].team + ' pl_nudge_player');
+          var atPlayerName = markup[1].plain.replace(/^@/, '');
+          msg += $('<div/>').html($('<span/>')
+                            .attr('class', spanClass)
+                            .attr('onclick',"window.chat.nicknameClicked(event, '"+atPlayerName+"')")
+                            .text(markup[1].plain)).html();
+          msgToPlayer = msgToPlayer || thisToPlayer;
+          break;
 
-      case 'PORTAL':
-        var latlng = [markup[1].latE6/1E6, markup[1].lngE6/1E6];
-        var perma = '/intel?ll='+latlng[0]+','+latlng[1]+'&z=17&pll='+latlng[0]+','+latlng[1];
-        var js = 'window.selectPortalByLatLng('+latlng[0]+', '+latlng[1]+');return false';
+        case 'PORTAL':
+          var latlng = [markup[1].latE6/1E6, markup[1].lngE6/1E6];
+          var perma = '/intel?ll='+latlng[0]+','+latlng[1]+'&z=17&pll='+latlng[0]+','+latlng[1];
+          var js = 'window.selectPortalByLatLng('+latlng[0]+', '+latlng[1]+');return false';
 
-        msg += '<a onclick="'+js+'"'
-          + ' title="'+markup[1].address+'"'
-          + ' href="'+perma+'" class="help">'
-          + window.chat.getChatPortalName(markup[1])
-          + '</a>';
-        break;
+          msg += '<a onclick="'+js+'"'
+            + ' title="'+markup[1].address+'"'
+            + ' href="'+perma+'" class="help">'
+            + window.chat.getChatPortalName(markup[1])
+            + '</a>';
+          break;
 
-      case 'SECURE':
-        //NOTE: we won't add the '[secure]' string here - it'll be handled below instead
-        isSecureMessage = true;
-        break;
+        case 'SECURE':
+          //NOTE: we won't add the '[secure]' string here - it'll be handled below instead
+          isSecureMessage = true;
+          break;
 
-      default:
-        //handle unknown types by outputting the plain text version, marked with it's type
-        msg += $('<div/>').text(markup[0]+':<'+markup[1].plain+'>').html();
-        break;
+        default:
+          //handle unknown types by outputting the plain text version, marked with it's type
+          msg += $('<div/>').text(markup[0]+':<'+markup[1].plain+'>').html();
+          break;
       }
     });
 
 
-//    //skip secure messages on the public channel
-//    if (isPublicChannel && isSecureMessage) return true;
+    //    //skip secure messages on the public channel
+    //    if (isPublicChannel && isSecureMessage) return true;
 
-//    //skip public messages (e.g. @player mentions) on the secure channel
-//    if ((!isPublicChannel) && (!isSecureMessage)) return true;
+    //    //skip public messages (e.g. @player mentions) on the secure channel
+    //    if ((!isPublicChannel) && (!isSecureMessage)) return true;
 
 
     //NOTE: these two are redundant with the above two tests in place - but things have changed...
@@ -412,7 +412,7 @@ window.chat.renderData = function(data, element, likelyWereOldMsgs) {
   if(elm.is(':hidden')) return;
 
   // discard guids and sort old to new
-//TODO? stable sort, to preserve server message ordering? or sort by GUID if timestamps equal?
+  //TODO? stable sort, to preserve server message ordering? or sort by GUID if timestamps equal?
   var vals = $.map(data, function(v, k) { return [v]; });
   vals = vals.sort(function(a, b) { return a[0]-b[0]; });
 
@@ -463,8 +463,8 @@ window.chat.renderMsg = function(msg, nick, time, team, msgToPlayer, systemNarro
 };
 
 window.chat.addNickname= function(nick) {
-  var c = document.getElementById("chattext");
-  c.value = [c.value.trim(), nick].join(" ").trim() + " ";
+  var c = document.getElementById('chattext');
+  c.value = [c.value.trim(), nick].join(' ').trim() + ' ';
   c.focus();
 };
 
@@ -476,8 +476,8 @@ window.chat.getActive = function() {
 };
 
 window.chat.tabToChannel = function(tab) {
-  if (tab == 'faction') return 'faction';
-  if (tab == 'alerts') return 'alerts';
+  if (tab === 'faction') return 'faction';
+  if (tab === 'alerts') return 'alerts';
   return 'all';
 };
 
@@ -529,13 +529,13 @@ window.chat.backgroundChannelData = function(instance,channel,flag) {
 window.chat.request = function() {
   console.log('refreshing chat');
   var channel = chat.tabToChannel(chat.getActive());
-  if (channel == 'faction' || (window.chat.backgroundChannels && window.chat.backgroundChannels['faction'])) {
+  if (channel === 'faction' || (window.chat.backgroundChannels && window.chat.backgroundChannels['faction'])) {
     chat.requestFaction(false);
   }
-  if (channel == 'all' || (window.chat.backgroundChannels && window.chat.backgroundChannels['all'])) {
+  if (channel === 'all' || (window.chat.backgroundChannels && window.chat.backgroundChannels['all'])) {
     chat.requestPublic(false);
   }
-  if (channel == 'alerts' || (window.chat.backgroundChannels && window.chat.backgroundChannels['alerts'])) {
+  if (channel === 'alerts' || (window.chat.backgroundChannels && window.chat.backgroundChannels['alerts'])) {
     chat.requestAlerts(false);
   }
 };
@@ -623,9 +623,11 @@ window.chat.chooseTab = function(tab) {
 };
 
 window.chat.show = function(name) {
-  window.isSmartphone()
-        ? $('#updatestatus').hide()
-        : $('#updatestatus').show();
+  if (window.isSmartphone()) {
+    $('#updatestatus').hide();
+  } else {
+    $('#updatestatus').show();
+  }
   $('#chat, #chatinput').show();
 
   window.chat.chooseTab(name);

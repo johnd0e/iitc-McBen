@@ -238,8 +238,8 @@ RegionScoreboard = (function () {
 
   function createHistoryTable() {
 
-    var order_name = (PLAYER.team == 'RESISTANCE' ? [TEAM_RES,TEAM_ENL]:[TEAM_ENL,TEAM_RES]);
-    var order_team = (PLAYER.team == 'RESISTANCE' ? [1,0]:[0,1]);
+    var order_name = (PLAYER.team === 'RESISTANCE' ? [TEAM_RES,TEAM_ENL]:[TEAM_ENL,TEAM_RES]);
+    var order_team = (PLAYER.team === 'RESISTANCE' ? [1,0]:[0,1]);
 
     var table = '<table class="checkpoint_table" width="90%"><thead><tr><th align="right">CP</th><th>Time</th>'+
                 '<th align="right">'+window.TEAM_NAMES[order_name[0]]+'</th>'+
@@ -272,7 +272,7 @@ RegionScoreboard = (function () {
 
     for (var i=0; i<regionScore.topAgents.length; i++) {
       var agent = regionScore.topAgents[i];
-      agentTable += '<tr><td>'+(i+1)+'</td><td class="nickname '+(agent.team=='RESISTANCE'?'res':'enl')+'">'+agent.nick+'</td></tr>';
+      agentTable += '<tr><td>'+(i+1)+'</td><td class="nickname '+(agent.team==='RESISTANCE'?'res':'enl')+'">'+agent.nick+'</td></tr>';
     }
 
     if (regionScore.hasNoTopAgents()) {
