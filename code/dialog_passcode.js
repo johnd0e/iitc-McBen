@@ -100,6 +100,8 @@ Redeem= (function () {
 
   function handleRedeemResponse(data) {
 
+    requested_code=undefined;
+
     if (data.error) {
       showResult('<strong>' + data.error + '</strong>');
       return;
@@ -115,7 +117,6 @@ Redeem= (function () {
       window.setupPlayerStat();
     }
 
-    requested_code=undefined;
     request_result = data.rewards;
     outputReward();
   }
