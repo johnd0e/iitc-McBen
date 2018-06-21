@@ -93,7 +93,7 @@ window.plugin.doneLinks.showLink = function(link) {
        opacity: 0.8,
        weight: 6,
        clickable: false,
-       dashArray: [6,12],
+       dashArray: '6,12',
 
        guid: link.options.guid
     });

@@ -252,7 +252,7 @@ window.plugin.flyLinks.updateLayer = function() {
       weight: 1.5,
       clickable: false,
       smoothFactor: 10,
-      dashArray: [6, 4],
+      dashArray: '6, 4',
     });
   });
   

@@ -76,11 +76,12 @@ window.plugin.drawTools.setOptions = function() {
   window.plugin.drawTools.polygonOptions = L.extend({}, window.plugin.drawTools.lineOptions, {
     fill: true,
     fillColor: null, // to use the same as 'color' for fill
-    fillOpacity: 0.2
+    fillOpacity: 0.2,
+    dashArray: ''
   });
 
   window.plugin.drawTools.editOptions = L.extend({}, window.plugin.drawTools.polygonOptions, {
-    dashArray: [10,10]
+    dashArray: '10,10'
   });
   delete window.plugin.drawTools.editOptions.color;
 
