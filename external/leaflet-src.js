@@ -12029,7 +12029,7 @@ var Canvas = Renderer.extend({
 			var parts = layer.options.dashArray.split(','),
 			    dashArray = [],
 			    i;
-			for (i = 0; i < parts.length; i++) {
+			for (i = 0; i < parts.length && parts.length>1; i++) {
 				dashArray.push(Number(parts[i]));
 			}
 			layer.options._dashArray = dashArray;
