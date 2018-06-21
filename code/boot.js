@@ -47,6 +47,7 @@ window.setupStyles = function() {
 window.setupMap = function() {
   $('#map').text('');
 
+  let useCanvasRender = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
   // proper initial position is now delayed until all plugins are loaded and the base layer is set
   window.map = new L.Map('map', {
@@ -57,7 +58,7 @@ window.setupMap = function() {
 //    zoomAnimation: false,
     markerZoomAnimation: false,
     bounceAtZoomLimits: false,
-    preferCanvas: (window.L_PREFER_CANVAS ? true : false)
+    preferCanvas: useCanvasRender
   });
 
   if (L.Path.CANVAS) {
