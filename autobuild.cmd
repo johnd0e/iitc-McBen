@@ -2,7 +2,7 @@
 ECHO autobuild running
 rem "inotifywait" required: https://github.com/thekid/inotify-win
 
-start run_server.rb
+start yarn start
 
 :loop
 build.py local
