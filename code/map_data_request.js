@@ -578,6 +578,8 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
                        unaccountedTiles.length > 0 ? this.EMPTY_RESPONSE_RUN_QUEUE_DELAY :
                        timeoutTiles.length > 0 ? this.TIMEOUT_REQUEST_RUN_QUEUE_DELAY :
                        this.RUN_QUEUE_DELAY;
+
+  /*
   var statusMsg = 'getEntities status: '+tiles.length+' tiles: ';
   statusMsg += successTiles.length+' successful';
   if (retryTiles.length) statusMsg += ', '+retryTiles.length+' retried';
@@ -585,7 +587,8 @@ window.MapDataRequest.prototype.handleResponse = function (data, tiles, success)
   if (errorTiles.length) statusMsg += ', '+errorTiles.length+' failed';
   if (unaccountedTiles.length) statusMsg += ', '+unaccountedTiles.length+' unaccounted';
   statusMsg += '. delay '+nextQueueDelay+' seconds';
-  console.log (statusMsg);
+  console.info(statusMsg);
+  */
 
 
   // requeue any 'timeout' tiles immediately
