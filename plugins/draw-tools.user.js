@@ -28,13 +28,13 @@ window.plugin.drawTools = function() {};
 
 window.plugin.drawTools.loadExternals = function() {
   try { console.log('Loading leaflet.draw JS now'); } catch(e) {}
-  @@INCLUDERAW:external/leaflet.draw.js@@
+  @@INCLUDERAW:external/leaflet.draw-src.js@@
   @@INCLUDERAW:external/spectrum/spectrum.js@@
   try { console.log('done loading leaflet.draw JS'); } catch(e) {}
 
   window.plugin.drawTools.boot();
 
-  $('head').append('<style>@@INCLUDESTRING:external/leaflet.draw.css@@</style>');
+  $('head').append('<style>@@INCLUDESTRING:external/leaflet.draw-src.css@@</style>');
   $('head').append('<style>@@INCLUDESTRING:external/spectrum/spectrum.css@@</style>');
 }
 
@@ -151,7 +151,7 @@ window.plugin.drawTools.addDrawControl = function() {
   window.plugin.drawTools.drawControl = drawControl;
 
   map.addControl(drawControl);
-  
+
   window.plugin.drawTools.setAccessKeys();
   for (var toolbarId in drawControl._toolbars) {
     if (drawControl._toolbars[toolbarId] instanceof L.Toolbar) {
@@ -600,7 +600,7 @@ window.plugin.drawTools.boot = function() {
   window.plugin.drawTools.currentMarker = window.plugin.drawTools.getMarkerIcon(window.plugin.drawTools.currentColor);
 
   window.plugin.drawTools.setOptions();
-  
+
   //create a leaflet FeatureGroup to hold drawn items
   window.plugin.drawTools.drawnItems = new L.FeatureGroup();
 
