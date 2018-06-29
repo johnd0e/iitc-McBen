@@ -2,7 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const glob = require('glob');
 
-const port = 8100;
+const port = 8101;
 var publicDir = 'build/local/';
 
 if (process.argv.length > 2) {
