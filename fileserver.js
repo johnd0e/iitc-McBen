@@ -43,24 +43,24 @@ IndexPage = function(req, res) {
 
 
     function groupBy(xs, key) {
-    return xs.reduce(function(rv, x) {
-      v = x[key] || 'none';
-      rv[v] = rv[v] || [];
-      rv[v].push(x);
-      return rv;
-    }, {});
+        return xs.reduce(function(rv, x) {
+            v = x[key] || 'none';
+            rv[v] = rv[v] || [];
+            rv[v].push(x);
+            return rv;
+        }, {});
     }
 
 
     function getAllScripts() {
-    let script_meta = [];
-    let files = glob.sync(publicDir+'**/*.user.js');
-    files.forEach(file => {
-      let meta = readScriptMeta(file);
-      script_meta.push(meta);
-    });
+        let script_meta = [];
+        let files = glob.sync(publicDir+'**/*.user.js');
+        files.forEach(file => {
+            let meta = readScriptMeta(file);
+            script_meta.push(meta);
+        });
 
-    return script_meta; 
+        return script_meta;
     }
 
     function readScriptMeta(filename) {

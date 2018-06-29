@@ -58,74 +58,74 @@
 // artifactsUpdated: called when the set of artifacts (including targets)
 //              has changed. Parameters names are old, new.
 
-window._hooks = {}
+window._hooks = {};
 window.VALID_HOOKS = [
-  'portalSelected', 'portalDetailsUpdated', 'artifactsUpdated',
-  'mapDataRefreshStart', 'mapDataEntityInject', 'mapDataRefreshEnd',
-  'portalAdded', 'linkAdded', 'fieldAdded',
-  'portalRemoved', 'linkRemoved', 'fieldRemoved',
-  'publicChatDataAvailable', 'factionChatDataAvailable',
-  'requestFinished', 'nicknameClicked',
-  'geoSearch', 'search', 'iitcLoaded',
-  'portalDetailLoaded', 'paneChanged'];
+    'portalSelected', 'portalDetailsUpdated', 'artifactsUpdated',
+    'mapDataRefreshStart', 'mapDataEntityInject', 'mapDataRefreshEnd',
+    'portalAdded', 'linkAdded', 'fieldAdded',
+    'portalRemoved', 'linkRemoved', 'fieldRemoved',
+    'publicChatDataAvailable', 'factionChatDataAvailable',
+    'requestFinished', 'nicknameClicked',
+    'geoSearch', 'search', 'iitcLoaded',
+    'portalDetailLoaded', 'paneChanged'];
 
 window.runHooks = function(event, data) {
-  if(VALID_HOOKS.indexOf(event) === -1) throw('Unknown event type: ' + event);
+    if(VALID_HOOKS.indexOf(event) === -1) throw('Unknown event type: ' + event);
 
-  if(!_hooks[event]) return true;
-  var interrupted = false;
-  $.each(_hooks[event], function(ind, callback) {
-    try {
-      if (callback(data) === false) {
-        interrupted = true;
-        return false;  //break from $.each
-      }
-    } catch(err) {
-      console.error('error running hook '+event+', error: '+err);
-      if (typeof(err.stack)==='string') {
-        console.log('Stack: '+err.stack);
-      }
-      if (typeof(callback.toString)==='function') {
-        console.log('source: '+callback.toString());
-      }
-      //debugger;
-    }
-  });
-  return !interrupted;
+    if(!_hooks[event]) return true;
+    var interrupted = false;
+    $.each(_hooks[event], function(ind, callback) {
+        try {
+            if (callback(data) === false) {
+                interrupted = true;
+                return false;  //break from $.each
+            }
+        } catch(err) {
+            console.error('error running hook '+event+', error: '+err);
+            if (typeof(err.stack)==='string') {
+                console.log('Stack: '+err.stack);
+            }
+            if (typeof(callback.toString)==='function') {
+                console.log('source: '+callback.toString());
+            }
+            //debugger;
+        }
+    });
+    return !interrupted;
 };
 
 // helper method to allow plugins to create new hooks
 window.pluginCreateHook = function(event) {
-  if($.inArray(event, window.VALID_HOOKS) < 0) {
-    window.VALID_HOOKS.push(event);
-  }
+    if($.inArray(event, window.VALID_HOOKS) < 0) {
+        window.VALID_HOOKS.push(event);
+    }
 };
 
 
 window.addHook = function(event, callback) {
-  if(VALID_HOOKS.indexOf(event) === -1) {
-    console.error('addHook: Unknown event type: ' + event + ' - ignoring');
-    debugger;
-    return;
-  }
+    if(VALID_HOOKS.indexOf(event) === -1) {
+        console.error('addHook: Unknown event type: ' + event + ' - ignoring');
+        
+        return;
+    }
 
-  if(typeof callback !== 'function') throw('Callback must be a function.');
+    if(typeof callback !== 'function') throw('Callback must be a function.');
 
-  if(!_hooks[event])
-    _hooks[event] = [callback];
-  else
-    _hooks[event].push(callback);
+    if(!_hooks[event])
+        _hooks[event] = [callback];
+    else
+        _hooks[event].push(callback);
 };
 
 // callback must the SAME function to be unregistered.
 window.removeHook = function(event, callback) {
-  if (typeof callback !== 'function') throw('Callback must be a function.');
+    if (typeof callback !== 'function') throw('Callback must be a function.');
 
-  if (_hooks[event]) {
-    var index = _hooks[event].indexOf(callback);
-    if(index === -1)
-      console.warn('Callback wasn\'t registered for this event.');
-    else
-      _hooks[event].splice(index, 1);
-  }
+    if (_hooks[event]) {
+        var index = _hooks[event].indexOf(callback);
+        if(index === -1)
+            console.warn('Callback wasn\'t registered for this event.');
+        else
+            _hooks[event].splice(index, 1);
+    }
 };

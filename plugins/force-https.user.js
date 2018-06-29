@@ -25,7 +25,7 @@
 
 
 if(window.location.protocol !== 'https:') {
-  var redir = window.location.href.replace(/^http:/, 'https:');
-  window.location = redir;
-  throw('Need to load HTTPS version.');
+    var redir = window.location.href.replace(/^http:/, 'https:');
+    window.location = redir;
+    throw('Need to load HTTPS version.');
 }

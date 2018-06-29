@@ -21,13 +21,13 @@
 var targetContainer = document.getElementById('dashboard_container');
 if (targetContainer) {
 
-  var logoDiv = document.createElement('div');
-  logoDiv.setAttribute('style', "position: fixed; left: 20px; top: 130px; z-index: auto; pointer-events: none;");
+    var logoDiv = document.createElement('div');
+    logoDiv.setAttribute('style', 'position: fixed; left: 20px; top: 130px; z-index: auto; pointer-events: none;');
 
-  var img = document.createElement('img');
-  img.setAttribute('src', 'http://iitc.me/assets/img/prefer-iitc-200.png');
+    var img = document.createElement('img');
+    img.setAttribute('src', 'http://iitc.me/assets/img/prefer-iitc-200.png');
 
-  logoDiv.appendChild(img);
+    logoDiv.appendChild(img);
 
-  targetContainer.appendChild(logoDiv);
+    targetContainer.appendChild(logoDiv);
 }

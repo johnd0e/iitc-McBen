@@ -6,13 +6,13 @@
 // be listed as a player
 window.isSystemPlayer = function(name) {
 
-  switch (name) {
-    case '__ADA__':
-    case '__JARVIS__':
-      return true;
+    switch (name) {
+        case '__ADA__':
+        case '__JARVIS__':
+            return true;
 
-    default:
-      return false;
-  }
+        default:
+            return false;
+    }
 
 };
