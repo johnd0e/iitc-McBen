@@ -96,6 +96,12 @@ script.appendChild(document.createTextNode('('+ wrapper +')('+JSON.stringify(inf
 
 """
 
+pluginMetaBlock = """// @updateURL      @@UPDATEURL@@
+// @downloadURL    @@DOWNLOADURL@@
+// @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
+// @match          *://*.ingress.com/intel*
+// @match          *://*.ingress.com/mission/*
+// @grant          none"""
 
 def readfile(fn):
     with io.open(fn, 'Ur', encoding='utf8') as f:
@@ -162,6 +168,7 @@ def doReplacements(script,updateUrl,downloadUrl,pluginName=None):
 
     script = re.sub('@@INJECTCODE@@',loadCode,script)
 
+    script = script.replace('@@METAINFO@@', pluginMetaBlock)
     script = script.replace('@@PLUGINSTART@@', pluginWrapperStart)
     script = script.replace('@@PLUGINEND@@', pluginWrapperEnd)
 
