@@ -106,7 +106,7 @@ function createDefaultBaseMapLayers() {
   baseLayers['Google Roads'] = L.gridLayer.googleMutant({type:'roadmap', maxZoom: 21});
   baseLayers['Google Satellite'] = L.gridLayer.googleMutant({type:'satellite', maxZoom: 21});
   baseLayers['Google Hybrid'] = L.gridLayer.googleMutant({type:'hybrid', maxZoom: 21});
-  baseLayers['Google Terrain'] = L.gridLayer.googleMutant({type:'terrain', maxZoom: 15});
+  baseLayers['Google Terrain'] = L.gridLayer.googleMutant({type:'terrain', maxZoom: 21});
 
 
   // pure OSM
