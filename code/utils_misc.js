@@ -230,7 +230,7 @@ String.prototype.capitalizeAll = function() {
     .map( word => word[0].toUpperCase() + word.substr(1) )
     .join(' ');
  }
- 
+
 // http://stackoverflow.com/a/646643/1684530 by Bergi and CMS
 if (typeof String.prototype.startsWith !== 'function') {
   String.prototype.startsWith = function (str){
@@ -353,13 +353,14 @@ window.addLayerGroup = function(name, layerGroup, defaultDisplay, group) {
 };
 
 window.removeLayerGroup = function(layerGroup) {
-  if(!layerChooser._layers[layerGroup._leaflet_id]) throw('Layer was not found');
-  // removing the layer will set it's default visibility to false (store if layer gets added again)
-  var name = layerChooser._layers[layerGroup._leaflet_id].name;
-  var enabled = isLayerGroupDisplayed(name);
-  map.removeLayer(layerGroup);
-  layerChooser.removeLayer(layerGroup);
-  updateDisplayedLayerGroup(name, enabled);
+    const id = L.stamp(layerGroup);
+    if(!layerChooser._layers || !layerChooser._layers[id]) return;
+    // removing the layer will set it's default visibility to false (store if layer gets added again)
+    const name = layerChooser._layers[id].name;
+    const enabled = isLayerGroupDisplayed(name);
+    map.removeLayer(layerGroup);
+    layerChooser.removeLayer(layerGroup);
+    updateDisplayedLayerGroup(name, enabled);
 };
 
 window.clampLat = function(lat) {
