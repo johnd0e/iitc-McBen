@@ -353,14 +353,14 @@ window.addLayerGroup = function(name, layerGroup, defaultDisplay, group) {
 };
 
 window.removeLayerGroup = function(layerGroup) {
-    if(!layerChooser._layers[layerGroup._leaflet_id]) throw('Layer was not found');
-    if(!layerChooser._layers || !layerChooser._layers[id]) return;
+    const layername = layerChooser.getLayerName(L.stamp(layerGroup));
+    if(!layername) throw('Layer was not found');
+
     // removing the layer will set it's default visibility to false (store if layer gets added again)
-    var name = layerChooser._layers[layerGroup._leaflet_id].name;
-    var enabled = isLayerGroupDisplayed(name);
+    var enabled = isLayerGroupDisplayed(layername);
     map.removeLayer(layerGroup);
     layerChooser.removeLayer(layerGroup);
-    updateDisplayedLayerGroup(name, enabled);
+    updateDisplayedLayerGroup(layername, enabled);
 };
 
 window.clampLat = function(lat) {

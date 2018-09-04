@@ -441,4 +441,10 @@ L.Control.GroupedLayers = L.Control.extend({
     },
 
 
+
+    getLayerName: function(leafletid) {
+        let layer = this._findLayerByID(leafletid);
+        return (layer || layer.name);
+    }
+
 });
