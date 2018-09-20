@@ -18,6 +18,12 @@ if(document.getElementsByTagName('html')[0].getAttribute('itemscope') != null)
   throw('Ingress Intel Website is down, not a userscript issue.');
 window.iitcBuildDate = '@@BUILDDATE@@';
 
+
+// Force no WWW adress
+if (window.location.href.indexOf("//www.ingress.com/intel") >0) {
+    window.location = window.location.href.replace('//www.ingress.com/intel', '//ingress.com/intel');
+}
+
 // disable vanilla JS
 document.body.onload = function() {};
 window.onload = function() {};
