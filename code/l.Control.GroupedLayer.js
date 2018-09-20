@@ -65,14 +65,17 @@ L.Control.GroupedLayers = L.Control.extend({
         return this;
     },
 
-    _removeLayer: function (arr,id) {
+    _removeLayer: function (arr, id) {
         for (var i=arr.length-1;i>=0;--i) {
             var obj = arr[i];
-            if (obj.layer && L.stamp(obj.layer)===id) delete obj[l];
+            if (obj.layer && L.stamp(obj.layer)===id) {
+                arr.splice(i,1);
+            }
             if (obj.childs!==null) {
                 this._removeLayer(obj.childs,id);
             }
         }
+        this._update();
     },
 
     _initLayout: function () {
@@ -173,15 +176,13 @@ L.Control.GroupedLayers = L.Control.extend({
 
 
     findBaseLayerByName: function (name) {
-        const obj = this._mlayers.find( (obj) => obj.layer && !obj.overlay && obj.name===name)
+        const obj = this._mlayers.find( (obj) => obj.layer && !obj.overlay && obj.name===name);
         return  obj && obj.layer;
     },
 
     getfirstBaseLayer: function () {
-        for (var i=0,l=this._mlayers.length;i<l;++i) {
-            var obj = this._mlayers[i];
-            if (obj.layer && !obj.overlay) return obj.layer;
-        }
+        const obj = this._mlayers.find( (obj) => obj.layer && !obj.overlay );
+        return  obj && obj.layer;
     },
 
     _findLayerByID: function (id) {
@@ -444,7 +445,7 @@ L.Control.GroupedLayers = L.Control.extend({
 
     getLayerName: function(leafletid) {
         let layer = this._findLayerByID(leafletid);
-        return (layer || layer.name);
+        return (layer && layer.name);
     }
 
 });

@@ -72,8 +72,8 @@ window.layerChooserSetDisabledStates = function() {
 
 function setupLayers() {
 
-    var addLayers = createDefaultOverlays();
-    var baseLayers = createDefaultBaseMapLayers();
+    const addLayers = createDefaultOverlays();
+    const baseLayers = createDefaultBaseMapLayers();
     window.layerChooser = new L.Control.GroupedLayers(baseLayers, addLayers);
 
     map.addControl(window.layerChooser);
