@@ -389,7 +389,7 @@
 
 /* Default icon URLs */
 .leaflet-default-icon-path {
-	background-image: url(@@INCLUDEIMAGE:images/marker-icon.png@@);
+	background-image: url(""); /* requires Path: not URL! ..patched in Boot */
 	}
 
 
