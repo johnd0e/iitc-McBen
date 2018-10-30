@@ -3,13 +3,8 @@
 // @name           IITC plugin: cross links
 // @category       Layer
 // @version        1.1.2.@@DATETIMEVERSION@@
-// @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
-// @updateURL      @@UPDATEURL@@
-// @downloadURL    @@DOWNLOADURL@@
 // @description    [@@BUILDNAME@@-@@BUILDDATE@@] Checks for existing links that cross planned links. Requires draw-tools plugin.
-// @match          *://*.ingress.com/intel*
-// @match          *://*.ingress.com/mission/*
-// @grant          none
+@@METAINFO@@
 // ==/UserScript==
 
 @@PLUGINSTART@@

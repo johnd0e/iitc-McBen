@@ -3,13 +3,8 @@
 // @name           IITC plugin: Show total counts of portals
 // @category       Info
 // @version        0.1.2.@@DATETIMEVERSION@@
-// @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
-// @updateURL      @@UPDATEURL@@
-// @downloadURL    @@DOWNLOADURL@@
 // @description    [@@BUILDNAME@@-@@BUILDDATE@@] Display a list of all localized portals by level and faction.
-// @match          *://*.ingress.com/intel*
-// @match          *://*.ingress.com/mission/*
-// @grant          none
+@@METAINFO@@
 // ==/UserScript==
 
 @@PLUGINSTART@@

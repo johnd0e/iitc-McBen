@@ -99,8 +99,7 @@ script.appendChild(document.createTextNode('('+ wrapper +')('+JSON.stringify(inf
 pluginMetaBlock = """// @updateURL      @@UPDATEURL@@
 // @downloadURL    @@DOWNLOADURL@@
 // @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
-// @match          *://*.ingress.com/intel*
-// @match          *://*.ingress.com/mission/*
+// @include        https://intel.ingress.com/*
 // @grant          none"""
 
 def readfile(fn):
