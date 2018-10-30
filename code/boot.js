@@ -296,7 +296,7 @@ function MonkeyPatching_Leaflet() {
             popupAnchor: new L.Point(1, -34),
         },
         _getIconUrl: function (name) {
-            return Icon.prototype._getIconUrl.call(this, name);
+            return L.Icon.prototype._getIconUrl.call(this, name);
         },
     });
 }
