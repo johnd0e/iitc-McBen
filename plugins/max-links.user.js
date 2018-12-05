@@ -23,7 +23,7 @@ window.plugin.maxLinks.STROKE_STYLE = {
   color: '#FF0000',
   opacity: 1,
   weight: 1.5,
-  clickable: false,
+  interactive: false,
   dashArray: '6,4',
   smoothFactor: 10,
 };
