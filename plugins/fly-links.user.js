@@ -31,13 +31,13 @@ window.plugin.flyLinks.updateLayer = function() {
 
   window.plugin.flyLinks.linksLayerGroup.clearLayers();
   window.plugin.flyLinks.fieldsLayerGroup.clearLayers();
-  var ctrl = [$('.leaflet-control-layers-selector + span:contains("Fly links")').parent(), 
+  var ctrl = [$('.leaflet-control-layers-selector + span:contains("Fly links")').parent(),
               $('.leaflet-control-layers-selector + span:contains("Fly fields")').parent()];
   if (Object.keys(window.portals).length > window.plugin.flyLinks.MAX_PORTALS_TO_OBSERVE) {
     $.each(ctrl, function(guid, ctl) {ctl.addClass('disabled').attr('title', 'Too many portals: ' + Object.keys(window.portals).length);});
     return;
   }
-  
+
   var locations = [];
 
   var bounds = map.getBounds();
@@ -60,27 +60,27 @@ window.plugin.flyLinks.updateLayer = function() {
     var poly = L.polyline([alatlng, blatlng], style);
     poly.addTo(window.plugin.flyLinks.linksLayerGroup);
   }
-  
+
   var drawField = function(a, b, c, style) {
     var alatlng = map.unproject(a, window.plugin.flyLinks.PROJECT_ZOOM);
     var blatlng = map.unproject(b, window.plugin.flyLinks.PROJECT_ZOOM);
     var clatlng = map.unproject(c, window.plugin.flyLinks.PROJECT_ZOOM);
-    
+
     var poly = L.polygon([alatlng, blatlng, clatlng], style);
     poly.addTo(window.plugin.flyLinks.fieldsLayerGroup);
   }
-  
+
   if (locations.length > window.plugin.flyLinks.MAX_PORTALS_TO_LINK) {
     $.each(ctrl, function(guid, ctl) {ctl.addClass('disabled').attr('title', 'Too many portals (linked/observed): ' + locations.length + '/' + Object.keys(window.portals).length);});
     return;
   }
   $.each(ctrl, function(guid, ctl) {ctl.removeClass('disabled').attr('title', 'portals (linked/observed): ' + locations.length + '/' + Object.keys(window.portals).length);});
-  
+
   var EPS = 1e-9;
   var det = function(a, b, c) {
     return a.x * b.y - a.y * b.x + b.x * c.y - b.y * c.x + c.x * a.y - c.y * a.x;
   }
-  
+
   var convexHull = function(points) {
     if (points.length < 3)
       return [];
@@ -123,9 +123,9 @@ window.plugin.flyLinks.updateLayer = function() {
     func(maxxi, minxi, index);
     return result;
   }
-  
+
   var index = convexHull(locations);
-  
+
   var triangulate = function(index, locations) {
     if (index.length == 0)
       return {edges: [], triangles: []};
@@ -203,7 +203,7 @@ window.plugin.flyLinks.updateLayer = function() {
         best[len][k] = {height: t, length: tlen};
       }
     }
-    
+
     var edges = [];
     var triangles = [];
     var makesubtriangulation = function _makesubtriangulation(ai, bi, ci, depth) {
@@ -230,7 +230,7 @@ window.plugin.flyLinks.updateLayer = function() {
     maketriangulation(index.length - 1, 0);
     return {edges: edges, triangles: triangles};
   }
-  
+
   var triangulation = triangulate(index, locations);
   var edges = triangulation.edges;
   var triangles = triangulation.triangles;
@@ -240,19 +240,19 @@ window.plugin.flyLinks.updateLayer = function() {
       color: '#FF0000',
       opacity: 1,
       weight: 1.5,
-      clickable: false,
+      interactive: false,
       smoothFactor: 10,
       dashArray: '6, 4',
     });
   });
-  
+
   $.each(triangles, function(idx, triangle) {
     drawField(triangle.a, triangle.b, triangle.c, {
       stroke: false,
       fill: true,
       fillColor: '#FF0000',
       fillOpacity: 1 - Math.pow(0.85, triangle.depth),
-      clickable: false,
+      interactive: false,
     });
   });
 }
@@ -273,7 +273,7 @@ window.plugin.flyLinks.Triangle = function(a, b, c, depth) {
 window.plugin.flyLinks.setup = function() {
   window.plugin.flyLinks.linksLayerGroup = new L.LayerGroup();
   window.plugin.flyLinks.fieldsLayerGroup = new L.LayerGroup();
-  
+
   window.addHook('mapDataRefreshEnd', function(e) {
     window.plugin.flyLinks.updateLayer();
   });

@@ -94,20 +94,20 @@ window.plugin.regions.search = function(query) {
     return string.match(window.plugin.regions.REGEXP);
   });
   if(!matches.every(function(match) { return match !== null; })) return;
-  
+
   var currentCell = window.plugin.regions.regionName(S2.S2Cell.FromLatLng(map.getCenter(), 6));
-  
+
   matches.forEach(function(match) {
     if(!match[1])
       match[1] = currentCell.substr(0, 2);
     else
       match[1] = match[1].toUpperCase();
-    
+
     if(!match[2])
       match[2] = currentCell.substr(2,2);
-    
+
     match[3] = match[3].toUpperCase();
-    
+
     var result = window.plugin.regions.getSearchResult(match);
     if(result) query.addResult(result);
   });
@@ -178,7 +178,7 @@ window.plugin.regions.getSearchResult = function(match) {
   var corners = cell.getCornerLatLngs();
 
   result.title = window.plugin.regions.regionName(cell);
-  result.layer = L.geodesicPolygon(corners, { fill: false, color: 'red', clickable: false });
+  result.layer = L.geodesicPolygon(corners, { fill: false, color: 'red', interactive: false });
   result.bounds = L.latLngBounds(corners);
 
   return result;
@@ -231,7 +231,7 @@ window.plugin.regions.update = function() {
   // the six cube side boundaries. we cheat by hard-coding the coords as it's simple enough
   var latLngs = [ [45,-180], [35.264389682754654,-135], [35.264389682754654,-45], [35.264389682754654,45], [35.264389682754654,135], [45,180]];
 
-  var globalCellOptions = {color: 'red', weight: 7, opacity: 0.5, clickable: false };
+  var globalCellOptions = {color: 'red', weight: 7, opacity: 0.5, interactive: false };
 
   for (var i=0; i<latLngs.length-1; i++) {
     // the geodesic line code can't handle a line/polyline spanning more than (or close to?) 180 degrees, so we draw
@@ -270,7 +270,7 @@ window.plugin.regions.drawCell = function(cell) {
   // the level 6 cells have noticible errors with non-geodesic lines - and the larger level 4 cells are worse
   // NOTE: we only draw two of the edges. as we draw all cells on screen, the other two edges will either be drawn
   // from the other cell, or be off screen so we don't care
-  var region = L.geodesicPolyline([corners[0],corners[1],corners[2]], {fill: false, color: color, opacity: 0.5, weight: 5, clickable: false });
+  var region = L.geodesicPolyline([corners[0],corners[1],corners[2]], {fill: false, color: color, opacity: 0.5, weight: 5, interactive: false });
 
   window.plugin.regions.regionLayer.addLayer(region);
 

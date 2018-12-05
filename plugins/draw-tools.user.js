@@ -60,7 +60,7 @@ window.plugin.drawTools.setOptions = function() {
     weight: 4,
     opacity: 0.5,
     fill: false,
-    clickable: true
+    interactive: true
   };
 
   window.plugin.drawTools.polygonOptions = L.extend({}, window.plugin.drawTools.lineOptions, {

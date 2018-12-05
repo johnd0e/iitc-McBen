@@ -40,7 +40,7 @@ window.plugin.maxLinks.addErrorMarker = function() {
         iconSize: [300,30],
         html: 'Tidy Links: too many portals!'
       }),
-      clickable: false
+      interactive: false
     });
 
     window.map.addLayer(window.plugin.maxLinks.errorMarker);

@@ -36,15 +36,15 @@ window.plugin.crossLinks.greatCircleArcIntersect = function (a0,a1,b0,b1) {
       cb1 = toCartesian(b1.lat, b1.lng);
 
   // plane normales
-  var da = cross(ca0, ca1); 
-  var db = cross(cb0, cb1); 
-  var da0 = cross(da, ca0); 
-  var da1 = cross(da, ca1); 
+  var da = cross(ca0, ca1);
+  var db = cross(cb0, cb1);
+  var da0 = cross(da, ca0);
+  var da1 = cross(da, ca1);
   var db0 = cross(db, cb0);
   var db1 = cross(db, cb1);
 
   // the intersection line <=> collision point
-  var p = cross(da, db); 
+  var p = cross(da, db);
   normalize(p);
 
   // angels to positions
@@ -125,7 +125,7 @@ window.plugin.crossLinks.checkAllLinks = function() {
 window.plugin.crossLinks.testLink = function (link) {
     if (plugin.crossLinks.linkLayerGuids[link.options.guid]) return;
 
-    for (var i in plugin.drawTools.drawnItems._layers) { 
+    for (var i in plugin.drawTools.drawnItems._layers) {
        var layer = plugin.drawTools.drawnItems._layers[i];
        if (layer instanceof L.GeodesicPolygon) {
            if (plugin.crossLinks.testPolyLine(layer, link,true)) {
@@ -148,7 +148,7 @@ window.plugin.crossLinks.showLink = function(link) {
        color: '#d22',
        opacity: 0.7,
        weight: 5,
-       clickable: false,
+       interactive: false,
        dashArray: '8,8',
 
        guid: link.options.guid
@@ -202,7 +202,7 @@ window.plugin.crossLinks.createLayer = function() {
 
     map.on('layeradd', function(obj) {
       if(obj.layer === window.plugin.crossLinks.linkLayer) {
-        delete window.plugin.crossLinks.disabled;
+        window.plugin.crossLinks.disabled = undefined;
         window.plugin.crossLinks.checkAllLinks();
       }
     });

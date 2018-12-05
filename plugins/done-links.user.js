@@ -81,7 +81,7 @@ window.plugin.doneLinks.showLink = function(link) {
        color: COLORS[link.options.team],
        opacity: 0.8,
        weight: 6,
-       clickable: false,
+       interactive: false,
        dashArray: '6,12',
 
        guid: link.options.guid
@@ -179,7 +179,7 @@ var setup = function() {
     window.addHook('linkAdded', window.plugin.doneLinks.onLinkAdded);
     window.addHook('mapDataRefreshEnd', window.plugin.doneLinks.onMapDataRefreshEnd);
 
-    
+
 }
 
 // PLUGIN END //////////////////////////////////////////////////////////

@@ -62,7 +62,7 @@ window.plugin.playerTracker.setup = function() {
     window.plugin.playerTracker.zoomListener();
   });
   window.plugin.playerTracker.zoomListener();
-  
+
   plugin.playerTracker.setupUserSearch();
 }
 
@@ -414,7 +414,7 @@ window.plugin.playerTracker.drawData = function() {
     var opts = {
       weight: 2-0.25*i,
       color: PLAYER_TRACKER_LINE_COLOUR,
-      clickable: false,
+      interactive: false,
       opacity: 1-0.2*i,
       dashArray: "5,8"
     };
@@ -429,7 +429,7 @@ window.plugin.playerTracker.drawData = function() {
     var opts = {
       weight: 2-0.25*i,
       color: PLAYER_TRACKER_LINE_COLOUR,
-      clickable: false,
+      interactive: false,
       opacity: 1-0.2*i,
       dashArray: "5,8"
     };
