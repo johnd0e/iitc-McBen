@@ -112,7 +112,7 @@ plugin.layerCount.calculate = function(ev) {
 	if (window.plugin.drawTools) {
 		for(var layerId in window.plugin.drawTools.drawnItems._layers) {
 			var field = window.plugin.drawTools.drawnItems._layers[layerId];
-			if(field instanceof L.GeodesicPolygon && plugin.layerCount.pnpoly(field._latlngs, point))
+			if(field instanceof L.GeodesicPolygon && plugin.layerCount.pnpoly(field.getLatLngs(), point))
 				layersDrawn++;
 		}
 	}
