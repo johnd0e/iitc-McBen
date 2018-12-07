@@ -33,7 +33,6 @@ plugin.layerCount.onBtnClick = function(ev) {
 		map.off("click", plugin.layerCount.calculate);
 		btn.classList.remove("active");
 	} else {
-		console.log("inactive");
 		if(window.plugin.drawTools !== undefined) {
 			window.plugin.drawTools.drawnItems.eachLayer(function(layer) {
 				if (layer instanceof L.GeodesicPolygon) {
@@ -102,7 +101,7 @@ plugin.layerCount.calculate = function(ev) {
 
 		// we don't need to check the field's bounds first. pnpoly is pretty simple math.
 		// Checking the bounds is about 50 times slower than just using pnpoly
-		if(plugin.layerCount.pnpoly(field._latlngs, point)) {
+		if(plugin.layerCount.pnpoly(field.getLatLngs(), point)) {
 			if(field.options.team == TEAM_ENL)
 				layersEnl++;
 			else if(field.options.team == TEAM_RES)
